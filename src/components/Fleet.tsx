@@ -8,13 +8,13 @@ export default function Fleet() {
   };
 
   return (
-    <section id="fleet" className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-white to-sand/30">
+    <section id="fleet" className="py-12 sm:py-16 md:py-20 px-4 bg-sand">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3 sm:mb-4">
             Our Premium Fleet
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-ocean/70 max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 max-w-2xl mx-auto px-4">
             Choose from our selection of well-maintained, fully-equipped pontoon boats perfect for any occasion
           </p>
         </div>
@@ -37,7 +37,7 @@ export default function Fleet() {
               <div className="p-5 sm:p-6">
                 <h3 className="text-xl sm:text-2xl font-bold text-ocean mb-3 sm:mb-4">{boat.name}</h3>
 
-                <div className="flex items-center gap-4 sm:gap-6 mb-4 text-ocean/70 text-sm sm:text-base">
+                <div className="flex items-center gap-4 sm:gap-6 mb-4 text-gray-700 text-sm sm:text-base">
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                     <span className="font-medium">Up to {boat.capacity}</span>
@@ -52,8 +52,8 @@ export default function Fleet() {
                   <h4 className="font-semibold text-ocean mb-2 text-sm sm:text-base">Amenities:</h4>
                   <div className="space-y-1.5 sm:space-y-2">
                     {boat.amenities.map((amenity, index) => (
-                      <div key={index} className="flex items-center gap-2 text-ocean/70">
-                        <Check className="w-4 h-4 text-coral flex-shrink-0" />
+                      <div key={index} className="flex items-center gap-2 text-gray-700">
+                        <Check className="w-4 h-4 text-teal flex-shrink-0" />
                         <span className="text-xs sm:text-sm">{amenity}</span>
                       </div>
                     ))}
@@ -62,11 +62,11 @@ export default function Fleet() {
 
                 <div className="border-t border-ocean/10 pt-4 mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-ocean/70 text-sm sm:text-base">Hourly Rate</span>
+                    <span className="text-gray-700 text-sm sm:text-base">Hourly Rate</span>
                     <span className="text-xl sm:text-2xl font-bold text-ocean">${boat.hourlyRate}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-ocean/70 text-sm sm:text-base">Daily Rate</span>
+                    <span className="text-gray-700 text-sm sm:text-base">Daily Rate</span>
                     <span className="text-lg sm:text-xl font-bold text-coral">${boat.dailyRate}</span>
                   </div>
                 </div>
@@ -83,7 +83,7 @@ export default function Fleet() {
         </div>
 
         <div className="text-center mt-8 sm:mt-10 md:mt-12 px-4">
-          <p className="text-ocean/70 text-sm sm:text-base md:text-lg">
+          <p className="text-gray-700 text-sm sm:text-base md:text-lg">
             All boats include life jackets, safety equipment, and a full orientation. Departing from The Hilton Marina in Fort Lauderdale.
             <span className="block mt-2 font-semibold text-ocean text-sm sm:text-base md:text-lg">Captain services available for +$50/hour</span>
           </p>

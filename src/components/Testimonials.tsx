@@ -24,13 +24,13 @@ export default function Testimonials() {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section id="testimonials" className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-sand/20 to-white">
+    <section id="testimonials" className="py-12 sm:py-16 md:py-20 px-4 bg-sand">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3 sm:mb-4">
             What Our Guests Say
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-ocean/70 px-4">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 px-4">
             Real experiences from real people
           </p>
         </div>
@@ -46,13 +46,13 @@ export default function Testimonials() {
                 ))}
               </div>
 
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-ocean/80 text-center mb-6 sm:mb-8 leading-relaxed italic px-2">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 text-center mb-6 sm:mb-8 leading-relaxed italic px-2">
                 "{currentTestimonial.text}"
               </p>
 
               <div className="text-center">
                 <p className="font-bold text-ocean text-base sm:text-lg">{currentTestimonial.name}</p>
-                <p className="text-ocean/60 text-sm sm:text-base">{currentTestimonial.date}</p>
+                <p className="text-gray-700 text-sm sm:text-base">{currentTestimonial.date}</p>
               </div>
             </div>
           </div>

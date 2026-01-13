@@ -47,7 +47,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
     { id: 'water-mat', name: 'Premium Floating Water Mat', price: 39.99 },
     { id: 'pool-floats', name: 'Inflatable Pool Floats (3-pack)', price: 24.99 },
     { id: 'pool-noodles', name: 'Foam Pool Noodles (5-pack)', price: 24.99 },
-    { id: 'speaker', name: 'Waterproof Bluetooth Speaker Upgrade', price: 29.99 },
+    { id: 'speaker', name: 'Waterproof Bluetooth Speaker Upgrade', price: 49.99 },
     { id: 'decorations', name: 'Party Decorations Package', price: 49.99 }
   ];
 
@@ -131,7 +131,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
           customerEmail,
           customerPhone,
           bookingData,
-          ownerEmail: 'tibbyy05@gmail.com' // ← CHANGE THIS TO YOUR EMAIL
+          ownerEmail: 'Tikitacocruises@gmail.com' // ← CHANGE THIS TO YOUR EMAIL
         })
       });
 
@@ -160,9 +160,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
   };
 
   return (
-    <section id="booking" className="booking-calendar scroll-mt-20">
-      <h2>Book Your Experience</h2>
-      <form onSubmit={handleSubmit} className="booking-form">
+    <section id="booking" className="py-12 sm:py-16 md:py-20 px-4 bg-sand scroll-mt-20">
+      <div className="booking-calendar">
+        <h2>Book Your Experience</h2>
+        <form onSubmit={handleSubmit} className="booking-form">
         
         {/* Customer Information */}
         <div className="form-group">
@@ -367,6 +368,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
           By submitting, you'll receive an instant quote. Our team will confirm availability within 1 hour.
         </p>
       </form>
+      </div>
 
       <style>{`
         .booking-calendar {
@@ -380,7 +382,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
 
         h2 {
           text-align: center;
-          color: #1a365d;
+          color: #1E3A5F;
           margin-bottom: 2rem;
         }
 
@@ -391,7 +393,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
         label {
           display: block;
           font-weight: 600;
-          color: #2d3748;
+          color: #4A5568;
           margin-bottom: 0.5rem;
         }
 
@@ -450,7 +452,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
 
         .duration-label {
           font-weight: 600;
-          color: #2d3748;
+          color: #4A5568;
           margin-bottom: 0.5rem;
         }
 
@@ -496,7 +498,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
         .guest-count {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #2d3748;
+          color: #4A5568;
           min-width: 100px;
           text-align: center;
         }
@@ -546,7 +548,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
 
         .add-on-name {
           flex: 1;
-          color: #2d3748;
+          color: #4A5568;
         }
 
         .add-on-price {
@@ -563,7 +565,7 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
 
         .booking-summary h3 {
           margin-bottom: 1rem;
-          color: #1a365d;
+          color: #1E3A5F;
         }
 
         .summary-row {
@@ -578,10 +580,10 @@ const BookingCalendar: React.FC<BookingCalendarProps> = ({ destinationName }) =>
           justify-content: space-between;
           padding-top: 1rem;
           margin-top: 1rem;
-          border-top: 2px solid #2d3748;
+          border-top: 2px solid #4A5568;
           font-size: 1.25rem;
           font-weight: 700;
-          color: #1a365d;
+          color: #1E3A5F;
         }
 
         .submit-btn {

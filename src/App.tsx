@@ -7,6 +7,7 @@ import BeachCoastCruise from './pages/destinations/BeachCoastCruise';
 import FullWaterwayTour from './pages/destinations/FullWaterwayTour';
 import Destinations from './pages/Destinations';
 import Gallery from './pages/Gallery';
+import FAQ from './pages/FAQ';
 import AdminGallery from './admin/AdminGallery';
 
 function App() {
@@ -28,6 +29,9 @@ function App() {
         
         {/* Gallery */}
         <Route path="/gallery" element={<Gallery />} />
+        
+        {/* FAQ */}
+        <Route path="/faq" element={<FAQ />} />
         
         {/* Admin */}
         <Route path="/admin/gallery" element={<AdminGallery />} />

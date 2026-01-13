@@ -23,7 +23,7 @@ export default function Navigation() {
     { href: '/destinations', label: 'Destinations', isHash: false },
     { href: '/gallery', label: 'Gallery', isHash: false },
     { href: isHomePage ? '#features' : '/#features', label: 'Amenities', isHash: true },
-    { href: isHomePage ? '#faq' : '/#faq', label: 'FAQ', isHash: true }
+    { href: '/faq', label: 'FAQ', isHash: false }
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isHash: boolean) => {
@@ -84,8 +84,8 @@ export default function Navigation() {
   };
 
   const navBackground = !isHomePage || isScrolled
-    ? 'bg-ocean shadow-lg py-4'
-    : 'bg-black/20 backdrop-blur-sm py-6';
+    ? 'bg-ocean shadow-lg py-2'
+    : 'bg-black/20 backdrop-blur-sm py-3';
 
   return (
     <nav
@@ -101,7 +101,7 @@ export default function Navigation() {
             <img
               src="/Logo_Blue_Transparent.png"
               alt="Tiki Taco"
-              className="h-[4.5rem] sm:h-[5.4rem] md:h-[6.3rem] w-auto object-contain"
+              className="h-[3.5rem] sm:h-[4rem] md:h-[4.5rem] w-auto object-contain"
             />
           </a>
 

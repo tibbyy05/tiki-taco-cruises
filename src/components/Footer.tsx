@@ -76,7 +76,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/destinations"
-                  className="text-white/80 hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
+                  className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Popular Destinations
                 </Link>
@@ -84,21 +84,28 @@ export default function Footer() {
               <li>
                 <Link
                   to="/gallery"
-                  className="text-white/80 hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
+                  className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Gallery
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/faq"
+                  className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
+                >
+                  FAQ
+                </Link>
+              </li>
               {[
                 { href: '#features', label: 'Amenities' },
-                { href: '#testimonials', label: 'Reviews' },
-                { href: '#faq', label: 'FAQ' }
+                { href: '#testimonials', label: 'Reviews' }
               ].map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className="text-white/80 hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
+                    className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                   >
                     {link.label}
                   </a>
@@ -120,14 +127,14 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-coral flex-shrink-0" />
-                <a href="tel:+19547644344" className="text-white/80 hover:text-coral transition-colors text-sm sm:text-base min-h-[44px] flex items-center">
+                <a href="tel:+19547644344" className="text-teal hover:text-coral transition-colors text-sm sm:text-base min-h-[44px] flex items-center">
                   (954) 764-4344
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-coral flex-shrink-0" />
-                <a href="mailto:tacohookedup@aol.com" className="text-white/80 hover:text-coral transition-colors text-xs sm:text-sm break-all min-h-[44px] flex items-center">
-                  tacohookedup@aol.com
+                <a href="mailto:Tikitacocruises@gmail.com" className="text-teal hover:text-coral transition-colors text-xs sm:text-sm break-all min-h-[44px] flex items-center">
+                  Tikitacocruises@gmail.com
                 </a>
               </li>
             </ul>
@@ -153,10 +160,23 @@ export default function Footer() {
               {currentYear} Tiki Taco. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-white/60">
-              <a href="#" className="hover:text-coral transition-colors min-h-[44px] flex items-center">Privacy Policy</a>
-              <a href="#" className="hover:text-coral transition-colors min-h-[44px] flex items-center">Terms of Service</a>
-              <a href="#" className="hover:text-coral transition-colors min-h-[44px] flex items-center">Cancellation Policy</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Privacy Policy</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Terms of Service</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Cancellation Policy</a>
             </div>
+          </div>
+          <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10">
+            <p className="text-white/40 text-sm sm:text-base text-center">
+              Website powered by{' '}
+              <a 
+                href="https://ai-genda.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-teal hover:text-coral transition-colors font-medium"
+              >
+                ai-genda.com
+              </a>
+            </p>
           </div>
         </div>
       </div>

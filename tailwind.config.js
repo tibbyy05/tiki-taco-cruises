@@ -4,9 +4,14 @@ export default {
   theme: {
     extend: {
       colors: {
-        ocean: '#0A2F4F',
-        sand: '#F5E6D3',
+        navy: '#1E3A5F',
+        ocean: '#1E3A5F', // Keep ocean alias for backward compatibility, maps to navy
+        teal: '#0891B2',
+        sand: '#F5F7FA',
         coral: '#FF6B6B',
+        gray: {
+          700: '#4A5568', // For paragraph text
+        },
       },
       fontFamily: {
         sans: [

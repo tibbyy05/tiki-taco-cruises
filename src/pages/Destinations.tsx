@@ -376,6 +376,8 @@ const Destinations: React.FC = () => {
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
           }
 
           .destination-card:hover {
@@ -413,6 +415,9 @@ const Destinations: React.FC = () => {
 
           .card-content {
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
           }
 
           .card-content h3 {
@@ -445,6 +450,7 @@ const Destinations: React.FC = () => {
             align-items: center;
             padding-top: 1rem;
             border-top: 2px solid #e2e8f0;
+            margin-top: auto;
           }
 
           .view-btn {

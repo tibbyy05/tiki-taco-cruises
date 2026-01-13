@@ -1,33 +1,34 @@
-import { Radio, Package, Umbrella, Anchor, User, Shield } from 'lucide-react';
+import { FaBluetooth, FaSnowflake, FaUmbrellaBeach, FaSwimmer, FaGasPump, FaLifeRing } from 'react-icons/fa';
+import { Shield } from 'lucide-react';
 
 const features = [
   {
-    icon: Radio,
+    icon: FaBluetooth,
     title: 'Bluetooth Sound System',
     description: 'Premium audio system to play your favorite tunes'
   },
   {
-    icon: Package,
+    icon: FaSnowflake,
     title: 'Cooler & Ice Provided',
     description: 'Large cooler with ice to keep drinks cold all day'
   },
   {
-    icon: Umbrella,
+    icon: FaUmbrellaBeach,
     title: 'Bimini Top Shade',
     description: 'Full coverage shade to protect from the sun'
   },
   {
-    icon: Anchor,
+    icon: FaSwimmer,
     title: 'Swimming Ladder',
     description: 'Easy water access for swimming and snorkeling'
   },
   {
-    icon: User,
-    title: 'Captain Available',
-    description: 'Optional professional captain service'
+    icon: FaGasPump,
+    title: 'Fuel Included',
+    description: 'No extra fees—your trip comes with a full tank'
   },
   {
-    icon: Shield,
+    icon: FaLifeRing,
     title: 'Life Jackets Included',
     description: 'Safety equipment for all passengers'
   }
@@ -35,13 +36,13 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="features" className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-white to-sand/20">
+    <section id="features" className="py-12 sm:py-16 md:py-20 px-4 bg-sand">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-10 sm:mb-12 md:mb-16">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3 sm:mb-4">
             Premium Amenities
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-ocean/70 max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg md:text-xl text-gray-700 max-w-2xl mx-auto px-4">
             Every boat comes fully equipped for the perfect day on the water
           </p>
         </div>
@@ -54,11 +55,9 @@ export default function Features() {
                 key={index}
                 className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-coral/10 rounded-full flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-coral transition-colors duration-300">
-                  <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-coral group-hover:text-white transition-colors duration-300" />
-                </div>
+                <Icon size={48} color="#0891B2" className="mb-5 sm:mb-6" />
                 <h3 className="text-lg sm:text-xl font-bold text-ocean mb-2 sm:mb-3">{feature.title}</h3>
-                <p className="text-ocean/70 text-sm sm:text-base">{feature.description}</p>
+                <p className="text-gray-700 text-sm sm:text-base">{feature.description}</p>
               </div>
             );
           })}
