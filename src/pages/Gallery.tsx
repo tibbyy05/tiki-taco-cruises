@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -9,11 +9,16 @@ interface GalleryImage {
   alt: string;
   category: string;
   title: string;
+  mediaType?: 'image' | 'video';
 }
 
 const Gallery: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [lightboxImage, setLightboxImage] = useState<GalleryImage | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
 
   const categories = ['all', 'cruising', 'sandbar', 'sunset', 'groups'];
 
@@ -76,16 +81,77 @@ const Gallery: React.FC = () => {
     },
     {
       id: '9',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/16.png',
-      alt: 'Fort Lauderdale Beach & Coast cruise',
-      category: 'sunset',
-      title: 'Beach & Coast'
+      src: '/DJI_0062.JPG',
+      alt: 'Aerial view of Tiki Taco pontoon experience',
+      category: 'cruising',
+      title: 'Aerial Cruise'
+    },
+    {
+      id: '10',
+      src: '/Good3.JPG',
+      alt: 'Tiki Taco boat experience on the water',
+      category: 'cruising',
+      title: 'On the Water'
+    },
+    {
+      id: '11',
+      src: '/Good2.JPG',
+      alt: 'Guests enjoying a tiki pontoon cruise',
+      category: 'groups',
+      title: 'Group Fun'
+    },
+    {
+      id: '12',
+      src: '/Good1.MP4',
+      alt: 'Tiki Taco pontoon video highlight',
+      category: 'cruising',
+      title: 'Cruise Highlight',
+      mediaType: 'video'
     }
   ];
 
-  const filteredImages = selectedCategory === 'all' 
-    ? galleryImages 
-    : galleryImages.filter(img => img.category === selectedCategory);
+  const filteredImages = useMemo(() => (
+    selectedCategory === 'all'
+      ? galleryImages
+      : galleryImages.filter(img => img.category === selectedCategory)
+  ), [selectedCategory, galleryImages]);
+
+  const activeImage = lightboxIndex !== null ? filteredImages[lightboxIndex] : null;
+
+  const closeLightbox = () => setLightboxIndex(null);
+  const showPrev = () => {
+    if (lightboxIndex === null) return;
+    setLightboxIndex((prev) => {
+      if (prev === null) return null;
+      return (prev - 1 + filteredImages.length) % filteredImages.length;
+    });
+  };
+  const showNext = () => {
+    if (lightboxIndex === null) return;
+    setLightboxIndex((prev) => {
+      if (prev === null) return null;
+      return (prev + 1) % filteredImages.length;
+    });
+  };
+
+  useEffect(() => {
+    setLightboxIndex(null);
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeLightbox();
+      } else if (event.key === 'ArrowLeft') {
+        showPrev();
+      } else if (event.key === 'ArrowRight') {
+        showNext();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [lightboxIndex, filteredImages.length]);
 
   return (
     <>
@@ -160,13 +226,17 @@ const Gallery: React.FC = () => {
         <section className="gallery-grid-section">
           <div className="container">
             <div className="gallery-grid">
-              {filteredImages.map(image => (
+              {filteredImages.map((image, index) => (
                 <div 
                   key={image.id} 
                   className="gallery-item"
-                  onClick={() => setLightboxImage(image)}
+                  onClick={() => setLightboxIndex(index)}
                 >
-                  <img src={image.src} alt={image.alt} loading="lazy" />
+                  {image.mediaType === 'video' ? (
+                    <video src={image.src} muted playsInline preload="metadata" />
+                  ) : (
+                    <img src={image.src} alt={image.alt} loading="lazy" />
+                  )}
                   <div className="gallery-overlay">
                     <h3>{image.title}</h3>
                     <p>Click to view</p>
@@ -207,19 +277,31 @@ const Gallery: React.FC = () => {
           <div className="container">
             <h2>Ready to Create Your Own Memories?</h2>
             <p>Book your Fort Lauderdale pontoon experience today and be part of our next gallery update!</p>
-            <a href="/book" className="cta-button">Book Now</a>
+            <a href="/#booking" className="cta-button">
+              Book Now
+            </a>
           </div>
         </section>
 
         {/* Lightbox */}
-        {lightboxImage && (
-          <div className="lightbox" onClick={() => setLightboxImage(null)}>
+        {activeImage && (
+          <div className="lightbox" onClick={closeLightbox}>
             <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-              <button className="close-btn" onClick={() => setLightboxImage(null)}>×</button>
-              <img src={lightboxImage.src} alt={lightboxImage.alt} />
+              <button className="close-btn" onClick={closeLightbox}>×</button>
+              <button className="lightbox-nav-btn prev" onClick={showPrev} aria-label="Previous image">
+                ‹
+              </button>
+              <button className="lightbox-nav-btn next" onClick={showNext} aria-label="Next image">
+                ›
+              </button>
+              {activeImage.mediaType === 'video' ? (
+                <video src={activeImage.src} controls autoPlay />
+              ) : (
+                <img src={activeImage.src} alt={activeImage.alt} />
+              )}
               <div className="lightbox-caption">
-                <h3>{lightboxImage.title}</h3>
-                <p>{lightboxImage.alt}</p>
+                <h3>{activeImage.title}</h3>
+                <p>{activeImage.alt}</p>
               </div>
             </div>
           </div>
@@ -337,14 +419,16 @@ const Gallery: React.FC = () => {
             transform: scale(1.05);
           }
 
-          .gallery-item img {
+          .gallery-item img,
+          .gallery-item video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s;
           }
 
-          .gallery-item:hover img {
+          .gallery-item:hover img,
+          .gallery-item:hover video {
             transform: scale(1.1);
           }
 
@@ -453,11 +537,12 @@ const Gallery: React.FC = () => {
 
           .lightbox-content {
             position: relative;
-            max-width: 90vw;
+            width: min(900px, 90vw);
             max-height: 90vh;
           }
 
-          .lightbox-content img {
+          .lightbox-content img,
+          .lightbox-content video {
             max-width: 100%;
             max-height: 80vh;
             border-radius: 8px;
@@ -477,6 +562,46 @@ const Gallery: React.FC = () => {
             display: flex;
             align-items: center;
             justify-content: center;
+          }
+
+          .lightbox-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            color: white;
+            font-size: 2.5rem;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+          }
+
+          .lightbox-nav-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+          }
+
+          .lightbox-nav-btn.prev {
+            left: 16px;
+          }
+
+          .lightbox-nav-btn.next {
+            right: 16px;
+          }
+
+          @media (max-width: 768px) {
+            .lightbox-nav-btn.prev {
+              left: -10px;
+            }
+
+            .lightbox-nav-btn.next {
+              right: -10px;
+            }
           }
 
           .lightbox-caption {

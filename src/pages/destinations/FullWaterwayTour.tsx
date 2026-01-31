@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import BookingCalendar from '../../components/BookingCalendar';
+import SquareBooking from '../../components/SquareBooking';
 
 const FullWaterwayTour: React.FC = () => {
   return (
@@ -179,12 +179,7 @@ const FullWaterwayTour: React.FC = () => {
           </div>
         </section>
 
-        {/* Booking Section */}
-        <section className="booking-section">
-          <div className="container">
-            <BookingCalendar destinationName="Full Waterway Tour Cruise" />
-          </div>
-        </section>
+        <SquareBooking />
 
         {/* FAQ Section */}
         <section className="destination-faq">

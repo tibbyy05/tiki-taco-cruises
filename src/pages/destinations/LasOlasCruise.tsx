@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
-import BookingCalendar from '../../components/BookingCalendar';
+import SquareBooking from '../../components/SquareBooking';
 import { Clock, Users, Check, ArrowRight, ChevronRight } from 'lucide-react';
 
 export default function LasOlasCruise() {
@@ -16,11 +16,6 @@ export default function LasOlasCruise() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const scrollToBooking = () => {
-    const bookingSection = document.getElementById('booking');
-    bookingSection?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const relatedRoutes = [
     {
@@ -84,12 +79,12 @@ export default function LasOlasCruise() {
                 <span>Up to 18 Guests</span>
               </div>
             </div>
-            <button
-              onClick={scrollToBooking}
+            <a
+              href="/#booking"
               className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px]"
             >
               Book This Experience
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -236,14 +231,7 @@ export default function LasOlasCruise() {
         </div>
       </section>
 
-      {/* Booking Section */}
-      <section id="booking" className="scroll-mt-20">
-        <BookingCalendar
-          routeName="Las Olas & Intracoastal Cruise"
-          routeDuration="3 Hours"
-          basePrice={1200}
-        />
-      </section>
+      <SquareBooking />
 
       {/* Related Routes */}
       <section className="py-12 sm:py-16 md:py-20 px-4 bg-white">
@@ -287,12 +275,12 @@ export default function LasOlasCruise() {
       {/* Sticky Book Now Button (Mobile) */}
       {isScrolled && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl z-40 md:hidden p-4 border-t border-ocean/10">
-          <button
-            onClick={scrollToBooking}
-            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px]"
+          <a
+            href="/#booking"
+            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
           >
             Book Now - $1,200
-          </button>
+          </a>
         </div>
       )}
 

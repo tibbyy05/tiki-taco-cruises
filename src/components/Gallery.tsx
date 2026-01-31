@@ -52,9 +52,28 @@ const galleryImages = [
   },
   {
     id: 9,
-    src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/16.png',
-    alt: 'Fort Lauderdale Beach & Coast cruise',
-    category: 'sunset'
+    src: '/DJI_0062.JPG',
+    alt: 'Aerial view of Tiki Taco pontoon experience',
+    category: 'destinations'
+  },
+  {
+    id: 10,
+    src: '/Good3.JPG',
+    alt: 'Tiki Taco boat experience on the water',
+    category: 'cruising'
+  },
+  {
+    id: 11,
+    src: '/Good2.JPG',
+    alt: 'Guests enjoying a tiki pontoon cruise',
+    category: 'groups'
+  },
+  {
+    id: 12,
+    src: '/hero-video2.mp4',
+    alt: 'Tiki Taco pontoon experience highlight video',
+    category: 'cruising',
+    mediaType: 'video'
   }
 ];
 
@@ -100,13 +119,23 @@ export default function Gallery() {
               className="relative aspect-[4/3] overflow-hidden rounded-xl cursor-pointer group min-h-[200px] sm:min-h-0"
               onClick={() => openLightbox(index)}
             >
-              <img
-                src={image.src}
-                alt={image.alt}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
+              {image.mediaType === 'video' ? (
+                <video
+                  src={image.src}
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              ) : (
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  loading="lazy"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-ocean via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-4 left-4 right-4">
                   <p className="text-white font-medium text-sm sm:text-base">{image.alt}</p>
@@ -144,11 +173,20 @@ export default function Gallery() {
           </button>
 
           <div className="max-w-6xl max-h-[90vh] w-full">
-            <img
-              src={galleryImages[selectedImage].src}
-              alt={galleryImages[selectedImage].alt}
-              className="w-full h-full object-contain"
-            />
+            {galleryImages[selectedImage].mediaType === 'video' ? (
+              <video
+                src={galleryImages[selectedImage].src}
+                controls
+                autoPlay
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <img
+                src={galleryImages[selectedImage].src}
+                alt={galleryImages[selectedImage].alt}
+                className="w-full h-full object-contain"
+              />
+            )}
             <p className="text-white text-center mt-4 text-lg">
               {galleryImages[selectedImage].alt}
             </p>

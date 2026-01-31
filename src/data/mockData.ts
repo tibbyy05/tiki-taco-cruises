@@ -57,52 +57,44 @@ export const routes: Route[] = [
     duration: '4 hours',
     highlights: ['Luxury yachts', 'Waterfront mansions', 'Port Everglades views'],
     image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png'
-  },
-  {
-    id: '4',
-    name: 'Fort Lauderdale Beach & Coast',
-    description: 'Experience Fort Lauderdale\'s stunning beach coastline with views of the famous beach and A1A. Perfect for sunset cruises.',
-    duration: '3 hours',
-    highlights: ['Beach views', 'Coastal cruising', 'Sunset atmosphere'],
-    image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/16.png'
   }
 ];
 
 export const testimonials: Testimonial[] = [
   {
     id: '1',
-    name: 'Sarah Martinez',
+    name: 'Edward B.',
     rating: 5,
-    text: 'Absolutely incredible experience! The boat was pristine, and the captain knew all the best spots around Fort Lauderdale. We cruised along the Intracoastal Waterway, anchored at the Fort Lauderdale sandbar, and enjoyed stunning views of the downtown skyline. Best day of our Fort Lauderdale vacation!',
+    text: 'Felt more like cruising with an old friend than a tour guide — truly the best day on the water.',
     date: '2 weeks ago'
   },
   {
     id: '2',
-    name: 'James Wilson',
+    name: 'Jenna M.',
     rating: 5,
-    text: 'Perfect for our group of 10! Departing from The Hilton Marina was so convenient and easy to find. We cruised past Las Olas Boulevard and along the New River - the views were spectacular! The booking process was seamless, and the boat exceeded our expectations. Highly recommend for anyone wanting to experience Fort Lauderdale\'s beautiful waterways.',
+    text: 'The boat is top-of-the-line and the experience is next level — don’t waste your time anywhere else.',
     date: '1 month ago'
   },
   {
     id: '3',
-    name: 'Emily Chen',
+    name: 'Kalin M.',
     rating: 5,
-    text: 'We celebrated my birthday on the pontoon and it was magical! Sunset cruise along the Fort Lauderdale Intracoastal Waterway with views of the downtown Fort Lauderdale skyline and Fort Lauderdale Beach was absolutely breathtaking. The staff was professional and accommodating. Will definitely book again from The Hilton Marina!',
+    text: 'What are you waiting for? This was the perfect mix of fun, history, and sandbar adventure.',
     date: '3 weeks ago'
   },
   {
     id: '4',
-    name: 'Michael Rodriguez',
+    name: 'Amy W.',
     rating: 5,
-    text: 'As a Fort Lauderdale local, I have tried several boat rentals and this is by far the best. The location at The Hilton Marina is perfect - easy access to the Intracoastal Waterway and all the best spots. Great value, beautiful boats, and excellent customer service. Cruising past Las Olas and along the New River never gets old!',
-    date: '1 week ago'
+    text: 'If you’re gonna Tiki, you gotta go with Taco! The vibe, the knowledge, and the flexibility were unmatched.',
+    date: '1 month ago'
   },
   {
     id: '5',
-    name: 'Jessica Thompson',
+    name: 'Ashley M.',
     rating: 5,
-    text: 'Incredible day exploring Fort Lauderdale\'s waterways! We started from The Hilton Marina and spent the day cruising the Intracoastal, passing by Fort Lauderdale Beach and the downtown skyline. The pontoon was spacious and comfortable. We brought our own food and drinks, and the cooler kept everything ice cold. The swimming ladder made it easy to get in and out of the water. Five stars!',
-    date: '2 months ago'
+    text: 'Best way to see Fort Lauderdale — clean boat, great music, and a captain who makes everyone feel at home.',
+    date: 'Yesterday'
   }
 ];
 

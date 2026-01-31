@@ -2,9 +2,13 @@ import { Users, Ruler, Check } from 'lucide-react';
 import { boats } from '../data/mockData';
 
 export default function Fleet() {
-  const handleBookBoat = (boatName: string) => {
+  const handleBookNow = () => {
     const bookingSection = document.getElementById('booking');
-    bookingSection?.scrollIntoView({ behavior: 'smooth' });
+    if (bookingSection) {
+      bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    window.location.href = '/#booking';
   };
 
   return (
@@ -72,7 +76,7 @@ export default function Fleet() {
                 </div>
 
                 <button
-                  onClick={() => handleBookBoat(boat.name)}
+                  onClick={handleBookNow}
                   className="w-full bg-coral hover:bg-coral/90 text-white py-3 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-base sm:text-base min-h-[44px] flex items-center justify-center"
                 >
                   Book Now

@@ -35,38 +35,23 @@ export default function Navigation() {
     } else if (isHash && !isHomePage) {
       e.preventDefault();
       setIsMobileMenuOpen(false);
-      window.location.href = href;
+      const hash = href.split('#')[1];
+      navigate('/');
+      const scrollToHash = () => {
+        const element = hash ? document.getElementById(hash) : null;
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          setTimeout(scrollToHash, 50);
+        }
+      };
+      setTimeout(scrollToHash, 200);
     } else if (!isHash) {
       // For non-hash links like /gallery, use Link navigation
       setIsMobileMenuOpen(false);
       // Let the default link behavior handle it
     } else {
       setIsMobileMenuOpen(false);
-    }
-  };
-
-  const handleBookingClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsMobileMenuOpen(false);
-    if (isHomePage) {
-      const element = document.getElementById('booking');
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    } else {
-      // Navigate to home page and scroll to booking
-      navigate('/');
-      // Wait for navigation and element to be available
-      const scrollToBooking = () => {
-        const element = document.getElementById('booking');
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          // Retry if element not found yet
-          setTimeout(scrollToBooking, 50);
-        }
-      };
-      setTimeout(scrollToBooking, 200);
     }
   };
 
@@ -83,9 +68,19 @@ export default function Navigation() {
     }
   };
 
+  const handleBookingClick = () => {
+    setIsMobileMenuOpen(false);
+    const element = document.getElementById('booking');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    window.location.href = `/#booking`;
+  };
+
   const navBackground = !isHomePage || isScrolled
-    ? 'bg-ocean shadow-lg py-2'
-    : 'bg-black/20 backdrop-blur-sm py-3';
+    ? 'bg-ocean shadow-lg py-[0.18rem]'
+    : 'bg-black/20 backdrop-blur-sm py-[0.32rem]';
 
   return (
     <nav
@@ -98,11 +93,13 @@ export default function Navigation() {
             onClick={handleLogoClick}
             className="flex items-center"
           >
-            <img
-              src="/Logo_Blue_Transparent.png"
-              alt="Tiki Taco"
-              className="h-[3.5rem] sm:h-[4rem] md:h-[4.5rem] w-auto object-contain"
-            />
+            <div className="h-[4.93rem] sm:h-[5.63rem] md:h-[6.34rem] flex items-center overflow-visible">
+              <img
+                src="/NewLogo.png"
+                alt="Tiki Taco"
+                className="h-full w-auto object-contain scale-[1.3] origin-left"
+              />
+            </div>
           </a>
 
           <div className="hidden lg:flex items-center gap-8">
@@ -143,18 +140,18 @@ export default function Navigation() {
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+      </div>
 
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
-        }`}>
-          <div className="py-4 bg-white rounded-xl shadow-lg">
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 h-[100svh] z-40 bg-white overflow-y-auto">
+          <div className="pt-20 pb-4">
             {navLinks.map((link) => (
               link.isHash ? (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href, link.isHash)}
-                  className="block px-6 py-4 text-ocean hover:bg-sand/30 transition-colors min-h-[44px] flex items-center font-medium"
+                  className="block px-6 py-2.5 text-ocean hover:bg-sand/30 transition-colors min-h-[44px] flex items-center font-medium"
                 >
                   {link.label}
                 </a>
@@ -163,7 +160,7 @@ export default function Navigation() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-6 py-4 text-ocean hover:bg-sand/30 transition-colors min-h-[44px] flex items-center font-medium"
+                  className="block px-6 py-2.5 text-ocean hover:bg-sand/30 transition-colors min-h-[44px] flex items-center font-medium"
                 >
                   {link.label}
                 </Link>
@@ -171,13 +168,13 @@ export default function Navigation() {
             ))}
             <button
               onClick={handleBookingClick}
-              className="block mx-6 mt-2 text-center bg-coral hover:bg-coral/90 text-white px-6 py-4 rounded-full font-semibold min-h-[44px] flex items-center justify-center w-full"
+              className="block mx-6 mt-2 mb-4 text-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold min-h-[44px] flex items-center justify-center"
             >
               Book Now
             </button>
           </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }

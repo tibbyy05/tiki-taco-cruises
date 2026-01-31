@@ -1,17 +1,11 @@
 import { MapPin, CheckCircle, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { routes } from '../data/mockData';
 
 export default function Routes() {
-  const navigate = useNavigate();
+  const bookingUrl = '/#booking';
 
   const handleRouteClick = () => {
-    // Navigate to home page and scroll to booking section
-    navigate('/');
-    setTimeout(() => {
-      const bookingSection = document.getElementById('booking');
-      bookingSection?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    window.location.href = bookingUrl;
   };
 
   return (
@@ -66,15 +60,13 @@ export default function Routes() {
                   </div>
                 </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRouteClick();
-                  }}
+                <a
+                  href={bookingUrl}
+                  onClick={(e) => e.stopPropagation()}
                   className="w-full bg-coral hover:bg-coral/90 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-base min-h-[44px] flex items-center justify-center"
                 >
                   View Details & Book
-                </button>
+                </a>
               </div>
             </div>
           ))}

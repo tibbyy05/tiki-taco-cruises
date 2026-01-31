@@ -4,7 +4,7 @@ import Routes from '../components/Routes';
 import Gallery from '../components/Gallery';
 import Features from '../components/Features';
 import Testimonials from '../components/Testimonials';
-import BookingCalendar from '../components/BookingCalendar';
+import SquareBooking from '../components/SquareBooking';
 import Footer from '../components/Footer';
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
       <Gallery />
       <Features />
       <Testimonials />
-      <BookingCalendar destinationName="Fort Lauderdale Pontoon Rental" />
+      <SquareBooking />
       <Footer />
     </div>
   );

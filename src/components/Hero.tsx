@@ -19,7 +19,7 @@ export default function Hero() {
   };
 
   return (
-    <section id="home" className="relative h-[70vh] sm:h-[75vh] md:h-[80vh] w-full overflow-hidden">
+    <section id="home" className="relative h-[100svh] w-full overflow-hidden">
       {/* Fullscreen Video Background */}
       <div className="absolute inset-0 hero-video-container">
         <video
@@ -31,7 +31,7 @@ export default function Hero() {
           playsInline
           preload="auto"
         >
-          <source src="/Hero.mp4" type="video/mp4" />
+          <source src="https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/Website%20Stuff/Tiki%20Taco%20Website/HeroVideo2.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         {/* Subtle overlay for better text readability if needed */}
@@ -80,7 +80,7 @@ export default function Hero() {
 
         @media (max-width: 768px) {
           .hero-video {
-            object-position: center;
+            object-position: center 70%;
           }
         }
       `}</style>

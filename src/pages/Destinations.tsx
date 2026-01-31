@@ -1,6 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
 import { Target, Award, Clock, Sparkles } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
@@ -19,16 +18,7 @@ interface Destination {
 }
 
 const Destinations: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleBookClick = () => {
-    // Navigate to home page and scroll to booking section
-    navigate('/');
-    setTimeout(() => {
-      const bookingSection = document.getElementById('booking');
-      bookingSection?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
+  const bookingUrl = '/#booking';
 
   const destinations: Destination[] = [
     {
@@ -68,18 +58,6 @@ const Destinations: React.FC = () => {
       featured: false
     },
     {
-      id: '4',
-      name: 'Fort Lauderdale Beach & Coast',
-      slug: 'beach-coast-cruise',
-      description: 'Experience Fort Lauderdale\'s stunning beach coastline with views of the famous beach and A1A. Perfect for sunset cruises and enjoying the Atlantic Ocean breeze.',
-      shortDesc: 'Beach views & sunset cruises',
-      duration: ['2 hours', '3 hours', '4 hours'],
-      minPrice: 1000,
-      highlights: ['Beach coastline views', 'Atlantic Ocean experience', 'Sunset atmosphere', 'Famous A1A strip'],
-      image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/16.png',
-      featured: false
-    },
-    {
       id: '5',
       name: 'Full Waterway Tour Cruise',
       slug: 'full-waterway-tour',
@@ -104,11 +82,11 @@ const Destinations: React.FC = () => {
         <title>Fort Lauderdale Pontoon Rental Destinations | Tiki Taco</title>
         <meta 
           name="description" 
-          content="Explore 5 stunning destinations for your Fort Lauderdale pontoon rental. From Las Olas to pristine sandbars, discover the perfect cruise for your group. Tours from $1,000."
+          content="Explore 4 stunning destinations for your Fort Lauderdale pontoon rental. From Las Olas to pristine sandbars, discover the perfect cruise for your group. Tours from $1,000."
         />
         <meta 
           name="keywords" 
-          content="Fort Lauderdale boat destinations, Intracoastal cruise routes, sandbar locations Fort Lauderdale, Las Olas cruise, beach coast tour, pontoon rental routes"
+          content="Fort Lauderdale boat destinations, Intracoastal cruise routes, sandbar locations Fort Lauderdale, Las Olas cruise, pontoon rental routes"
         />
         <meta property="og:title" content="Popular Destinations - Tiki Taco Fort Lauderdale" />
         <meta property="og:description" content="Discover 5 incredible destinations for your Fort Lauderdale pontoon adventure." />
@@ -173,9 +151,9 @@ const Destinations: React.FC = () => {
                       ))}
                     </div>
                     <div className="card-footer">
-                      <button onClick={handleBookClick} className="view-btn">
+                      <a href={bookingUrl} className="view-btn">
                         View Details & Book
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -206,9 +184,9 @@ const Destinations: React.FC = () => {
                       ))}
                     </div>
                     <div className="row-footer">
-                      <button onClick={handleBookClick} className="book-btn">
+                      <a href={bookingUrl} className="book-btn">
                         Book This Destination
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -259,7 +237,7 @@ const Destinations: React.FC = () => {
           <div className="container">
             <h2>Ready to Explore Fort Lauderdale?</h2>
             <p>Book your destination today and experience the best of South Florida's waterways!</p>
-            <button onClick={handleBookClick} className="cta-button">Book Your Destination</button>
+            <a href={bookingUrl} className="cta-button">Book Your Destination</a>
           </div>
         </section>
 
