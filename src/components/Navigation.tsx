@@ -95,7 +95,7 @@ export default function Navigation() {
           >
             <div className="h-[4.93rem] sm:h-[5.63rem] md:h-[6.34rem] flex items-center overflow-visible">
               <img
-                src="/NewLogo.png"
+                src="/NewLogo1.png"
                 alt="Tiki Taco"
                 className="h-full w-auto object-contain scale-[1.3] origin-left"
               />
