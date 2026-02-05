@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const SquareBooking: React.FC = () => {
   const bookingUrl = 'https://app.squareup.com/appointments/buyer/widget/k9vo9skj1icgai/LFTKXYCHENZC7';
+  const [isHighlighted, setIsHighlighted] = useState(false);
+
+  useEffect(() => {
+    const triggerHighlight = () => {
+      if (window.location.hash === '#booking') {
+        setIsHighlighted(true);
+        setTimeout(() => setIsHighlighted(false), 1800);
+      }
+    };
+
+    triggerHighlight();
+    window.addEventListener('hashchange', triggerHighlight);
+    return () => window.removeEventListener('hashchange', triggerHighlight);
+  }, []);
 
   return (
-    <section className="square-booking-section" id="booking">
+    <section className={`square-booking-section ${isHighlighted ? 'booking-highlight' : ''}`} id="booking">
       <div className="booking-container">
         <h2>Book Your Adventure</h2>
         <p>Select your preferred date and time to reserve your cruise</p>
@@ -20,6 +34,12 @@ const SquareBooking: React.FC = () => {
           padding: 60px 20px;
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           text-align: center;
+          transition: box-shadow 0.4s, transform 0.4s;
+        }
+
+        .square-booking-section.booking-highlight {
+          box-shadow: 0 0 0 6px rgba(255, 107, 107, 0.25);
+          transform: translateY(-4px);
         }
 
         .booking-container {

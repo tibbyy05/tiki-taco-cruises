@@ -6,12 +6,18 @@ export default function Footer() {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
 
+  const scrollToSectionWithOffset = (selector: string, offset = 80) => {
+    const element = document.querySelector(selector);
+    if (!element) return;
+    const top = element.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  };
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
       if (isHomePage) {
-        const element = document.querySelector(href);
-        element?.scrollIntoView({ behavior: 'smooth' });
+        scrollToSectionWithOffset(href);
       } else {
         window.location.href = `/${href}`;
       }
@@ -92,6 +98,11 @@ export default function Footer() {
               <li>
                 <Link
                   to="/faq"
+                  onClick={() => {
+                    if (location.pathname === '/faq') {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   FAQ

@@ -100,8 +100,8 @@ export const testimonials: Testimonial[] = [
 
 export const faqs: FAQItem[] = [
   {
-    question: 'What should I bring?',
-    answer: 'Bring sunscreen, towels, food, and beverages (cooler and ice provided). We recommend polarized sunglasses, swimwear, and a waterproof phone case. Life jackets are included for all passengers.'
+    question: 'What to bring',
+    answer: 'Sunscreen, bathing attire, sunglasses, drinks, food or snacks, and inflatable water floats/toys.'
   },
   {
     question: 'What is your cancellation policy?',
@@ -126,5 +126,9 @@ export const faqs: FAQItem[] = [
   {
     question: 'Are pets allowed?',
     answer: 'Well-behaved dogs are welcome! Please bring a leash and clean up after your pet. There is a $25 pet cleaning fee. Let us know in advance so we can prepare the boat accordingly.'
+  },
+  {
+    question: 'Notes',
+    answer: 'Crew gratuities are appreciated.'
   }
 ];

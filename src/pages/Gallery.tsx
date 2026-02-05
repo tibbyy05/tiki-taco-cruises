@@ -1,142 +1,61 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import { supabase, CLIENT_ID } from '../lib/supabase';
 
-interface GalleryImage {
+interface GalleryItem {
   id: string;
-  src: string;
-  alt: string;
-  category: string;
-  title: string;
-  mediaType?: 'image' | 'video';
+  image_url: string;
+  caption: string | null;
+  display_order: number;
+  category?: string | null;
 }
 
 const Gallery: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);
 
-  const categories = ['all', 'cruising', 'sandbar', 'sunset', 'groups'];
+  useEffect(() => {
+    const fetchGalleryItems = async () => {
+      setIsLoading(true);
+      const { data } = await supabase
+        .from('gallery_photos')
+        .select('id, image_url, caption, display_order')
+        .eq('client_id', CLIENT_ID)
+        .order('display_order', { ascending: true });
 
-  const galleryImages: GalleryImage[] = [
-    {
-      id: '1',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/Real1.jpg',
-      alt: 'Sunset cruise with Fort Lauderdale skyline',
-      category: 'sunset',
-      title: 'Sunset Cruise'
-    },
-    {
-      id: '2',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/real2.jpg',
-      alt: 'Turquoise waters of Fort Lauderdale Intracoastal',
-      category: 'sandbar',
-      title: 'Turquoise Waters'
-    },
-    {
-      id: '3',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/real3.jpg',
-      alt: 'Pontoon cruising Fort Lauderdale Intracoastal Waterway',
-      category: 'cruising',
-      title: 'Intracoastal Cruising'
-    },
-    {
-      id: '4',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/real5.jpg',
-      alt: 'Fort Lauderdale waterfront aerial view',
-      category: 'cruising',
-      title: 'Waterfront Aerial View'
-    },
-    {
-      id: '5',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/real6.jpg',
-      alt: 'Group enjoying Fort Lauderdale waters',
-      category: 'groups',
-      title: 'Group Experience'
-    },
-    {
-      id: '6',
-      src: '/Sandbar.png',
-      alt: 'Fort Lauderdale sandbar experience',
-      category: 'sandbar',
-      title: 'Sandbar Paradise'
-    },
-    {
-      id: '7',
-      src: '/Night_Intracoastal2.jpg',
-      alt: 'Las Olas & Intracoastal Cruise in Fort Lauderdale',
-      category: 'cruising',
-      title: 'Las Olas Views'
-    },
-    {
-      id: '8',
-      src: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png',
-      alt: 'Intracoastal Waterway Tour in Fort Lauderdale',
-      category: 'cruising',
-      title: 'Intracoastal Tour'
-    },
-    {
-      id: '9',
-      src: '/DJI_0062.JPG',
-      alt: 'Aerial view of Tiki Taco pontoon experience',
-      category: 'cruising',
-      title: 'Aerial Cruise'
-    },
-    {
-      id: '10',
-      src: '/Good3.JPG',
-      alt: 'Tiki Taco boat experience on the water',
-      category: 'cruising',
-      title: 'On the Water'
-    },
-    {
-      id: '11',
-      src: '/Good2.JPG',
-      alt: 'Guests enjoying a tiki pontoon cruise',
-      category: 'groups',
-      title: 'Group Fun'
-    },
-    {
-      id: '12',
-      src: '/Good1.MP4',
-      alt: 'Tiki Taco pontoon video highlight',
-      category: 'cruising',
-      title: 'Cruise Highlight',
-      mediaType: 'video'
-    }
-  ];
+      setGalleryItems(data ?? []);
+      setIsLoading(false);
+    };
 
-  const filteredImages = useMemo(() => (
-    selectedCategory === 'all'
-      ? galleryImages
-      : galleryImages.filter(img => img.category === selectedCategory)
-  ), [selectedCategory, galleryImages]);
+    fetchGalleryItems();
+  }, []);
 
-  const activeImage = lightboxIndex !== null ? filteredImages[lightboxIndex] : null;
+  const activeImage = lightboxIndex !== null ? galleryItems[lightboxIndex] : null;
 
   const closeLightbox = () => setLightboxIndex(null);
   const showPrev = () => {
     if (lightboxIndex === null) return;
     setLightboxIndex((prev) => {
       if (prev === null) return null;
-      return (prev - 1 + filteredImages.length) % filteredImages.length;
+      return (prev - 1 + galleryItems.length) % galleryItems.length;
     });
   };
   const showNext = () => {
     if (lightboxIndex === null) return;
     setLightboxIndex((prev) => {
       if (prev === null) return null;
-      return (prev + 1) % filteredImages.length;
+      return (prev + 1) % galleryItems.length;
     });
   };
-
-  useEffect(() => {
-    setLightboxIndex(null);
-  }, [selectedCategory]);
 
   useEffect(() => {
     if (lightboxIndex === null) return;
@@ -151,7 +70,31 @@ const Gallery: React.FC = () => {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [lightboxIndex, filteredImages.length]);
+  }, [lightboxIndex, galleryItems.length]);
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    touchStartX.current = touch.clientX;
+    touchStartY.current = touch.clientY;
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX.current;
+    const deltaY = touch.clientY - touchStartY.current;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        showPrev();
+      } else {
+        showNext();
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
 
   return (
     <>
@@ -205,44 +148,42 @@ const Gallery: React.FC = () => {
           </div>
         </section>
 
-        {/* Filter Section */}
-        <section className="gallery-filters">
-          <div className="container">
-            <div className="filter-buttons">
-              {categories.map(category => (
-                <button
-                  key={category}
-                  className={`filter-btn ${selectedCategory === category ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(category)}
-                >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Gallery Grid */}
         <section className="gallery-grid-section">
           <div className="container">
             <div className="gallery-grid">
-              {filteredImages.map((image, index) => (
-                <div 
-                  key={image.id} 
-                  className="gallery-item"
-                  onClick={() => setLightboxIndex(index)}
-                >
-                  {image.mediaType === 'video' ? (
-                    <video src={image.src} muted playsInline preload="metadata" />
-                  ) : (
-                    <img src={image.src} alt={image.alt} loading="lazy" />
-                  )}
-                  <div className="gallery-overlay">
-                    <h3>{image.title}</h3>
-                    <p>Click to view</p>
-                  </div>
-                </div>
-              ))}
+              {isLoading ? (
+                <p style={{ textAlign: 'center', color: '#4a5568' }}>Loading...</p>
+              ) : galleryItems.length === 0 ? (
+                <p style={{ textAlign: 'center', color: '#4a5568' }}>Gallery coming soon!</p>
+              ) : (
+                galleryItems.map((image, index) => {
+                  const isVideo = /\.(mp4|mov|webm)$/i.test(image.image_url);
+                  const captionText = image.caption?.trim() || '';
+                  return (
+                    <div key={image.id} className="gallery-card">
+                      <div
+                        className="gallery-item"
+                        onClick={() => setLightboxIndex(index)}
+                      >
+                        {isVideo ? (
+                          <video src={image.image_url} muted playsInline preload="metadata" />
+                        ) : (
+                          <img src={image.image_url} alt={captionText || 'Gallery media'} loading="lazy" />
+                        )}
+                        {captionText && (
+                          <div className="gallery-overlay">
+                            <h3>{captionText}</h3>
+                          </div>
+                        )}
+                      </div>
+                      {captionText && (
+                        <p className="gallery-caption">{captionText}</p>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
         </section>
@@ -286,7 +227,12 @@ const Gallery: React.FC = () => {
         {/* Lightbox */}
         {activeImage && (
           <div className="lightbox" onClick={closeLightbox}>
-            <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="lightbox-content"
+              onClick={(e) => e.stopPropagation()}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+            >
               <button className="close-btn" onClick={closeLightbox}>×</button>
               <button className="lightbox-nav-btn prev" onClick={showPrev} aria-label="Previous image">
                 ‹
@@ -294,15 +240,17 @@ const Gallery: React.FC = () => {
               <button className="lightbox-nav-btn next" onClick={showNext} aria-label="Next image">
                 ›
               </button>
-              {activeImage.mediaType === 'video' ? (
-                <video src={activeImage.src} controls autoPlay />
+              {/\.(mp4|mov|webm)$/i.test(activeImage.image_url) ? (
+                <video src={activeImage.image_url} controls autoPlay muted playsInline />
               ) : (
-                <img src={activeImage.src} alt={activeImage.alt} />
+                <img src={activeImage.image_url} alt={activeImage.caption ?? 'Gallery media'} />
               )}
-              <div className="lightbox-caption">
-                <h3>{activeImage.title}</h3>
-                <p>{activeImage.alt}</p>
-              </div>
+              {activeImage.caption && (
+                <div className="lightbox-caption">
+                  <h3>{activeImage.caption}</h3>
+                  <p>{activeImage.caption}</p>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -364,55 +312,57 @@ const Gallery: React.FC = () => {
             padding: 0 2rem;
           }
 
-          .filter-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-          }
-
-          .filter-btn {
-            padding: 0.75rem 1.5rem;
-            border: 2px solid #e2e8f0;
-            background: white;
-            color: #4a5568;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-          }
-
-          .filter-btn:hover {
-            border-color: #FF6B6B;
-            color: #FF6B6B;
-          }
-
-          .filter-btn.active {
-            background: #FF6B6B;
-            color: white;
-            border-color: #FF6B6B;
-          }
-
           /* Gallery Grid */
           .gallery-grid-section {
             padding: 4rem 0;
             background: #f7fafc;
           }
 
+          .gallery-grid-section .container {
+            max-width: none;
+            padding: 0 24px;
+          }
+
           .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+          }
+
+          .gallery-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
           }
 
           .gallery-item {
             position: relative;
-            aspect-ratio: 4/3;
+            height: 500px;
             overflow: hidden;
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s;
+          }
+
+          @media (max-width: 1199px) {
+            .gallery-grid {
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .gallery-item {
+              height: 380px;
+            }
+          }
+
+          @media (max-width: 767px) {
+            .gallery-grid {
+              grid-template-columns: 1fr;
+            }
+
+            .gallery-item {
+              height: 300px;
+            }
           }
 
           .gallery-item:hover {
@@ -456,6 +406,99 @@ const Gallery: React.FC = () => {
           .gallery-overlay p {
             font-size: 0.875rem;
             opacity: 0.9;
+          }
+
+          .lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 12, 24, 0.88);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            padding: 24px;
+          }
+
+          .lightbox-content {
+            position: relative;
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 18px;
+            padding: 24px;
+            animation: lightboxFade 0.25s ease-out;
+          }
+
+          .lightbox-content img,
+          .lightbox-content video {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 12px;
+          }
+
+          .lightbox-caption h3 {
+            color: white;
+            font-size: 1.25rem;
+            margin-top: 16px;
+            text-align: center;
+          }
+
+          .lightbox-caption p {
+            color: rgba(255, 255, 255, 0.75);
+            text-align: center;
+            margin-top: 6px;
+          }
+
+          .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 2rem;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+          }
+
+          .lightbox-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.4);
+            border: none;
+            border-radius: 999px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+          }
+
+          .lightbox-nav-btn.prev {
+            left: -12px;
+          }
+
+          .lightbox-nav-btn.next {
+            right: -12px;
+          }
+
+          @keyframes lightboxFade {
+            from {
+              opacity: 0;
+              transform: scale(0.98);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          .gallery-caption {
+            font-size: 0.95rem;
+            color: #4a5568;
+            text-align: center;
           }
 
           /* Description Section */
@@ -520,105 +563,6 @@ const Gallery: React.FC = () => {
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.5);
           }
 
-          /* Lightbox */
-          .lightbox {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 2rem;
-          }
-
-          .lightbox-content {
-            position: relative;
-            width: min(900px, 90vw);
-            max-height: 90vh;
-          }
-
-          .lightbox-content img,
-          .lightbox-content video {
-            max-width: 100%;
-            max-height: 80vh;
-            border-radius: 8px;
-          }
-
-          .close-btn {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 3rem;
-            cursor: pointer;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .lightbox-nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            border: none;
-            color: white;
-            font-size: 2.5rem;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s ease;
-          }
-
-          .lightbox-nav-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-          }
-
-          .lightbox-nav-btn.prev {
-            left: 16px;
-          }
-
-          .lightbox-nav-btn.next {
-            right: 16px;
-          }
-
-          @media (max-width: 768px) {
-            .lightbox-nav-btn.prev {
-              left: -10px;
-            }
-
-            .lightbox-nav-btn.next {
-              right: -10px;
-            }
-          }
-
-          .lightbox-caption {
-            margin-top: 1rem;
-            color: white;
-            text-align: center;
-          }
-
-          .lightbox-caption h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-          }
-
-          .lightbox-caption p {
-            opacity: 0.8;
-          }
-
           @media (max-width: 768px) {
             .hero-content h1 {
               font-size: 2rem;
@@ -628,14 +572,6 @@ const Gallery: React.FC = () => {
               grid-template-columns: 1fr;
             }
 
-            .filter-buttons {
-              flex-direction: column;
-              align-items: stretch;
-            }
-
-            .filter-btn {
-              width: 100%;
-            }
           }
         `}</style>
       </div>

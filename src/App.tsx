@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes as RouterRoutes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
 import LasOlasCruise from './pages/destinations/LasOlasCruise';
 import SandbarParty from './pages/destinations/SandbarParty';
@@ -8,12 +9,15 @@ import FullWaterwayTour from './pages/destinations/FullWaterwayTour';
 import Destinations from './pages/Destinations';
 import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
-import AdminGallery from './admin/AdminGallery';
+import AdminLogin from './pages/AdminLogin';
+import AdminGallery from './pages/AdminGallery';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <BrowserRouter>
-      <RouterRoutes>
+      <AuthProvider>
+        <RouterRoutes>
         {/* Home */}
         <Route path="/" element={<Home />} />
         
@@ -34,11 +38,20 @@ function App() {
         <Route path="/faq" element={<FAQ />} />
         
         {/* Admin */}
-        <Route path="/admin/gallery" element={<AdminGallery />} />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route
+          path="/admin/gallery"
+          element={(
+            <ProtectedRoute>
+              <AdminGallery />
+            </ProtectedRoute>
+          )}
+        />
         
         {/* Legacy redirect - keeps old /routes links working */}
         <Route path="/routes" element={<Destinations />} />
-      </RouterRoutes>
+        </RouterRoutes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
