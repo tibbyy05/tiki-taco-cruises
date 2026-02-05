@@ -67,11 +67,11 @@ export default function Fleet() {
                 <div className="border-t border-ocean/10 pt-4 mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-gray-700 text-sm sm:text-base">Hourly Rate</span>
-                    <span className="text-xl sm:text-2xl font-bold text-ocean">${boat.hourlyRate}</span>
+                    <span className="text-xl sm:text-2xl font-bold text-ocean price-text">${boat.hourlyRate}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 text-sm sm:text-base">Daily Rate</span>
-                    <span className="text-lg sm:text-xl font-bold text-coral">${boat.dailyRate}</span>
+                    <span className="text-lg sm:text-xl font-bold text-coral price-text">${boat.dailyRate}</span>
                   </div>
                 </div>
 
@@ -89,7 +89,7 @@ export default function Fleet() {
         <div className="text-center mt-8 sm:mt-10 md:mt-12 px-4">
           <p className="text-gray-700 text-sm sm:text-base md:text-lg">
             All boats include life jackets, safety equipment, and a full orientation. Departing from The Hilton Marina in Fort Lauderdale.
-            <span className="block mt-2 font-semibold text-ocean text-sm sm:text-base md:text-lg">Captain services available for +$50/hour</span>
+            <span className="block mt-2 font-semibold text-ocean text-sm sm:text-base md:text-lg price-text">Captain services available for +$50/hour</span>
           </p>
         </div>
       </div>

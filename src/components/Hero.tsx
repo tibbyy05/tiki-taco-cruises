@@ -1,9 +1,10 @@
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [showScrollHint, setShowScrollHint] = useState(true);
+  const [parallaxOffset, setParallaxOffset] = useState(0);
 
   useEffect(() => {
     // Ensure video plays when component mounts
@@ -14,13 +15,43 @@ export default function Hero() {
     }
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollHint(window.scrollY < 100);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleParallax = () => {
+      const offset = Math.min(window.scrollY * 0.2, 40);
+      setParallaxOffset(offset);
+    };
+
+    handleParallax();
+    window.addEventListener('scroll', handleParallax);
+    return () => window.removeEventListener('scroll', handleParallax);
+  }, []);
+
   const scrollToRoutes = () => {
     const routesSection = document.getElementById('routes');
     routesSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section id="home" className="relative h-[100svh] w-full overflow-hidden">
+    <section
+      id="home"
+      className="relative h-[100svh] w-full overflow-hidden"
+      style={
+        {
+          '--hero-parallax': `${parallaxOffset}px`,
+          '--hero-overlay-parallax': `${parallaxOffset * 0.4}px`
+        } as React.CSSProperties
+      }
+    >
       {/* Fullscreen Video Background */}
       <div className="absolute inset-0 hero-video-container">
         <video
@@ -30,7 +61,8 @@ export default function Hero() {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster="/DJI_0062.JPG"
         >
           <source src="https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/Website%20Stuff/Tiki%20Taco%20Website/HeroVideo2.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -44,10 +76,25 @@ export default function Hero() {
         <h1>Unforgettable Tiki Boat Adventures</h1>
         <p>Sunset cruises, sandbar parties, and private pontoon experiences — all from The Hilton Marina.</p>
         <div className="hero-actions">
-          <Link to="/#booking" className="hero-cta">
+          <button
+            type="button"
+            onClick={() => {
+              const bookingSection = document.getElementById('booking');
+              bookingSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              const modalOpener = (window as { openBookingModal?: () => void }).openBookingModal;
+              if (modalOpener) {
+                modalOpener();
+              } else {
+                window.location.hash = '';
+                window.location.hash = 'booking';
+              }
+            }}
+            className="hero-cta magnetic-btn"
+            data-magnetic
+          >
             Book Now
-          </Link>
-          <button className="hero-secondary" onClick={scrollToRoutes}>
+          </button>
+          <button className="hero-secondary magnetic-btn" onClick={scrollToRoutes} data-magnetic>
             Explore Destinations
           </button>
         </div>
@@ -56,10 +103,11 @@ export default function Hero() {
       {/* Scroll down indicator */}
       <button
         onClick={scrollToRoutes}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white animate-bounce min-h-[44px] min-w-[44px] flex items-center justify-center z-20 hover:scale-110 transition-transform"
-        aria-label="Scroll down"
+        className={`hero-scroll-hint ${showScrollHint ? 'is-visible' : ''}`}
+        aria-label="Explore our cruises"
       >
-        <ChevronDown className="w-8 h-8" />
+        <span className="hero-scroll-text">Explore Our Cruises</span>
+        <ChevronDown className="w-6 h-6" />
       </button>
 
       <style>{`
@@ -77,6 +125,7 @@ export default function Hero() {
           height: 100%;
           object-fit: cover;
           object-position: center;
+          animation: kenBurns 20s ease-in-out infinite;
         }
 
         .hero-video-overlay {
@@ -84,13 +133,12 @@ export default function Hero() {
           inset: 0;
           background: linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0) 20%,
-            rgba(0, 0, 0, 0) 80%,
-            rgba(0, 0, 0, 0.2) 100%
+            rgba(0, 0, 0, 0.15) 0%,
+            rgba(0, 0, 0, 0.5) 100%
           );
           pointer-events: none;
           z-index: 1;
+          transform: translateY(var(--hero-overlay-parallax));
         }
 
         .hero-content {
@@ -102,7 +150,7 @@ export default function Hero() {
           text-align: center;
           color: white;
           top: 50%;
-          transform: translateY(-50%);
+          transform: translateY(calc(-50% + var(--hero-parallax)));
           animation: heroFadeUp 1.1s ease-out both;
         }
 
@@ -123,13 +171,14 @@ export default function Hero() {
           font-size: clamp(2.5rem, 5vw, 4rem);
           font-weight: 800;
           margin-bottom: 16px;
-          text-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+          text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
         }
 
         .hero-content p {
           font-size: clamp(1rem, 2.3vw, 1.25rem);
           color: rgba(255, 255, 255, 0.9);
           margin-bottom: 28px;
+          text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
         }
 
         .hero-actions {
@@ -140,7 +189,8 @@ export default function Hero() {
         }
 
         .hero-cta {
-          background: #FF6B6B;
+          background: rgba(255, 107, 107, 0.85);
+          backdrop-filter: blur(10px);
           color: white;
           padding: 14px 36px;
           border-radius: 999px;
@@ -188,6 +238,57 @@ export default function Hero() {
           }
           50% {
             box-shadow: 0 18px 45px rgba(255, 107, 107, 0.55);
+          }
+        }
+
+        .hero-scroll-hint {
+          position: absolute;
+          bottom: 28px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: inline-flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          color: white;
+          background: transparent;
+          border: none;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.3s ease;
+          z-index: 20;
+        }
+
+        .hero-scroll-hint.is-visible {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .hero-scroll-text {
+          font-size: 0.75rem;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+        }
+
+        .hero-scroll-hint svg {
+          animation: scrollBounce 1.6s ease-in-out infinite;
+        }
+
+        @keyframes kenBurns {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.06);
+          }
+        }
+
+        @keyframes scrollBounce {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(8px);
           }
         }
 

@@ -73,7 +73,7 @@ export default function IntracoastalTour() {
               Intracoastal Waterway Tour
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8">
-              <div className="text-4xl sm:text-5xl font-bold text-coral">$1,500</div>
+            <div className="text-4xl sm:text-5xl font-bold text-coral price-text">$1,500</div>
               <div className="flex items-center gap-2 text-lg sm:text-xl">
                 <Users className="w-5 h-5" />
                 <span>Up to 18 Guests</span>
@@ -101,6 +101,29 @@ export default function IntracoastalTour() {
           </div>
         </div>
       </div>
+
+      {/* Quick Summary */}
+      <section className="py-6 sm:py-8 px-4 bg-white border-b border-ocean/10">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="bg-sand/40 rounded-xl p-4">
+            <div className="text-sm text-ocean/70">Duration</div>
+            <div className="text-xl font-bold text-ocean">4 Hours</div>
+          </div>
+          <div className="bg-sand/40 rounded-xl p-4">
+            <div className="text-sm text-ocean/70">Guests</div>
+            <div className="text-xl font-bold text-ocean">Up to 18</div>
+          </div>
+          <div className="bg-sand/40 rounded-xl p-4">
+            <div className="text-sm text-ocean/70">Price</div>
+            <div className="text-xl font-bold text-coral price-text">$1,500</div>
+          </div>
+        </div>
+        <div className="max-w-5xl mx-auto mt-4 flex flex-wrap justify-center gap-3 text-sm text-ocean/70">
+          <span className="bg-white rounded-full px-4 py-1">USCG Captain</span>
+          <span className="bg-white rounded-full px-4 py-1">Fuel Included</span>
+          <span className="bg-white rounded-full px-4 py-1">Cooler & Ice</span>
+        </div>
+      </section>
 
       {/* Overview Section */}
       <section className="py-12 sm:py-16 md:py-20 px-4 bg-white">
@@ -136,7 +159,7 @@ export default function IntracoastalTour() {
           {/* Pricing Badge */}
           <div className="mt-8 text-center">
             <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2">$1,500</div>
+              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">$1,500</div>
               <div className="text-ocean/70 text-sm sm:text-base">4 Hours | Up to 18 Guests</div>
             </div>
           </div>

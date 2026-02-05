@@ -11,7 +11,7 @@ export default function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 80);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -70,17 +70,26 @@ export default function Navigation() {
 
   const handleBookingClick = () => {
     setIsMobileMenuOpen(false);
-    const element = document.getElementById('booking');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (isHomePage) {
+      const modalOpener = (window as { openBookingModal?: () => void }).openBookingModal;
+      const bookingSection = document.getElementById('booking');
+      bookingSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (modalOpener) {
+        modalOpener();
+      } else {
+        window.location.hash = '';
+        window.location.hash = 'booking';
+      }
       return;
     }
-    window.location.href = `/#booking`;
+    sessionStorage.setItem('open-booking-modal', 'true');
+    window.location.href = '/#booking';
   };
 
   const navBackground = !isHomePage || isScrolled
-    ? 'bg-ocean shadow-lg py-[0.18rem]'
-    : 'bg-black/20 backdrop-blur-sm py-[0.32rem]';
+    ? 'bg-white/95 shadow-md py-[0.18rem]'
+    : 'bg-transparent py-[0.32rem]';
+  const navTextColor = !isHomePage || isScrolled ? 'text-ocean' : 'text-white';
 
   return (
     <nav
@@ -109,7 +118,7 @@ export default function Navigation() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href, link.isHash)}
-                  className="font-medium transition-colors duration-300 hover:text-coral text-white"
+                  className={`font-medium transition-colors duration-300 hover:text-coral ${navTextColor}`}
                 >
                   {link.label}
                 </a>
@@ -118,15 +127,22 @@ export default function Navigation() {
                   key={link.href}
                   to={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="font-medium transition-colors duration-300 hover:text-coral text-white"
+                  className={`font-medium transition-colors duration-300 hover:text-coral ${navTextColor}`}
                 >
                   {link.label}
                 </Link>
               )
             ))}
+            <a
+              href="tel:+19547644344"
+              className={`hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
+            >
+              (954) 764-4344
+            </a>
             <button
               onClick={handleBookingClick}
-              className="bg-coral hover:bg-coral/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 min-h-[44px] flex items-center"
+              className="bg-coral hover:bg-coral/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 min-h-[44px] flex items-center magnetic-btn"
+              data-magnetic
             >
               Book Now
             </button>
@@ -134,7 +150,7 @@ export default function Navigation() {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center text-white"
+            className={`lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center ${navTextColor}`}
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

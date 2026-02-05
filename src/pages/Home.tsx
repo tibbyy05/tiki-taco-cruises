@@ -6,6 +6,9 @@ import Features from '../components/Features';
 import Testimonials from '../components/Testimonials';
 import SquareBooking from '../components/SquareBooking';
 import Footer from '../components/Footer';
+import ScrollReveal from '../components/ScrollReveal';
+import LocationSection from '../components/LocationSection';
+import RecentReviews from '../components/RecentReviews';
 
 export default function Home() {
   return (
@@ -13,10 +16,18 @@ export default function Home() {
       <Navigation />
       <Hero />
       <Routes />
-      <Gallery />
+      <ScrollReveal>
+        <Gallery />
+      </ScrollReveal>
       <Features />
       <Testimonials />
-      <SquareBooking />
+      <ScrollReveal>
+        <RecentReviews />
+      </ScrollReveal>
+      <ScrollReveal>
+        <SquareBooking />
+      </ScrollReveal>
+      <LocationSection />
       <Footer />
     </div>
   );

@@ -335,7 +335,7 @@ const AdminGallery: React.FC = () => {
 
         <style>{`
           .admin-dashboard {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             min-height: 100vh;
             background: #f7fafc;
           }

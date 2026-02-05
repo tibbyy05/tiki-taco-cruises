@@ -139,7 +139,7 @@ const Destinations: React.FC = () => {
               {featuredDestinations.map(destination => (
                 <div key={destination.id} className="destination-card featured">
                   <div className="card-image">
-                    <img src={destination.image} alt={destination.name} />
+                    <img src={destination.image} alt={destination.name} loading="lazy" decoding="async" />
                     <span className="featured-badge">Featured</span>
                   </div>
                   <div className="card-content">
@@ -173,7 +173,7 @@ const Destinations: React.FC = () => {
               {allDestinations.map(destination => (
                 <div key={destination.id} className="destination-row">
                   <div className="row-image">
-                    <img src={destination.image} alt={destination.name} />
+                    <img src={destination.image} alt={destination.name} loading="lazy" decoding="async" />
                   </div>
                   <div className="row-content">
                     <h3>{destination.name}</h3>
@@ -266,7 +266,7 @@ const Destinations: React.FC = () => {
 
         <style>{`
           .destinations-page {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
           }
 
           /* Hero Section */

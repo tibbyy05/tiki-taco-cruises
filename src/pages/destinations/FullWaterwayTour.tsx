@@ -31,7 +31,7 @@ const FullWaterwayTour: React.FC = () => {
             <div className="hero-details">
               <span className="detail-item">⏱ 2-4 Hours</span>
               <span className="detail-item">👥 Up to 18 Guests</span>
-              <span className="detail-item">💰 From $1,000</span>
+              <span className="detail-item price-text">💰 From $1,000</span>
             </div>
           </div>
         </section>
@@ -39,6 +39,20 @@ const FullWaterwayTour: React.FC = () => {
         {/* Overview Section */}
         <section className="destination-overview">
           <div className="container">
+            <div className="quick-summary">
+              <div className="summary-item">
+                <span>Duration</span>
+                <strong>2-4 Hours</strong>
+              </div>
+              <div className="summary-item">
+                <span>Guests</span>
+                <strong>Up to 18</strong>
+              </div>
+              <div className="summary-item">
+                <span>Price</span>
+                <strong className="price-text">$1,000+</strong>
+              </div>
+            </div>
             <h2>The Complete Fort Lauderdale Waterway Experience</h2>
             <p className="lead">
               Embark on the ultimate Fort Lauderdale boating adventure with our comprehensive Full Waterway Tour. 
@@ -208,7 +222,7 @@ const FullWaterwayTour: React.FC = () => {
 
         <style>{`
           .destination-page {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
           }
 
           /* Hero Section */
@@ -251,6 +265,35 @@ const FullWaterwayTour: React.FC = () => {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             border-radius: 50px;
+          }
+
+          .quick-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+          }
+
+          .summary-item {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            color: #1a365d;
+          }
+
+          .summary-item span {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+          }
+
+          .summary-item strong {
+            font-size: 1.4rem;
           }
 
           /* Overview Section */

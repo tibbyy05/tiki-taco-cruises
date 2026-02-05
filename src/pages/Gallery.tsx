@@ -160,6 +160,7 @@ const Gallery: React.FC = () => {
                 galleryItems.map((image, index) => {
                   const isVideo = /\.(mp4|mov|webm)$/i.test(image.image_url);
                   const captionText = image.caption?.trim() || '';
+                  const shouldPreload = index < 2;
                   return (
                     <div key={image.id} className="gallery-card">
                       <div
@@ -167,9 +168,20 @@ const Gallery: React.FC = () => {
                         onClick={() => setLightboxIndex(index)}
                       >
                         {isVideo ? (
-                          <video src={image.image_url} muted playsInline preload="metadata" />
+                          <video
+                            src={image.image_url}
+                            muted
+                            playsInline
+                            preload={shouldPreload ? 'auto' : 'metadata'}
+                          />
                         ) : (
-                          <img src={image.image_url} alt={captionText || 'Gallery media'} loading="lazy" />
+                          <img
+                            src={image.image_url}
+                            alt={captionText || 'Gallery media'}
+                            loading={shouldPreload ? 'eager' : 'lazy'}
+                            decoding="async"
+                            className="gallery-media"
+                          />
                         )}
                         {captionText && (
                           <div className="gallery-overlay">
@@ -257,7 +269,7 @@ const Gallery: React.FC = () => {
 
         <style>{`
           .gallery-page {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'DM Sans', sans-serif;
           }
 
           /* Hero Section */
@@ -401,6 +413,21 @@ const Gallery: React.FC = () => {
           .gallery-overlay h3 {
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
+          }
+
+          .gallery-item {
+            position: relative;
+          }
+
+          .gallery-media {
+            filter: blur(12px);
+            transform: scale(1.02);
+            transition: filter 0.4s ease, transform 0.4s ease;
+          }
+
+          .gallery-media[src] {
+            filter: blur(0);
+            transform: scale(1);
           }
 
           .gallery-overlay p {
