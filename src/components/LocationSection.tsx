@@ -20,7 +20,6 @@ export default function LocationSection() {
           </p>
           <p className="text-gray-700 text-base sm:text-lg mb-2">Hours: Daily 8:00 AM - 8:00 PM</p>
           <p className="text-gray-700 text-base sm:text-lg mb-6">
-            Free parking available at The Hilton Marina
           </p>
           <a
             href="https://www.google.com/maps/dir/?api=1&destination=1881%20SE%2017th%20St%2C%20Fort%20Lauderdale%2C%20FL%2033316"
