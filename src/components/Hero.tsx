@@ -125,7 +125,9 @@ export default function Hero() {
           height: 100%;
           object-fit: cover;
           object-position: center;
-          animation: kenBurns 20s ease-in-out infinite;
+          /* Keep video stable to avoid perceived shake on playback */
+          transform: translateZ(0);
+          will-change: transform;
         }
 
         .hero-video-overlay {
@@ -272,15 +274,6 @@ export default function Hero() {
 
         .hero-scroll-hint svg {
           animation: scrollBounce 1.6s ease-in-out infinite;
-        }
-
-        @keyframes kenBurns {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.06);
-          }
         }
 
         @keyframes scrollBounce {

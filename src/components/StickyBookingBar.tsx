@@ -74,7 +74,7 @@ export default function StickyBookingBar() {
         <div className="hidden sm:flex flex-col leading-tight">
           <span className="text-xs uppercase tracking-[0.2em] text-gray-500">Book Now</span>
           <span className="text-sm sm:text-base font-semibold text-ocean">
-            From $285/hr • 3-hour minimum
+            From $300/hr - 3 Hour Minimum
           </span>
         </div>
         <button
