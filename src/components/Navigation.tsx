@@ -71,13 +71,12 @@ export default function Navigation() {
   const handleBookingClick = () => {
     setIsMobileMenuOpen(false);
     if (isHomePage) {
-      const modalOpener = (window as { openBookingModal?: () => void }).openBookingModal;
       const bookingSection = document.getElementById('booking');
       bookingSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      if (modalOpener) {
-        modalOpener();
-      } else {
-        window.location.hash = '';
+      window.dispatchEvent(new CustomEvent('open-booking-modal'));
+      const modalOpener = (window as { openBookingModal?: () => void }).openBookingModal;
+      modalOpener?.();
+      if (!bookingSection && window.location.hash !== '#booking') {
         window.location.hash = 'booking';
       }
       return;

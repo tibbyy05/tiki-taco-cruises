@@ -28,6 +28,7 @@ const SquareBooking: React.FC = () => {
     };
 
     (window as { openBookingModal?: () => void }).openBookingModal = handleOpen;
+    window.addEventListener('open-booking-modal', handleOpen as EventListener);
     const shouldOpen = sessionStorage.getItem('open-booking-modal');
     if (shouldOpen) {
       sessionStorage.removeItem('open-booking-modal');
@@ -36,6 +37,7 @@ const SquareBooking: React.FC = () => {
 
     return () => {
       delete (window as { openBookingModal?: () => void }).openBookingModal;
+      window.removeEventListener('open-booking-modal', handleOpen as EventListener);
     };
   }, []);
 
