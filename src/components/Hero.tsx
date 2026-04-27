@@ -91,6 +91,7 @@ export default function Hero() {
             }}
             className="hero-cta magnetic-btn"
             data-magnetic
+            data-gtm-id="book-now"
           >
             Book Now
           </button>

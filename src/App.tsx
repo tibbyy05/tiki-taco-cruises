@@ -7,7 +7,6 @@ import LasOlasCruise from './pages/destinations/LasOlasCruise';
 import SandbarParty from './pages/destinations/SandbarParty';
 import IntracoastalTour from './pages/destinations/IntracoastalTour';
 import BeachCoastCruise from './pages/destinations/BeachCoastCruise';
-import FullWaterwayTour from './pages/destinations/FullWaterwayTour';
 import Destinations from './pages/Destinations';
 import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
@@ -17,6 +16,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
 import LoadingScreen from './components/LoadingScreen';
 import StickyBookingBar from './components/StickyBookingBar';
+import NotFound from './pages/NotFound';
 
 function AppRoutes() {
   const location = useLocation();
@@ -113,15 +113,6 @@ function AppRoutes() {
             </PageTransition>
           )}
         />
-        <Route
-          path="/destinations/full-waterway-tour"
-          element={(
-            <PageTransition>
-              <FullWaterwayTour />
-            </PageTransition>
-          )}
-        />
-        
         {/* Gallery */}
         <Route
           path="/gallery"
@@ -168,6 +159,16 @@ function AppRoutes() {
           element={(
             <PageTransition>
               <Destinations />
+            </PageTransition>
+          )}
+        />
+
+        {/* 404 */}
+        <Route
+          path="*"
+          element={(
+            <PageTransition>
+              <NotFound />
             </PageTransition>
           )}
         />

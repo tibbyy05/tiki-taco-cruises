@@ -142,6 +142,7 @@ export default function Navigation() {
               onClick={handleBookingClick}
               className="bg-coral hover:bg-coral/90 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 min-h-[44px] flex items-center magnetic-btn"
               data-magnetic
+              data-gtm-id="book-now"
             >
               Book Now
             </button>
@@ -184,6 +185,7 @@ export default function Navigation() {
             <button
               onClick={handleBookingClick}
               className="block mx-6 mt-2 mb-4 text-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold min-h-[44px] flex items-center justify-center"
+              data-gtm-id="book-now"
             >
               Book Now
             </button>

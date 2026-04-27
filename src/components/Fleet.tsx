@@ -78,6 +78,7 @@ export default function Fleet() {
                 <button
                   onClick={handleBookNow}
                   className="w-full bg-coral hover:bg-coral/90 text-white py-3 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg text-base sm:text-base min-h-[44px] flex items-center justify-center"
+                  data-gtm-id="book-now"
                 >
                   Book Now
                 </button>

@@ -62,7 +62,7 @@ const SquareBooking: React.FC = () => {
         </div>
         <h2>Book Your Adventure</h2>
         <p>Select your preferred date and time to reserve your cruise</p>
-        <button className="booking-open-btn" onClick={openModal}>
+        <button className="booking-open-btn" onClick={openModal} data-gtm-id="open-booking-calendar">
           Open Booking Calendar
         </button>
         <p className="booking-note">Secure booking powered by Square</p>

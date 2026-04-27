@@ -57,18 +57,6 @@ const Destinations: React.FC = () => {
       image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png',
       featured: false
     },
-    {
-      id: '5',
-      name: 'Full Waterway Tour Cruise',
-      slug: 'full-waterway-tour',
-      description: 'The ultimate Fort Lauderdale experience! Customize your perfect day with visits to multiple destinations including the Intracoastal, sandbars, and coastal areas. Our most comprehensive tour.',
-      shortDesc: 'Complete Fort Lauderdale experience',
-      duration: ['2 hours', '3 hours', '4 hours'],
-      minPrice: 1000,
-      highlights: ['Fully customizable route', 'Multiple destinations', 'Best value for longer trips', 'All highlights included'],
-      image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/Real1.jpg',
-      featured: true
-    }
   ];
 
   const featuredDestinations = destinations.filter(d => d.featured);
@@ -89,10 +77,10 @@ const Destinations: React.FC = () => {
           content="Fort Lauderdale boat destinations, Intracoastal cruise routes, sandbar locations Fort Lauderdale, Las Olas cruise, pontoon rental routes"
         />
         <meta property="og:title" content="Popular Destinations - Tiki Taco Fort Lauderdale" />
-        <meta property="og:description" content="Discover 5 incredible destinations for your Fort Lauderdale pontoon adventure." />
+        <meta property="og:description" content="Discover incredible destinations for your Fort Lauderdale pontoon adventure." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://pontoon-rental.netlify.app/images/destinations-hero.jpg" />
-        <link rel="canonical" href="https://pontoon-rental.netlify.app/destinations" />
+        <meta property="og:image" content="https://tikitacocruises.com/images/destinations-hero.jpg" />
+        <link rel="canonical" href="https://tikitacocruises.com/destinations" />
         
         {/* Structured Data */}
         <script type="application/ld+json">
@@ -101,7 +89,7 @@ const Destinations: React.FC = () => {
             "@type": "TouristAttraction",
             "name": "Fort Lauderdale Pontoon Rental Destinations",
             "description": "Premium pontoon rental destinations throughout Fort Lauderdale's waterways",
-            "url": "https://pontoon-rental.netlify.app/destinations",
+            "url": "https://tikitacocruises.com/destinations",
             "provider": {
               "@type": "LocalBusiness",
               "name": "Tiki Taco",
@@ -151,7 +139,7 @@ const Destinations: React.FC = () => {
                       ))}
                     </div>
                     <div className="card-footer">
-                      <a href={bookingUrl} className="view-btn">
+                      <a href={`/destinations/${destination.slug}`} className="view-btn">
                         View Details & Book
                       </a>
                     </div>
@@ -184,8 +172,8 @@ const Destinations: React.FC = () => {
                       ))}
                     </div>
                     <div className="row-footer">
-                      <a href={bookingUrl} className="book-btn">
-                        Book This Destination
+                      <a href={`/destinations/${destination.slug}`} className="book-btn">
+                        View Details & Book
                       </a>
                     </div>
                   </div>

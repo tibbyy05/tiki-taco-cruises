@@ -26,11 +26,12 @@ const Gallery: React.FC = () => {
   useEffect(() => {
     const fetchGalleryItems = async () => {
       setIsLoading(true);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('gallery_photos')
         .select('id, image_url, caption, display_order')
         .eq('client_id', CLIENT_ID)
         .order('display_order', { ascending: true });
+
 
       setGalleryItems(data ?? []);
       setIsLoading(false);
@@ -112,8 +113,8 @@ const Gallery: React.FC = () => {
         <meta property="og:title" content="Gallery - Tiki Taco Fort Lauderdale Pontoon Rentals" />
         <meta property="og:description" content="Browse stunning photos from our Fort Lauderdale pontoon rental experiences." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://pontoon-rental.netlify.app/images/gallery/hero.jpg" />
-        <link rel="canonical" href="https://pontoon-rental.netlify.app/gallery" />
+        <meta property="og:image" content="https://tikitacocruises.com/images/gallery/hero.jpg" />
+        <link rel="canonical" href="https://tikitacocruises.com/gallery" />
         
         {/* Structured Data for Image Gallery */}
         <script type="application/ld+json">
@@ -122,7 +123,7 @@ const Gallery: React.FC = () => {
             "@type": "ImageGallery",
             "name": "Tiki Taco Fort Lauderdale Pontoon Rental Gallery",
             "description": "Photo gallery showcasing Fort Lauderdale pontoon rental experiences",
-            "url": "https://pontoon-rental.netlify.app/gallery",
+            "url": "https://tikitacocruises.com/gallery",
             "provider": {
               "@type": "LocalBusiness",
               "name": "Tiki Taco",
@@ -230,7 +231,7 @@ const Gallery: React.FC = () => {
           <div className="container">
             <h2>Ready to Create Your Own Memories?</h2>
             <p>Book your Fort Lauderdale pontoon experience today and be part of our next gallery update!</p>
-            <a href="/#booking" className="cta-button">
+            <a href="/#booking" className="cta-button" data-gtm-id="book-now">
               Book Now
             </a>
           </div>

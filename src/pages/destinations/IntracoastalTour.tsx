@@ -301,6 +301,7 @@ export default function IntracoastalTour() {
           <a
             href="/#booking"
             className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
+            data-gtm-id="book-now"
           >
             Book Now - $1,500
           </a>
