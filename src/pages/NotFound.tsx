@@ -1,15 +1,16 @@
-import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
 export default function NotFound() {
   return (
     <>
-      <Helmet>
-        <title>Page Not Found | Tiki Taco Cruises</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
+      <SEO
+        title="Page Not Found | Tiki Taco Cruises"
+        description="The page you're looking for doesn't exist."
+        noindex={true}
+      />
       <div className="min-h-screen">
         <Navigation />
         <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 bg-sand">

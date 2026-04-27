@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { ChevronDown } from 'lucide-react';
+import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { faqs } from '../data/mockData';
@@ -18,13 +18,10 @@ export default function FAQ() {
 
   return (
     <>
-      <Helmet>
-        <title>FAQ - Tiki Taco Cruises | Frequently Asked Questions</title>
-        <meta
-          name="description"
-          content="Frequently asked questions about Tiki Taco Cruises pontoon rentals in Fort Lauderdale. Learn about what to bring, cancellation policies, fuel, and more."
-        />
-      </Helmet>
+      <SEO
+        title="FAQ - Tiki Taco Cruises | Frequently Asked Questions"
+        description="Frequently asked questions about Tiki Taco Cruises pontoon rentals in Fort Lauderdale. Learn about what to bring, cancellation policies, fuel, and more."
+      />
       <div className="min-h-screen">
         <Navigation />
         <section className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 bg-sand">

@@ -1,3 +1,4 @@
+import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Hero from '../components/Hero';
 import Routes from '../components/Routes';
@@ -13,6 +14,10 @@ import RecentReviews from '../components/RecentReviews';
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Fort Lauderdale Pontoon Boat Rental & Tiki Cruises | Tiki Taco Cruises"
+        description="Private pontoon boat rentals and tiki cruises in Fort Lauderdale. Cruise the Intracoastal, visit sandbars, and enjoy premium amenities with a USCG-licensed captain."
+      />
       <Navigation />
       <Hero />
       <Routes />

@@ -6,7 +6,6 @@ import Home from './pages/Home';
 import LasOlasCruise from './pages/destinations/LasOlasCruise';
 import SandbarParty from './pages/destinations/SandbarParty';
 import IntracoastalTour from './pages/destinations/IntracoastalTour';
-import BeachCoastCruise from './pages/destinations/BeachCoastCruise';
 import Destinations from './pages/Destinations';
 import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
@@ -102,14 +101,6 @@ function AppRoutes() {
           element={(
             <PageTransition>
               <IntracoastalTour />
-            </PageTransition>
-          )}
-        />
-        <Route
-          path="/destinations/beach-coast-cruise"
-          element={(
-            <PageTransition>
-              <BeachCoastCruise />
             </PageTransition>
           )}
         />

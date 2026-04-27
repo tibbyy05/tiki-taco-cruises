@@ -20,7 +20,7 @@ export default function Navigation() {
 
   const navLinks = [
     { href: isHomePage ? '#home' : '/#home', label: 'Home', isHash: true },
-    { href: '/destinations', label: 'Destinations', isHash: false },
+    { href: '/destinations', label: 'Cruises', isHash: false },
     { href: '/gallery', label: 'Gallery', isHash: false },
     { href: isHomePage ? '#features' : '/#features', label: 'Amenities', isHash: true },
     { href: '/faq', label: 'FAQ', isHash: false }

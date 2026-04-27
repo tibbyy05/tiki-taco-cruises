@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Target, Award, Clock, Sparkles } from 'lucide-react';
+import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
@@ -9,12 +10,10 @@ interface Destination {
   name: string;
   slug: string;
   description: string;
-  shortDesc: string;
   duration: string[];
   minPrice: number;
   highlights: string[];
   image: string;
-  featured: boolean;
 }
 
 const Destinations: React.FC = () => {
@@ -26,63 +25,43 @@ const Destinations: React.FC = () => {
       name: 'Las Olas & Intracoastal Cruise',
       slug: 'las-olas-cruise',
       description: 'Cruise through Fort Lauderdale\'s famous Intracoastal Waterway, passing luxury waterfront homes and the vibrant Las Olas Boulevard area. Perfect for sightseeing and experiencing the heart of Fort Lauderdale from the water.',
-      shortDesc: 'Luxury homes & Las Olas views',
       duration: ['2 hours', '3 hours', '4 hours'],
       minPrice: 1000,
       highlights: ['Las Olas Boulevard views', 'Luxury waterfront estates', 'Perfect for sightseeing', 'Iconic drawbridges'],
-      image: '/Night_Intracoastal2.jpg',
-      featured: true
+      image: '/Night_Intracoastal2.jpg'
     },
     {
       id: '2',
       name: 'Fort Lauderdale Sandbar',
       slug: 'sandbar-party',
       description: 'Anchor at the popular Fort Lauderdale sandbar with stunning waterfront views. Perfect for swimming, relaxation, and creating unforgettable memories in crystal clear waters.',
-      shortDesc: 'Swimming & relaxation paradise',
       duration: ['3 hours', '4 hours'],
       minPrice: 1200,
       highlights: ['Popular sandbar destination', 'Crystal clear waters', 'Ideal for photos', 'Swimming & floating'],
-      image: '/Sandbar.png',
-      featured: true
+      image: '/Sandbar.png'
     },
     {
       id: '3',
       name: 'Intracoastal Waterway Tour',
       slug: 'intracoastal-tour',
       description: 'Explore the beautiful Fort Lauderdale Intracoastal Waterway, passing luxury yachts, waterfront mansions, and the Port Everglades inlet. Experience the Venice of America in style.',
-      shortDesc: 'Luxury yachts & mansions',
       duration: ['3 hours', '4 hours'],
       minPrice: 1200,
       highlights: ['Mega yachts & vessels', 'Waterfront mansions', 'Port Everglades views', 'Millionaire\'s Row'],
-      image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png',
-      featured: false
+      image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png'
     },
   ];
 
-  const featuredDestinations = destinations.filter(d => d.featured);
-  const allDestinations = destinations;
 
   return (
     <>
       <Navigation />
       
+      <SEO
+        title="Fort Lauderdale Pontoon Rental Destinations | Tiki Taco"
+        description="Explore 3 stunning destinations for your Fort Lauderdale pontoon rental. From Las Olas to pristine sandbars, discover the perfect cruise for your group. Tours from $1,000."
+      />
       <Helmet>
-        <title>Fort Lauderdale Pontoon Rental Destinations | Tiki Taco</title>
-        <meta 
-          name="description" 
-          content="Explore 4 stunning destinations for your Fort Lauderdale pontoon rental. From Las Olas to pristine sandbars, discover the perfect cruise for your group. Tours from $1,000."
-        />
-        <meta 
-          name="keywords" 
-          content="Fort Lauderdale boat destinations, Intracoastal cruise routes, sandbar locations Fort Lauderdale, Las Olas cruise, pontoon rental routes"
-        />
-        <meta property="og:title" content="Popular Destinations - Tiki Taco Fort Lauderdale" />
-        <meta property="og:description" content="Discover incredible destinations for your Fort Lauderdale pontoon adventure." />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://tikitacocruises.com/images/destinations-hero.jpg" />
-        <link rel="canonical" href="https://tikitacocruises.com/destinations" />
-        
-        {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -116,40 +95,6 @@ const Destinations: React.FC = () => {
           </div>
         </section>
 
-        {/* Featured Destinations */}
-        <section className="featured-section">
-          <div className="container">
-            <h2>Featured Experiences</h2>
-            <p className="section-intro">
-              Our most popular destinations, handpicked for unforgettable Fort Lauderdale experiences
-            </p>
-            <div className="destinations-grid featured-grid">
-              {featuredDestinations.map(destination => (
-                <div key={destination.id} className="destination-card featured">
-                  <div className="card-image">
-                    <img src={destination.image} alt={destination.name} loading="lazy" decoding="async" />
-                    <span className="featured-badge">Featured</span>
-                  </div>
-                  <div className="card-content">
-                    <h3>{destination.name}</h3>
-                    <p className="short-desc">{destination.shortDesc}</p>
-                    <div className="highlights">
-                      {destination.highlights.slice(0, 3).map((highlight, idx) => (
-                        <span key={idx} className="highlight-tag">✓ {highlight}</span>
-                      ))}
-                    </div>
-                    <div className="card-footer">
-                      <a href={`/destinations/${destination.slug}`} className="view-btn">
-                        View Details & Book
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* All Destinations */}
         <section className="all-destinations-section">
           <div className="container">
@@ -158,7 +103,7 @@ const Destinations: React.FC = () => {
               Choose from our complete selection of Fort Lauderdale pontoon cruise experiences
             </p>
             <div className="destinations-list">
-              {allDestinations.map(destination => (
+              {destinations.map(destination => (
                 <div key={destination.id} className="destination-row">
                   <div className="row-image">
                     <img src={destination.image} alt={destination.name} loading="lazy" decoding="async" />
@@ -323,117 +268,6 @@ const Destinations: React.FC = () => {
             max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-          }
-
-          /* Featured Section */
-          .featured-section {
-            background: #f7fafc;
-          }
-
-          .destinations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-          }
-
-          .destination-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            display: flex;
-            flex-direction: column;
-          }
-
-          .destination-card:hover {
-            transform: translateY(-10px);
-          }
-
-          .card-image {
-            position: relative;
-            height: 250px;
-            overflow: hidden;
-          }
-
-          .card-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-          }
-
-          .destination-card:hover .card-image img {
-            transform: scale(1.1);
-          }
-
-          .featured-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            padding: 0.5rem 1rem;
-            background: #FF6B6B;
-            color: white;
-            border-radius: 50px;
-            font-size: 0.875rem;
-            font-weight: 600;
-          }
-
-          .card-content {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-          }
-
-          .card-content h3 {
-            font-size: 1.5rem;
-            color: #1a365d;
-            margin-bottom: 0.5rem;
-          }
-
-          .short-desc {
-            color: #4a5568;
-            margin-bottom: 1rem;
-          }
-
-          .highlights {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-          }
-
-          .highlight-tag {
-            font-size: 0.875rem;
-            color: #48bb78;
-            font-weight: 500;
-          }
-
-          .card-footer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 2px solid #e2e8f0;
-            margin-top: auto;
-          }
-
-          .view-btn {
-            padding: 0.75rem 1.5rem;
-            background: #1a365d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1rem;
-          }
-
-          .view-btn:hover {
-            background: #2d4a7c;
-            transform: translateY(-2px);
           }
 
           /* All Destinations Section */
@@ -626,10 +460,6 @@ const Destinations: React.FC = () => {
           @media (max-width: 768px) {
             .hero-content h1 {
               font-size: 2rem;
-            }
-
-            .destinations-grid {
-              grid-template-columns: 1fr;
             }
 
             .destination-row {

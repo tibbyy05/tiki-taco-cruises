@@ -84,7 +84,7 @@ export default function Footer() {
                   to="/destinations"
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
-                  Popular Destinations
+                  Popular Cruises
                 </Link>
               </li>
               <li>

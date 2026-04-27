@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { supabase, CLIENT_ID } from '../lib/supabase';
@@ -100,23 +101,11 @@ const Gallery: React.FC = () => {
   return (
     <>
       <Navigation />
+      <SEO
+        title="Gallery - Fort Lauderdale Pontoon Rental Photos | Tiki Taco"
+        description="Explore stunning photos from Fort Lauderdale pontoon rentals. View our luxury boats, beautiful waterways, sandbar experiences, and sunset cruises. See why guests love Tiki Taco!"
+      />
       <Helmet>
-        <title>Gallery - Fort Lauderdale Pontoon Rental Photos | Tiki Taco</title>
-        <meta 
-          name="description" 
-          content="Explore stunning photos from Fort Lauderdale pontoon rentals. View our luxury boats, beautiful waterways, sandbar experiences, and sunset cruises. See why guests love Tiki Taco!"
-        />
-        <meta 
-          name="keywords" 
-          content="Fort Lauderdale boat rental photos, pontoon rental gallery, Intracoastal cruise photos, sandbar pictures, sunset cruise images, Fort Lauderdale waterway photos"
-        />
-        <meta property="og:title" content="Gallery - Tiki Taco Fort Lauderdale Pontoon Rentals" />
-        <meta property="og:description" content="Browse stunning photos from our Fort Lauderdale pontoon rental experiences." />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://tikitacocruises.com/images/gallery/hero.jpg" />
-        <link rel="canonical" href="https://tikitacocruises.com/gallery" />
-        
-        {/* Structured Data for Image Gallery */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

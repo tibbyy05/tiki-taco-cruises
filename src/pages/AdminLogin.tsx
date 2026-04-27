@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminLogin() {
@@ -29,10 +29,11 @@ export default function AdminLogin() {
 
   return (
     <>
-      <Helmet>
-        <title>Admin Login | Tiki Taco Cruises</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <SEO
+        title="Admin Login | Tiki Taco Cruises"
+        description="Admin login for Tiki Taco Cruises."
+        noindex={true}
+      />
       <div className="min-h-screen bg-sand flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-navy/10">
           <h1 className="text-3xl font-bold text-navy text-center mb-2">Admin Login</h1>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { supabase, CLIENT_ID } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -181,10 +181,11 @@ export default function AdminGallery() {
 
   return (
     <>
-      <Helmet>
-        <title>Gallery Manager | Tiki Taco Cruises</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <SEO
+        title="Gallery Manager | Tiki Taco Cruises"
+        description="Gallery management for Tiki Taco Cruises."
+        noindex={true}
+      />
       <div className="min-h-screen bg-sand px-4 py-10 sm:py-12">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
