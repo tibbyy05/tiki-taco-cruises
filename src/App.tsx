@@ -3,10 +3,6 @@ import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import { useEffect, useState } from 'react';
 import Home from './pages/Home';
-import LasOlasCruise from './pages/destinations/LasOlasCruise';
-import SandbarParty from './pages/destinations/SandbarParty';
-import IntracoastalTour from './pages/destinations/IntracoastalTour';
-import Destinations from './pages/Destinations';
 import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
 import AdminLogin from './pages/AdminLogin';
@@ -16,6 +12,12 @@ import PageTransition from './components/PageTransition';
 import LoadingScreen from './components/LoadingScreen';
 import StickyBookingBar from './components/StickyBookingBar';
 import NotFound from './pages/NotFound';
+import CruiseDestinations from './pages/cruises/CruiseDestinations';
+import NewRiverCruise from './pages/cruises/NewRiverCruise';
+import NorthBoundScenicCruise from './pages/cruises/NorthBoundScenicCruise';
+import LasOlasBoatTour from './pages/cruises/LasOlasBoatTour';
+import IntracoastalWaterwayCorporateCruise from './pages/cruises/IntracoastalWaterwayCorporateCruise';
+import FortLauderdaleSunsetCruise from './pages/cruises/FortLauderdaleSunsetCruise';
 
 function AppRoutes() {
   const location = useLocation();
@@ -68,42 +70,7 @@ function AppRoutes() {
             </PageTransition>
           )}
         />
-        
-        {/* Destinations Overview */}
-        <Route
-          path="/destinations"
-          element={(
-            <PageTransition>
-              <Destinations />
-            </PageTransition>
-          )}
-        />
-        
-        {/* Individual Destinations */}
-        <Route
-          path="/destinations/las-olas-cruise"
-          element={(
-            <PageTransition>
-              <LasOlasCruise />
-            </PageTransition>
-          )}
-        />
-        <Route
-          path="/destinations/sandbar-party"
-          element={(
-            <PageTransition>
-              <SandbarParty />
-            </PageTransition>
-          )}
-        />
-        <Route
-          path="/destinations/intracoastal-tour"
-          element={(
-            <PageTransition>
-              <IntracoastalTour />
-            </PageTransition>
-          )}
-        />
+
         {/* Gallery */}
         <Route
           path="/gallery"
@@ -144,12 +111,52 @@ function AppRoutes() {
           )}
         />
         
-        {/* Legacy redirect - keeps old /routes links working */}
+        {/* New cruise pages (Phase 2) */}
         <Route
-          path="/routes"
+          path="/cruise-destinations"
           element={(
             <PageTransition>
-              <Destinations />
+              <CruiseDestinations />
+            </PageTransition>
+          )}
+        />
+        <Route
+          path="/new-river-cruise"
+          element={(
+            <PageTransition>
+              <NewRiverCruise />
+            </PageTransition>
+          )}
+        />
+        <Route
+          path="/north-bound-scenic-cruise"
+          element={(
+            <PageTransition>
+              <NorthBoundScenicCruise />
+            </PageTransition>
+          )}
+        />
+        <Route
+          path="/las-olas-boat-tour"
+          element={(
+            <PageTransition>
+              <LasOlasBoatTour />
+            </PageTransition>
+          )}
+        />
+        <Route
+          path="/intracoastal-waterway-corporate-cruise"
+          element={(
+            <PageTransition>
+              <IntracoastalWaterwayCorporateCruise />
+            </PageTransition>
+          )}
+        />
+        <Route
+          path="/fort-lauderdale-sunset-cruise"
+          element={(
+            <PageTransition>
+              <FortLauderdaleSunsetCruise />
             </PageTransition>
           )}
         />

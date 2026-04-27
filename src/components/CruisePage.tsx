@@ -169,7 +169,7 @@ export default function CruisePage({
           <div className="flex items-center gap-2">
             <Link to="/" className="hover:text-coral transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link to="/destinations" className="hover:text-coral transition-colors">Cruises</Link>
+            <Link to="/cruise-destinations" className="hover:text-coral transition-colors">Cruises</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-ocean">{hero.title}</span>
           </div>

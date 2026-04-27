@@ -2,17 +2,13 @@
 # Tiki Taco Cruises — Netlify Redirects
 # ===================================================================
 
-# --- Cruise URL restructure (Phase 2) ---
-# These redirects will be populated when new cruise pages go live in Phase 2.
-# Format: <old-path> <new-path> <status-code>
-#
-# /destinations              /cruise-destinations          301
-# /destinations/las-olas-cruise    /las-olas-boat-tour     301
-# /destinations/sandbar-party      /north-bound-scenic-cruise  301
-# /destinations/intracoastal-tour  /intracoastal-waterway-corporate-cruise  301
-# /destinations/beach-coast-cruise /cruise-destinations    301
-#
-# (Lines above are commented out — uncomment in Phase 2 when new pages exist.)
+# --- Phase 2: All cruise URL redirects active ---
+/destinations              /cruise-destinations          301
+/destinations/beach-coast-cruise /cruise-destinations    301
+/destinations/full-waterway-tour /cruise-destinations    301
+/destinations/las-olas-cruise    /las-olas-boat-tour     301
+/destinations/sandbar-party      /north-bound-scenic-cruise  301
+/destinations/intracoastal-tour  /intracoastal-waterway-corporate-cruise  301
 
 # --- SPA fallback (must be last) ---
 /*    /index.html   200

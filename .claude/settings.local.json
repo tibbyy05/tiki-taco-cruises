@@ -19,7 +19,12 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_wait_for",
-      "mcp__playwright__browser_console_messages"
+      "mcp__playwright__browser_console_messages",
+      "Bash(netlify watch:*)",
+      "Bash(rm src/pages/Destinations.tsx src/pages/destinations/LasOlasCruise.tsx src/pages/destinations/SandbarParty.tsx src/pages/destinations/IntracoastalTour.tsx)",
+      "Bash(rmdir src/pages/destinations)",
+      "Bash(ls src/pages/Destinations.tsx)",
+      "Bash(ls src/pages/destinations/)"
     ]
   }
 }

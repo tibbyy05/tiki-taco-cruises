@@ -81,7 +81,7 @@ export default function Footer() {
             <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
-                  to="/destinations"
+                  to="/cruise-destinations"
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Popular Cruises
