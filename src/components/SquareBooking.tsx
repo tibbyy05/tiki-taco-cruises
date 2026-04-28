@@ -60,8 +60,8 @@ const SquareBooking: React.FC = () => {
           <div className="badge-item">USCG Certified</div>
           <div className="badge-item">5-Star Rated</div>
         </div>
-        <h2>Book Your Adventure</h2>
-        <p>Select your preferred date and time to reserve your cruise</p>
+        <h2>Book Your Fort Lauderdale Tiki Cruise</h2>
+        <p>Reserve your private tiki cruise today and experience Fort Lauderdale from the water, perfect for groups, celebrations, and unforgettable days on the Intracoastal.</p>
         <button className="booking-open-btn" onClick={openModal} data-gtm-id="open-booking-calendar">
           Open Booking Calendar
         </button>

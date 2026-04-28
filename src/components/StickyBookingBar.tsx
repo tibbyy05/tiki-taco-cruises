@@ -74,13 +74,14 @@ export default function StickyBookingBar() {
         <div className="hidden sm:flex flex-col leading-tight">
           <span className="text-xs uppercase tracking-[0.2em] text-gray-500">Book Now</span>
           <span className="text-sm sm:text-base font-semibold text-ocean">
-            From $300/hr - 3 Hour Minimum
+            From $1,200
           </span>
         </div>
         <button
           onClick={handleClick}
           className="bg-coral hover:bg-coral/90 text-white px-4 sm:px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 text-sm sm:text-base magnetic-btn"
           data-magnetic
+          data-gtm-id="book-now"
         >
           Reserve
         </button>

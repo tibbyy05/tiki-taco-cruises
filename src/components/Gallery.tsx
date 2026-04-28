@@ -107,7 +107,7 @@ export default function Gallery() {
         <ScrollReveal>
           <div className="text-center mb-10 sm:mb-12 md:mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-4">
-              Experience Gallery
+              Fort Lauderdale Boat Tour Experience Gallery
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl mx-auto px-4">
               Discover unforgettable moments on Fort Lauderdale's most beautiful waters

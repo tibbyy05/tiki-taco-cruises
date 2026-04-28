@@ -30,5 +30,7 @@ dist-ssr
 
 # Audit reports and screenshots (point-in-time, regenerated per phase)
 PHASE_*_AUDIT.md
+BATCH_*_VERIFICATION.md
 phase*-audit-screenshots/
 phase*-screenshots/
+batch*-screenshots/

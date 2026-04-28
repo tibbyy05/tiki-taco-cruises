@@ -73,8 +73,8 @@ export default function Hero() {
 
       <div className="hero-content">
         <span className="hero-badge">Fort Lauderdale’s Premier Tiki Cruise</span>
-        <h1>Unforgettable Tiki Boat Adventures</h1>
-        <p>Sunset cruises, sandbar parties, and private pontoon experiences — all from The Hilton Marina.</p>
+        <h1>Fort Lauderdale Tiki Cruise & Private Boat Tour</h1>
+        <p>Experience Fort Lauderdale from the water with a private tiki cruise designed for relaxation, celebration, and unforgettable views.</p>
         <div className="hero-actions">
           <button
             type="button"
@@ -95,9 +95,9 @@ export default function Hero() {
           >
             Book Now
           </button>
-          <button className="hero-secondary magnetic-btn" onClick={scrollToRoutes} data-magnetic>
+          <a href="/cruise-destinations" className="hero-secondary magnetic-btn" data-magnetic>
             Explore Destinations
-          </button>
+          </a>
         </div>
       </div>
 
