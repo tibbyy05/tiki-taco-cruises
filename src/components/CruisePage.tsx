@@ -5,7 +5,7 @@
  *   <CruisePage
  *     seo={{ title: "...", description: "..." }}
  *     hero={{ title: "...", subtitle: "...", backgroundImage: "/img.jpg" }}
- *     pricing={{ duration: "3 Hours", price: "$1,200", basePassengers: "Up to 18", startTimes: ["10am", "2pm"] }}
+ *     pricing={{ duration: "4 Hours", price: "$1,140", basePassengers: "Up to 12 Passengers", startTimes: ["10:00 AM", "2:00 PM"] }}
  *     whatToExpect={{ heading: "What to Expect", bullets: ["..."] }}
  *     sections={[{ heading: "...", subtext: "..." }]}
  *     gallery={{ heading: "Gallery", images: [{ src: "...", alt: "..." }] }}
@@ -192,6 +192,25 @@ export default function CruisePage({
             <div className="text-xl font-bold text-coral price-text">{pricing.price}</div>
           </div>
         </div>
+        {(pricing.additionalGuestPrice || pricing.hourlyRate || pricing.startTimes.length > 0) && (
+          <div className="max-w-5xl mx-auto mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-sm text-ocean/70">
+            {pricing.additionalGuestPrice && (
+              <div className="bg-sand/40 rounded-xl p-3">
+                <span className="font-semibold text-ocean">{pricing.additionalGuestPrice}</span> per additional guest
+              </div>
+            )}
+            {pricing.hourlyRate && (
+              <div className="bg-sand/40 rounded-xl p-3">
+                <span className="font-semibold text-ocean">{pricing.hourlyRate}</span> per hour
+              </div>
+            )}
+            {pricing.startTimes.length > 0 && (
+              <div className="bg-sand/40 rounded-xl p-3">
+                Start times: <span className="font-semibold text-ocean">{pricing.startTimes.join(' or ')}</span>
+              </div>
+            )}
+          </div>
+        )}
         <div className="max-w-5xl mx-auto mt-4 flex flex-wrap justify-center gap-3 text-sm text-ocean/70">
           <span className="bg-white rounded-full px-4 py-1">USCG Captain</span>
           <span className="bg-white rounded-full px-4 py-1">Fuel Included</span>

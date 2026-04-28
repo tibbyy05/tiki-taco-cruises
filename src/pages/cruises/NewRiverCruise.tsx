@@ -15,9 +15,11 @@ export default function NewRiverCruise() {
       }}
       pricing={{
         duration: '4 Hours',
-        price: '$1,500',
-        basePassengers: 'Up to 18 Guests',
-        startTimes: [],
+        price: '$1,140',
+        basePassengers: 'Up to 12 Passengers',
+        additionalGuestPrice: '$60',
+        hourlyRate: '$285',
+        startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[
         'Historic downtown Fort Lauderdale views',
@@ -48,7 +50,7 @@ export default function NewRiverCruise() {
           'Bimini Top Shade Protection',
           'Safety Equipment & Life Jackets',
           'Floating Water Mat',
-          'Cup Holders & Seating for 18',
+          'Cup Holders & Seating for 12+',
           'USB Charging Ports',
           'Departure from The Hilton Marina',
         ],

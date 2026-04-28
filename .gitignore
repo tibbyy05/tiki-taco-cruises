@@ -35,7 +35,9 @@ dist-ssr
 PHASE_*_AUDIT.md
 BATCH_*_VERIFICATION.md
 LOGO_*_VERIFICATION.md
+FINAL_*_AUDIT.md
 phase*-audit-screenshots/
 phase*-screenshots/
 batch*-screenshots/
 logo-*-screenshots/
+final-*-screenshots/
