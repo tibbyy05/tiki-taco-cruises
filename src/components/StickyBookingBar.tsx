@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 export default function StickyBookingBar() {
   const location = useLocation();
   const [isVisible, setIsVisible] = useState(false);
-  const [hideForBooking, setHideForBooking] = useState(false);
 
   useEffect(() => {
     if (location.pathname.startsWith('/admin')) {
@@ -19,26 +18,6 @@ export default function StickyBookingBar() {
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    if (location.pathname !== '/') {
-      setHideForBooking(false);
-      return;
-    }
-
-    const bookingSection = document.getElementById('booking');
-    if (!bookingSection) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setHideForBooking(entry.isIntersecting);
-      },
-      { threshold: 0.2 }
-    );
-
-    observer.observe(bookingSection);
-    return () => observer.disconnect();
   }, [location.pathname]);
 
   if (location.pathname.startsWith('/admin')) {
@@ -62,12 +41,10 @@ export default function StickyBookingBar() {
     window.location.href = '/#booking';
   };
 
-  const shouldShow = isVisible && !hideForBooking;
-
   return (
     <div
       className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
-        shouldShow ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'
       }`}
     >
       <div className="bg-white/95 backdrop-blur-md shadow-xl border border-black/5 rounded-full px-4 py-2 sm:px-6 sm:py-3 flex items-center gap-3 sm:gap-4">

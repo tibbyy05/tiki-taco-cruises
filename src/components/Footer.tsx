@@ -165,29 +165,29 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 pt-6 sm:pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-            <p className="text-white/60 text-xs sm:text-sm text-center md:text-left">
-              {currentYear} Tiki Taco. All rights reserved.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-white/60">
-              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Privacy Policy</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Terms of Service</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors min-h-[44px] flex items-center">Cancellation Policy</a>
+        <div className="border-t border-white/20 pt-6 sm:pt-8 pb-24">
+          <div className="flex items-center text-xs sm:text-sm">
+            <div className="flex-1">
+              <p className="text-white/60">
+                {currentYear} Tiki Taco. All rights reserved.
+              </p>
             </div>
-          </div>
-          <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-white/10">
-            <p className="text-white/40 text-sm sm:text-base text-center">
+            <p id="footer-bottom" className="text-white/40 text-center">
               Website powered by{' '}
-              <a 
-                href="https://ai-genda.com" 
-                target="_blank" 
+              <a
+                href="https://ai-genda.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-teal hover:text-coral transition-colors font-medium"
               >
                 ai-genda.com
               </a>
             </p>
+            <div className="flex-1 flex justify-end gap-4 sm:gap-6 text-white/60">
+              <a href="#" className="text-teal hover:text-coral transition-colors">Privacy Policy</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors">Terms of Service</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors">Cancellation Policy</a>
+            </div>
           </div>
         </div>
       </div>

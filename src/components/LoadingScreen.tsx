@@ -25,7 +25,7 @@ export default function LoadingScreen({ onFinish }: LoadingScreenProps) {
   return (
     <div className={`loading-screen ${isExiting ? 'loading-exit' : ''}`}>
       <div className="loading-content">
-        <img src="/NewLogo1.png" alt="Tiki Taco Cruises" className="loading-logo" />
+        <img src="/tiki-taco-logo.png" alt="Tiki Taco Cruises" className="loading-logo" />
       </div>
       <div className="loading-wave" />
       <style>{`

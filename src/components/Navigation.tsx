@@ -86,8 +86,8 @@ export default function Navigation() {
   };
 
   const navBackground = !isHomePage || isScrolled
-    ? 'bg-white/95 shadow-md py-[0.18rem]'
-    : 'bg-transparent py-[0.32rem]';
+    ? 'bg-white/95 shadow-md py-[0.45rem]'
+    : 'bg-transparent py-[0.6rem]';
   const navTextColor = !isHomePage || isScrolled ? 'text-ocean' : 'text-white';
 
   return (
@@ -101,11 +101,11 @@ export default function Navigation() {
             onClick={handleLogoClick}
             className="flex items-center"
           >
-            <div className="h-[4.93rem] sm:h-[5.63rem] md:h-[6.34rem] flex items-center overflow-visible">
+            <div className="h-[4rem] sm:h-[4.56rem] md:h-[5.14rem] flex items-center overflow-visible">
               <img
-                src="/NewLogo1.png"
+                src="/tiki-taco-logo.png"
                 alt="Tiki Taco"
-                className="h-full w-auto object-contain scale-[1.3] origin-left"
+                className="h-full w-auto object-contain scale-[1.05] origin-left"
               />
             </div>
           </a>
