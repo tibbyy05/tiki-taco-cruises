@@ -47,22 +47,14 @@ export default function StickyBookingBar() {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6 pointer-events-none'
       }`}
     >
-      <div className="bg-white/95 backdrop-blur-md shadow-xl border border-black/5 rounded-full px-4 py-2 sm:px-6 sm:py-3 flex items-center gap-3 sm:gap-4">
-        <div className="hidden sm:flex flex-col leading-tight">
-          <span className="text-xs uppercase tracking-[0.2em] text-gray-500">Book Now</span>
-          <span className="text-sm sm:text-base font-semibold text-ocean">
-            From $1,140
-          </span>
-        </div>
-        <button
-          onClick={handleClick}
-          className="bg-coral hover:bg-coral/90 text-white px-4 sm:px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:scale-105 text-sm sm:text-base magnetic-btn"
-          data-magnetic
-          data-gtm-id="book-now"
-        >
-          Reserve
-        </button>
-      </div>
+      <button
+        onClick={handleClick}
+        className="bg-coral hover:bg-coral/90 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 text-sm sm:text-base magnetic-btn shadow-xl"
+        data-magnetic
+        data-gtm-id="book-now"
+      >
+        Book Now $285/Hour
+      </button>
     </div>
   );
 }
