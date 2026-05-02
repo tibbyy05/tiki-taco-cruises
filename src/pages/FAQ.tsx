@@ -4,6 +4,93 @@ import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How long are the cruises?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer both 2-hour and 4-hour cruise options. Choose a quick morning or sunset cruise, or book a longer private experience."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does a 4-hour cruise cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "4-hour cruises are $1,140 for up to 12 passengers. Additional guests are $60 per person."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What does a 2-hour cruise cost?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "2-hour morning and sunset cruises are $60 per person with a 6-person minimum."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the start times?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "4-hour cruises start at 10:00 AM or 2:00 PM. 2-hour cruises run from 8:00\u201310:00 AM and 6:00\u20138:00 PM."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What should we bring?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bring drinks, snacks, sunscreen, towels, and anything you'd like for your time on the water."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can we bring alcohol?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, you're welcome to bring your own drinks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this a private cruise?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all cruises are private for your group."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where do we depart from?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All cruises depart from the Hilton Marina in Fort Lauderdale."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if the weather is bad?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If weather conditions are unsafe, you'll be able to reschedule your cruise."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are pets allowed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Well-behaved dogs are welcome! Please bring a leash and clean up after your pet. There is a $25 pet cleaning fee. Let us know in advance so we can prepare the boat accordingly."
+      }
+    }
+  ]
+};
+
 const faqs = [
   {
     question: 'How long are the cruises?',
@@ -59,6 +146,7 @@ export default function FAQ() {
       <SEO
         title="Tiki Boat FAQs | Fort Lauderdale Cruise Questions"
         description="Find answers about Fort Lauderdale tiki boat pontoon cruises, including pricing, what to bring, policies, and booking details for your trip on the water!"
+        jsonLd={faqSchema}
       />
       <div className="min-h-screen">
         <Navigation />

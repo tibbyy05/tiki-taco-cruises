@@ -18,11 +18,12 @@ interface SEOProps {
   canonical?: string;
   ogImage?: string;
   noindex?: boolean;
+  jsonLd?: Record<string, unknown>;
 }
 
 const DEFAULT_OG_IMAGE = 'https://tikitacocruises.com/fort-lauderdale-hero.jpg';
 
-export default function SEO({ title, description, canonical, ogImage, noindex = false }: SEOProps) {
+export default function SEO({ title, description, canonical, ogImage, noindex = false, jsonLd }: SEOProps) {
   const { pathname } = useLocation();
   const url = canonical || `https://tikitacocruises.com${pathname}`;
   const image = ogImage || DEFAULT_OG_IMAGE;
@@ -45,6 +46,12 @@ export default function SEO({ title, description, canonical, ogImage, noindex = 
       <meta name="twitter:image" content={image} />
 
       {noindex && <meta name="robots" content="noindex" />}
+
+      {jsonLd && (
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      )}
     </Helmet>
   );
 }

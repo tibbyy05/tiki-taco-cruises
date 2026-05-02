@@ -11,6 +11,47 @@ import LocationSection from '../components/LocationSection';
 import Footer from '../components/Footer';
 import ScrollReveal from '../components/ScrollReveal';
 
+const localBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "@id": "https://tikitacocruises.com/#business",
+  "name": "Tiki Taco Cruises",
+  "description": "Experience Fort Lauderdale from the water with a private chartered tiki cruise designed for relaxation, celebration, and unforgettable views.",
+  "url": "https://tikitacocruises.com/",
+  "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+  "image": "https://tikitacocruises.com/tiki-taco-logo.png",
+  "telephone": "+1-954-764-4344",
+  "email": "tikitacocruises@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "1881 SE 17th St",
+    "addressLocality": "Fort Lauderdale",
+    "addressRegion": "FL",
+    "postalCode": "33316",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 26.0998,
+    "longitude": -80.1186
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "Fort Lauderdale"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "08:00",
+      "closes": "20:00"
+    }
+  ],
+  "sameAs": [
+    "https://www.instagram.com/tikitacocruises"
+  ]
+};
+
 const trustBadges = [
   { icon: Award, label: '40 Years of Experience' },
   { icon: Anchor, label: 'USCG Licensed' },
@@ -46,6 +87,7 @@ export default function Home() {
         title="Tiki Cruise Pontoon Rental | Fort Lauderdale Charter"
         description="Book a private tiki cruise in Fort Lauderdale. Explore the Intracoastal, sandbars, and sunset views with premium amenities and flexible day or evening tours."
         canonical="https://tikitacocruises.com/"
+        jsonLd={localBusinessSchema}
       />
       <Navigation />
       <Hero />
