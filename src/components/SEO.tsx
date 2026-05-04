@@ -16,6 +16,7 @@ interface SEOProps {
   title: string;
   description: string;
   canonical?: string;
+  ogTitle?: string;
   ogImage?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>;
@@ -23,10 +24,11 @@ interface SEOProps {
 
 const DEFAULT_OG_IMAGE = 'https://tikitacocruises.com/fort-lauderdale-hero.jpg';
 
-export default function SEO({ title, description, canonical, ogImage, noindex = false, jsonLd }: SEOProps) {
+export default function SEO({ title, description, canonical, ogTitle, ogImage, noindex = false, jsonLd }: SEOProps) {
   const { pathname } = useLocation();
   const url = canonical || `https://tikitacocruises.com${pathname}`;
   const image = ogImage || DEFAULT_OG_IMAGE;
+  const socialTitle = ogTitle || title;
 
   return (
     <Helmet>
@@ -34,14 +36,15 @@ export default function SEO({ title, description, canonical, ogImage, noindex = 
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
 
-      <meta property="og:title" content={title} />
+      <meta property="og:site_name" content="Tiki Taco Cruises" />
+      <meta property="og:title" content={socialTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={image} />
       <meta property="og:type" content="website" />
 
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
+      <meta name="twitter:title" content={socialTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
 

@@ -85,6 +85,7 @@ export default function Home() {
     <div className="min-h-screen">
       <SEO
         title="Tiki Cruise Pontoon Rental | Fort Lauderdale Charter"
+        ogTitle="Tiki Taco Cruises - Fort Lauderdale Pontoon Charter"
         description="Book a private tiki cruise in Fort Lauderdale. Explore the Intracoastal, sandbars, and sunset views with premium amenities and flexible day or evening tours."
         canonical="https://tikitacocruises.com/"
         jsonLd={localBusinessSchema}
