@@ -4,6 +4,7 @@ import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { supabase, CLIENT_ID } from '../lib/supabase';
+import { staticGalleryImages } from '../data/galleryImages';
 
 interface GalleryItem {
   id: string;
@@ -13,6 +14,14 @@ interface GalleryItem {
   category?: string | null;
 }
 
+const fallbackGalleryItems: GalleryItem[] = staticGalleryImages.map((img) => ({
+  id: `static-${img.id}`,
+  image_url: img.src,
+  caption: img.alt,
+  display_order: img.id,
+  category: img.category,
+}));
+
 const Gallery: React.FC = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
@@ -21,20 +30,15 @@ const Gallery: React.FC = () => {
   const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, []);
-
-  useEffect(() => {
     const fetchGalleryItems = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('gallery_photos')
         .select('id, image_url, caption, display_order')
         .eq('client_id', CLIENT_ID)
         .order('display_order', { ascending: true });
 
-
-      setGalleryItems(data ?? []);
+      setGalleryItems(data && data.length > 0 ? data : fallbackGalleryItems);
       setIsLoading(false);
     };
 

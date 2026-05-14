@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 const SquareBooking: React.FC = () => {
   const bookingUrl = 'https://app.squareup.com/appointments/buyer/widget/k9vo9skj1icgai/LFTKXYCHENZC7';
@@ -67,7 +68,7 @@ const SquareBooking: React.FC = () => {
         </button>
         <p className="booking-note">Secure booking powered by Square</p>
       </div>
-      {isOpen && (
+      {isOpen && createPortal(
         <div className="booking-modal" role="dialog" aria-modal="true">
           <div className="booking-modal-backdrop" onClick={closeModal} />
           <div className="booking-modal-content">
@@ -81,7 +82,8 @@ const SquareBooking: React.FC = () => {
               loading="lazy"
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       <style>{`
         .square-booking-section {

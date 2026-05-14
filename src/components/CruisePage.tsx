@@ -91,7 +91,6 @@ export interface CruisePageProps {
   faqs?: CruisePageFAQ[];
   faqHeading?: string;
   relatedRoutes?: CruisePageRelatedRoute[];
-  bookingCtaText?: string;
 }
 
 export default function CruisePage({
@@ -108,7 +107,6 @@ export default function CruisePage({
   faqs,
   faqHeading = 'Frequently Asked Questions',
   relatedRoutes,
-  bookingCtaText = 'Book Now',
 }: CruisePageProps) {
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -157,7 +155,7 @@ export default function CruisePage({
               className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px]"
               data-gtm-id="book-now"
             >
-              Book This Experience
+              Book Now
             </a>
           </div>
         </div>
@@ -429,7 +427,7 @@ export default function CruisePage({
             className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
             data-gtm-id="book-now"
           >
-            {bookingCtaText} - {pricing.price}
+            Book Now
           </a>
         </div>
       )}

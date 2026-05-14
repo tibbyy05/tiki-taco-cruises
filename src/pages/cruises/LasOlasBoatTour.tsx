@@ -9,7 +9,7 @@ export default function LasOlasBoatTour() {
         canonical: 'https://tikitacocruises.com/las-olas-boat-tour',
       }}
       hero={{
-        title: 'Party Pontoon Boat in Fort Lauderdale',
+        title: 'Las Olas & Intracoastal Party Cruise',
         subtitle: "This is the go-to party pontoon boat experience in Fort Lauderdale. Cruise along Las Olas and the Intracoastal with your crew, music playing, and plenty of space to celebrate.",
         backgroundImage: '/Night_Intracoastal2.jpg',
       }}
@@ -28,7 +28,7 @@ export default function LasOlasBoatTour() {
       ]}
       sections={[
         {
-          heading: 'What to Expect on a Party Pontoon Boat',
+          heading: 'What to Expect on the Las Olas & Intracoastal Party Cruise',
           subtext: "Take in iconic Las Olas views while enjoying a lively, social cruise experience. This route is popular for celebrations, group outings, and anyone looking to combine sightseeing with a party atmosphere.",
         },
         {

@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+
+const cruisesSubmenu = [
+  { to: '/cruise-destinations', label: 'All Cruise Destinations', highlight: true },
+  { to: '/new-river-cruise', label: 'New River Historic Cruise' },
+  { to: '/north-bound-scenic-cruise', label: 'Northbound Sandbar & Scenic Cruise' },
+  { to: '/las-olas-boat-tour', label: 'Las Olas & Intracoastal Party Cruise' },
+  { to: '/intracoastal-waterway-corporate-cruise', label: 'Corporate & Private Event Cruise' },
+  { to: '/fort-lauderdale-sunset-cruise', label: '2-Hour Morning & Sunset Cruises' },
+];
 
 export default function Navigation() {
   const location = useLocation();
@@ -8,6 +17,7 @@ export default function Navigation() {
   const isHomePage = location.pathname === '/';
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileCruisesOpen, setIsMobileCruisesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +27,10 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) setIsMobileCruisesOpen(false);
+  }, [isMobileMenuOpen]);
 
   const navLinks = [
     { href: isHomePage ? '#home' : '/#home', label: 'Home', isHash: true },
@@ -111,8 +125,37 @@ export default function Navigation() {
           </a>
 
           <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              link.isHash ? (
+            {navLinks.map((link) => {
+              if (link.label === 'Cruises') {
+                return (
+                  <div key={link.href} className="relative group">
+                    <Link
+                      to="/cruise-destinations"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`font-medium transition-colors duration-300 hover:text-coral inline-flex items-center gap-1 ${navTextColor}`}
+                      aria-haspopup="true"
+                    >
+                      {link.label}
+                      <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                    </Link>
+                    <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 absolute left-0 top-full pt-3 transition-opacity duration-200 z-50">
+                      <div className="bg-white rounded-xl shadow-2xl py-2 min-w-[300px] border border-ocean/5" role="menu">
+                        {cruisesSubmenu.map((item) => (
+                          <Link
+                            key={item.to}
+                            to={item.to}
+                            role="menuitem"
+                            className={`block px-4 py-2.5 text-sm hover:bg-sand/30 hover:text-coral transition-colors ${item.highlight ? 'font-semibold text-ocean border-b border-ocean/10 mb-1 pb-3' : 'text-ocean/80'}`}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return link.isHash ? (
                 <a
                   key={link.href}
                   href={link.href}
@@ -130,8 +173,8 @@ export default function Navigation() {
                 >
                   {link.label}
                 </Link>
-              )
-            ))}
+              );
+            })}
             <a
               href="tel:+19547644344"
               className={`hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
@@ -161,8 +204,36 @@ export default function Navigation() {
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 h-[100svh] z-40 bg-white overflow-y-auto">
           <div className="pt-20 pb-4">
-            {navLinks.map((link) => (
-              link.isHash ? (
+            {navLinks.map((link) => {
+              if (link.label === 'Cruises') {
+                return (
+                  <div key={link.href}>
+                    <button
+                      onClick={() => setIsMobileCruisesOpen(!isMobileCruisesOpen)}
+                      className="w-full px-6 py-2.5 text-ocean hover:bg-sand/30 transition-colors min-h-[44px] flex items-center justify-between font-medium"
+                      aria-expanded={isMobileCruisesOpen}
+                    >
+                      <span>{link.label}</span>
+                      <ChevronDown className={`w-5 h-5 transition-transform duration-200 ${isMobileCruisesOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isMobileCruisesOpen && (
+                      <div className="bg-sand/10">
+                        {cruisesSubmenu.map((item) => (
+                          <Link
+                            key={item.to}
+                            to={item.to}
+                            onClick={() => { setIsMobileMenuOpen(false); setIsMobileCruisesOpen(false); }}
+                            className={`block pl-10 pr-6 py-2.5 hover:bg-sand/30 transition-colors min-h-[44px] flex items-center text-sm ${item.highlight ? 'font-semibold text-ocean' : 'text-ocean/75'}`}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              return link.isHash ? (
                 <a
                   key={link.href}
                   href={link.href}
@@ -180,8 +251,8 @@ export default function Navigation() {
                 >
                   {link.label}
                 </Link>
-              )
-            ))}
+              );
+            })}
             <button
               onClick={handleBookingClick}
               className="block mx-6 mt-2 mb-4 text-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold min-h-[44px] flex items-center justify-center"

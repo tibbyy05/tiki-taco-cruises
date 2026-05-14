@@ -21,10 +21,10 @@ const featuredCruises: CruiseCard[] = [
     bullets: ['Las Olas Boulevard views', 'Waterfront mansions & yachts', 'Perfect for parties & groups'],
   },
   {
-    title: 'Party Pontoon Boat Experience',
-    path: '/las-olas-boat-tour',
-    subtext: 'Built for celebrations, music, and time on the water',
-    bullets: ['Ideal for bachelorettes & birthdays', 'Bring your crew & your drinks', 'Social, upbeat atmosphere'],
+    title: 'Northbound Sandbar & Scenic Cruise',
+    path: '/north-bound-scenic-cruise',
+    subtext: 'Swim, float, and relax at a Fort Lauderdale sandbar',
+    bullets: ['Popular Fort Lauderdale sandbar stop', 'Swimming, floating & relaxing', 'Scenic Intracoastal views'],
   },
   {
     title: 'Corporate & Private Event Cruise',
@@ -54,22 +54,10 @@ const allCruises: CruiseCard[] = [
     bullets: ['Las Olas Boulevard views', 'Luxury yachts & waterfront estates', 'Perfect for groups & celebrations', 'Music, drinks & social vibe'],
   },
   {
-    title: 'Party Pontoon Boat Experience',
-    path: '/las-olas-boat-tour',
-    subtext: 'Designed for groups that want to celebrate on the water, this experience offers a fun, flexible setup for birthdays, bachelorette and bachelor parties, and weekend outings.',
-    bullets: ['Ideal for bachelorettes & birthdays', 'Bring your own drinks & playlist', 'Open, social pontoon layout', 'Built for fun, casual cruising'],
-  },
-  {
     title: 'Corporate & Private Event Cruise',
     path: '/intracoastal-waterway-corporate-cruise',
     subtext: 'Host your next event on the water with a fully customizable cruise. Ideal for corporate outings, client entertainment, or private group gatherings.',
     bullets: ['Private, customizable experience', 'Great for team outings & events', 'Comfortable, upscale setting', 'Easy group planning'],
-  },
-  {
-    title: '2-Hour Morning & Sunset Cruises',
-    path: '/fort-lauderdale-sunset-cruise',
-    subtext: 'A shorter cruise option that still delivers the full Fort Lauderdale experience. Choose between a calm morning ride or a sunset cruise to end the day on the water.',
-    bullets: ['Morning & sunset time options', '2-hour easy, flexible format', '$60 per person (6-person minimum)', 'Great for smaller groups'],
   },
 ];
 
@@ -96,7 +84,7 @@ const whyChoose = [
   },
 ];
 
-function CruiseCardComponent({ cruise, variant }: { cruise: CruiseCard; variant: 'featured' | 'full' }) {
+function CruiseCardComponent({ cruise }: { cruise: CruiseCard }) {
   return (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full">
       <div className="p-6 sm:p-8 flex flex-col flex-1">
@@ -115,7 +103,7 @@ function CruiseCardComponent({ cruise, variant }: { cruise: CruiseCard; variant:
           className="w-full bg-coral hover:bg-coral/90 text-white py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 min-h-[44px]"
           data-gtm-id="book-now"
         >
-          {variant === 'featured' ? 'Explore This Cruise' : 'Book This Destination'} <ArrowRight className="w-5 h-5" />
+          Book Now <ArrowRight className="w-5 h-5" />
         </Link>
       </div>
     </div>
@@ -192,7 +180,7 @@ export default function CruiseDestinations() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               {featuredCruises.map((cruise, i) => (
-                <CruiseCardComponent key={i} cruise={cruise} variant="featured" />
+                <CruiseCardComponent key={i} cruise={cruise} />
               ))}
             </div>
           </div>
@@ -200,52 +188,73 @@ export default function CruiseDestinations() {
 
         {/* 2-Hour Morning & Sunset */}
         <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-sand/30 to-white">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-4 text-center">
-              2-Hour Morning & Sunset Cruises
-            </h2>
-            <h3 className="text-xl sm:text-2xl text-ocean/80 mb-6 text-center font-medium">
-              Short, scenic, and easy to fit into your day
-            </h3>
-            <p className="text-ocean/70 text-lg text-center mb-8 max-w-2xl mx-auto">
-              Enjoy a 2-hour cruise along the Intracoastal to either start your morning on the water or catch a Fort Lauderdale sunset.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-10">
-              {[
-                'Morning Cruise: 8:00 AM – 10:00 AM',
-                'Sunset Cruise: 6:00 PM – 8:00 PM',
-                '$60 per person (6-person minimum)',
-                'Great for smaller groups or tighter schedules',
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
-                  <Check className="w-5 h-5 text-coral flex-shrink-0 mt-0.5" />
-                  <span className="text-ocean/80 text-base">{item}</span>
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <div className="order-1 md:order-1">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] md:aspect-auto md:h-full md:max-h-[560px]">
+                  <img
+                    src="/Sunset.jpeg"
+                    alt="Fort Lauderdale Intracoastal Waterway and skyline at sunset"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
-              ))}
-            </div>
-            <div className="text-center">
-              <Link
-                to="/fort-lauderdale-sunset-cruise"
-                className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
-                data-gtm-id="book-now"
-              >
-                Explore Sunset Cruises <ArrowRight className="w-5 h-5" />
-              </Link>
+              </div>
+              <div className="order-2 md:order-2">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3">
+                  2-Hour Morning & Sunset Cruises
+                </h2>
+                <h3 className="text-xl sm:text-2xl text-ocean/80 mb-5 font-medium">
+                  Short, scenic, and easy to fit into your day
+                </h3>
+                <p className="text-ocean/70 text-lg mb-6">
+                  Enjoy a 2-hour cruise along the Intracoastal to either start your morning on the water or catch a Fort Lauderdale sunset.
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Morning Cruise: 8:00 AM – 10:00 AM',
+                    'Sunset Cruise: 6:00 PM – 8:00 PM',
+                    '$60 per person (6-person minimum)',
+                    'Great for smaller groups or tighter schedules',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
+                      <span className="text-ocean/80 text-base">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/fort-lauderdale-sunset-cruise"
+                  className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+                  data-gtm-id="book-now"
+                >
+                  Book Now <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Section divider */}
+        <div className="px-4 bg-white">
+          <div className="flex items-center justify-center gap-4 max-w-md mx-auto py-2 sm:py-4">
+            <div className="h-px flex-1 bg-ocean/15" />
+            <div className="w-2 h-2 rounded-full bg-coral" />
+            <div className="h-px flex-1 bg-ocean/15" />
+          </div>
+        </div>
+
         {/* All Cruise Destinations */}
-        <section className="py-12 sm:py-16 md:py-20 px-4 bg-white">
-          <div className="max-w-7xl mx-auto">
+        <section className="pt-6 sm:pt-8 md:pt-10 pb-12 sm:pb-16 md:pb-20 px-4 bg-white">
+          <div className="max-w-5xl mx-auto">
             <div className="text-center mb-10 sm:mb-14">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-4">
                 All Charter Cruise Destinations
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {allCruises.map((cruise, i) => (
-                <CruiseCardComponent key={i} cruise={cruise} variant="full" />
+                <CruiseCardComponent key={i} cruise={cruise} />
               ))}
             </div>
           </div>
@@ -285,7 +294,7 @@ export default function CruiseDestinations() {
               className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px] shadow-lg"
               data-gtm-id="book-now"
             >
-              Book Your Cruise <ArrowRight className="w-5 h-5" />
+              Book Now <ArrowRight className="w-5 h-5" />
             </a>
           </div>
         </section>

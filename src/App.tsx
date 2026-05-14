@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import PageTransition from './components/PageTransition';
 import LoadingScreen from './components/LoadingScreen';
 import StickyBookingBar from './components/StickyBookingBar';
+import ScrollToTop from './components/ScrollToTop';
 import NotFound from './pages/NotFound';
 import CruiseDestinations from './pages/cruises/CruiseDestinations';
 import NewRiverCruise from './pages/cruises/NewRiverCruise';
@@ -188,6 +189,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         {showLoading && (
           <LoadingScreen onFinish={() => setShowLoading(false)} />

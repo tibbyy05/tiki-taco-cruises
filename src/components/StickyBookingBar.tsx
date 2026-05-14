@@ -53,7 +53,7 @@ export default function StickyBookingBar() {
         data-magnetic
         data-gtm-id="book-now"
       >
-        Book Now $285/Hour
+        Book Now
       </button>
     </div>
   );

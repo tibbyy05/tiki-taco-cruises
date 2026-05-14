@@ -244,7 +244,7 @@ export default function FortLauderdaleSunsetCruise() {
             className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
             data-gtm-id="book-now"
           >
-            Book Now - $60/person
+            Book Now
           </a>
         </div>
       )}
