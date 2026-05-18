@@ -159,8 +159,9 @@ export default function Home() {
                     <Link
                       to={cruise.link}
                       className="w-full bg-coral hover:bg-coral/90 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-base min-h-[44px] flex items-center justify-center gap-2"
+                      data-gtm-id="learn-more"
                     >
-                      View Details <ArrowRight className="w-5 h-5" />
+                      Learn More <ArrowRight className="w-5 h-5" />
                     </Link>
                   </div>
                 </div>

@@ -101,9 +101,9 @@ function CruiseCardComponent({ cruise }: { cruise: CruiseCard }) {
         <Link
           to={cruise.path}
           className="w-full bg-coral hover:bg-coral/90 text-white py-3 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 min-h-[44px]"
-          data-gtm-id="book-now"
+          data-gtm-id="learn-more"
         >
-          Book Now <ArrowRight className="w-5 h-5" />
+          Learn More <ArrowRight className="w-5 h-5" />
         </Link>
       </div>
     </div>
@@ -226,9 +226,9 @@ export default function CruiseDestinations() {
                 <Link
                   to="/fort-lauderdale-sunset-cruise"
                   className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
-                  data-gtm-id="book-now"
+                  data-gtm-id="learn-more"
                 >
-                  Book Now <ArrowRight className="w-5 h-5" />
+                  Learn More <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
             </div>
