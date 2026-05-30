@@ -27,6 +27,9 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
           <NavLink to="/admin/blog" className={tabClass}>
             Blog
           </NavLink>
+          <NavLink to="/admin/account" className={tabClass}>
+            Account
+          </NavLink>
           <Link to="/" className="text-teal hover:text-coral transition-colors text-sm ml-2">
             Back to Website
           </Link>

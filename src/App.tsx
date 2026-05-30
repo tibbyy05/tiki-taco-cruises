@@ -9,6 +9,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminGallery from './pages/AdminGallery';
 import AdminBlog from './pages/AdminBlog';
 import AdminBlogEditor from './pages/AdminBlogEditor';
+import AdminAccount from './pages/AdminAccount';
 import BlogList from './pages/BlogList';
 import BlogPost from './pages/BlogPost';
 import NotFound from './pages/NotFound';
@@ -67,6 +68,16 @@ export const routes: RouteRecord[] = [
           <ProtectedRoute>
             <PageTransition>
               <AdminBlogEditor />
+            </PageTransition>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/account',
+        element: (
+          <ProtectedRoute>
+            <PageTransition>
+              <AdminAccount />
             </PageTransition>
           </ProtectedRoute>
         ),
