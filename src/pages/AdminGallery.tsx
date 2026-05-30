@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import SEO from '../components/SEO';
+import AdminNav from '../components/AdminNav';
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { supabase, CLIENT_ID } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +14,7 @@ interface GalleryPhoto {
 }
 
 export default function AdminGallery() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -188,14 +189,9 @@ export default function AdminGallery() {
       />
       <div className="min-h-screen bg-sand px-4 py-10 sm:py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-navy">Gallery Manager</h1>
-              <Link to="/" className="text-teal hover:text-coral transition-colors inline-flex mt-2">
-                Back to Website
-              </Link>
-            </div>
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          <AdminNav
+            title="Gallery Manager"
+            actions={
               <button
                 onClick={handleUploadClick}
                 disabled={isUploading}
@@ -203,14 +199,8 @@ export default function AdminGallery() {
               >
                 {isUploading ? 'Uploading...' : 'Upload Photos'}
               </button>
-              <button
-                onClick={signOut}
-                className="border border-navy/20 text-navy px-5 py-2.5 rounded-full font-semibold hover:border-coral hover:text-coral transition-all duration-300"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
+            }
+          />
 
           <input
             ref={fileInputRef}

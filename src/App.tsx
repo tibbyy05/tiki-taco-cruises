@@ -7,7 +7,12 @@ import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
 import AdminLogin from './pages/AdminLogin';
 import AdminGallery from './pages/AdminGallery';
+import AdminBlog from './pages/AdminBlog';
+import AdminBlogEditor from './pages/AdminBlogEditor';
+import BlogList from './pages/BlogList';
+import BlogPost from './pages/BlogPost';
 import NotFound from './pages/NotFound';
+import { supabase, CLIENT_ID } from './lib/supabase';
 import CruiseDestinations from './pages/cruises/CruiseDestinations';
 import NewRiverCruise from './pages/cruises/NewRiverCruise';
 import NorthBoundScenicCruise from './pages/cruises/NorthBoundScenicCruise';
@@ -35,6 +40,73 @@ export const routes: RouteRecord[] = [
             </PageTransition>
           </ProtectedRoute>
         ),
+      },
+      {
+        path: 'admin/blog',
+        element: (
+          <ProtectedRoute>
+            <PageTransition>
+              <AdminBlog />
+            </PageTransition>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/blog/new',
+        element: (
+          <ProtectedRoute>
+            <PageTransition>
+              <AdminBlogEditor />
+            </PageTransition>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'admin/blog/:id/edit',
+        element: (
+          <ProtectedRoute>
+            <PageTransition>
+              <AdminBlogEditor />
+            </PageTransition>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'blog',
+        element: wrap(<BlogList />),
+        loader: async () => {
+          const { data } = await supabase
+            .from('tiki_blog_posts')
+            .select('id, title, slug, excerpt, featured_image_url, created_at')
+            .eq('client_id', CLIENT_ID)
+            .eq('published', true)
+            .order('created_at', { ascending: false });
+          return { posts: data ?? [] };
+        },
+      },
+      {
+        path: 'blog/:slug',
+        element: wrap(<BlogPost />),
+        loader: async ({ params }) => {
+          const { data } = await supabase
+            .from('tiki_blog_posts')
+            .select('id, title, slug, excerpt, content, featured_image_url, created_at, updated_at')
+            .eq('slug', params.slug ?? '')
+            .eq('published', true)
+            .maybeSingle();
+          if (!data) {
+            throw new Response('Post not found', { status: 404 });
+          }
+          return { post: data };
+        },
+        getStaticPaths: async () => {
+          const { data } = await supabase
+            .from('tiki_blog_posts')
+            .select('slug')
+            .eq('client_id', CLIENT_ID)
+            .eq('published', true);
+          return data?.map((p) => p.slug) ?? [];
+        },
       },
       { path: 'cruise-destinations', element: wrap(<CruiseDestinations />) },
       { path: 'new-river-cruise', element: wrap(<NewRiverCruise />) },

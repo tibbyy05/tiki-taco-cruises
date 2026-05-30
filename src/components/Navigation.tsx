@@ -36,6 +36,7 @@ export default function Navigation() {
     { href: isHomePage ? '#home' : '/#home', label: 'Home', isHash: true },
     { href: '/cruise-destinations', label: 'Cruises', isHash: false },
     { href: '/gallery', label: 'Gallery', isHash: false },
+    { href: '/blog', label: 'Blog', isHash: false },
     { href: isHomePage ? '#features' : '/#features', label: 'Amenities', isHash: true },
     { href: '/faq', label: 'FAQ', isHash: false }
   ];
