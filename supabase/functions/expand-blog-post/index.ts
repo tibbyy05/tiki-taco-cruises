@@ -1,5 +1,6 @@
 // Supabase Edge Function: expand-blog-post
-// Takes a brief, returns a full markdown blog post via Claude Sonnet 4.6.
+// Takes a working draft (title + description), returns a polished, SEO-optimized
+// blog post via Claude Sonnet 4.6. Owner-friendly: handles rough notes through full drafts.
 // Secrets: ANTHROPIC_API_KEY (set with `supabase secrets set ANTHROPIC_API_KEY=...`)
 
 import Anthropic from "npm:@anthropic-ai/sdk@0.65.0";
@@ -11,7 +12,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-const SYSTEM_PROMPT = `You write blog posts for Tiki Taco Cruises, a tiki-style pontoon rental company in Fort Lauderdale, Florida.
+const SYSTEM_PROMPT = `You polish working drafts into publication-ready blog posts for Tiki Taco Cruises, a tiki-style pontoon rental company in Fort Lauderdale, Florida.
 
 About the business:
 - Two main offerings: 4-Hour Private Cruise (custom routes, BYOB, up to 12 guests) and 2-Hour Open Charter (per-seat boarding for individuals/small groups)
@@ -19,20 +20,22 @@ About the business:
 - Target audience: tourists visiting Fort Lauderdale, locals planning birthdays/bachelorettes/corporate events, snowbirds, and travel planners
 - Brand voice: warm, fun, beachy, but professional. Confidence without hype. No emoji. No "Hey there!" or "Are you looking for...?" openers.
 
-Writing rules:
-- Lead with a concrete, vivid hook — a scene, a moment, a specific detail. Not a question.
-- Use H2 (##) for main sections and H3 (###) for sub-sections. Never use H1 — the title is rendered separately.
-- 600–1100 words for the content body.
-- Include 3–5 H2 sections. Each section should be scannable: short paragraphs (2–4 sentences), occasional bullet lists where they help.
-- Include one natural call-to-action toward the end pointing readers to book a cruise (e.g. "Reserve a 4-hour private cruise" or "Browse our open charter departures").
-- Write in second person ("you") when describing the experience, third person when describing the area or attractions.
-- No filler like "In conclusion," or "At the end of the day,". End on a concrete image or invitation.
-- Use specific Fort Lauderdale details (street names, neighborhoods, landmarks) when relevant — don't be generic.
+Your task: the owner sends you a working draft — sometimes just a sentence or two of ideas, sometimes a full rough post. Your job is to return a polished, SEO-optimized blog post regardless of input size.
 
-Output requirements:
-- title: 50–65 characters, includes a primary keyword if natural, no clickbait, no colons-with-subtitle format unless it reads cleanly
-- excerpt: 150–160 characters, meta-description quality — a complete sentence that would make someone click. Not a teaser ("Find out why..."). State the value.
-- content: the markdown body only. Do not repeat the title. Start with the opening hook paragraph.`;
+Always do all of the following:
+1. **Rewrite the title** to be SEO-strong (50-65 chars, includes a primary keyword naturally, no clickbait). Keep the owner's intent but improve clarity and search appeal.
+2. **Write an excerpt** (150-160 chars) that works as both a list-card summary and a meta description. State the value, not a teaser.
+3. **Write the full body** in clean markdown — 600-1100 words, expanding rough notes into a complete post or polishing a longer draft to publication quality.
+
+Body writing rules:
+- Lead with a concrete, vivid hook — a scene, moment, or specific detail. Not a question.
+- Use H2 (##) for main sections and H3 (###) for sub-sections. Never use H1 — the title is rendered separately.
+- 3–5 H2 sections. Each scannable: short paragraphs (2–4 sentences), bullet lists where they genuinely help.
+- Include one natural call-to-action toward the end (e.g. "Reserve a 4-hour private cruise" or "Browse our open charter departures").
+- Write in second person ("you") for the experience, third person for area/attractions.
+- No filler like "In conclusion," or "At the end of the day,". End on a concrete image or invitation.
+- Use specific Fort Lauderdale details (street names, neighborhoods, landmarks) when relevant — never generic.
+- Preserve the owner's specific facts, names, or details if they provided them. Don't invent claims they didn't make.`;
 
 const schema = {
   type: "object",
@@ -40,17 +43,17 @@ const schema = {
     title: {
       type: "string",
       description:
-        "The post title, 50-65 characters. No emoji, no quotation marks.",
+        "SEO-optimized title, 50-65 characters. No emoji, no quotation marks.",
     },
     excerpt: {
       type: "string",
       description:
-        "Meta description / list-card summary, 150-160 characters, a complete sentence.",
+        "Meta description / list-card summary, 150-160 characters, complete sentence.",
     },
     content: {
       type: "string",
       description:
-        "The full blog post body in markdown. 600-1100 words. H2/H3 only (no H1). Includes a CTA near the end.",
+        "Full polished blog body in markdown. 600-1100 words. H2/H3 only (no H1). Includes a CTA near the end.",
     },
   },
   required: ["title", "excerpt", "content"],
@@ -74,20 +77,35 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  let brief: string;
+  let body: { title?: unknown; description?: unknown; brief?: unknown };
   try {
-    const body = await req.json();
-    brief = body?.brief;
+    body = await req.json();
   } catch {
     return json({ error: "Invalid JSON body." }, 400);
   }
 
-  if (typeof brief !== "string" || brief.trim().length < 10) {
+  // Accept either the new shape {title, description} or the legacy {brief}.
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const description =
+    typeof body.description === "string"
+      ? body.description.trim()
+      : typeof body.brief === "string"
+        ? body.brief.trim()
+        : "";
+
+  if (description.length < 10 && title.length < 10) {
     return json(
-      { error: "Brief must be a string of at least 10 characters." },
+      {
+        error:
+          "Add a title and a sentence or two of description before improving.",
+      },
       400,
     );
   }
+
+  const userMessage = title
+    ? `Working draft:\n\nTitle: ${title}\n\nDescription:\n${description || "(none yet — generate full body from the title)"}`
+    : `Working draft (no title yet):\n\n${description}`;
 
   const client = new Anthropic({ apiKey });
 
@@ -107,7 +125,7 @@ Deno.serve(async (req: Request) => {
           cache_control: { type: "ephemeral" },
         },
       ],
-      messages: [{ role: "user", content: brief.trim() }],
+      messages: [{ role: "user", content: userMessage }],
     });
 
     const textBlock = response.content.find((b) => b.type === "text");
@@ -119,7 +137,7 @@ Deno.serve(async (req: Request) => {
     let parsed: { title: string; excerpt: string; content: string };
     try {
       parsed = JSON.parse(textBlock.text);
-    } catch (err) {
+    } catch {
       console.error("JSON parse failed:", textBlock.text);
       return json({ error: "AI returned malformed output." }, 502);
     }

@@ -20,6 +20,8 @@ export default function AdminGallery() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
   const [captionDrafts, setCaptionDrafts] = useState<Record<string, string>>({});
 
   const maxDisplayOrder = useMemo(() => (
@@ -35,7 +37,7 @@ export default function AdminGallery() {
         .from('gallery_photos')
         .select('id, image_url, caption, display_order')
         .eq('client_id', CLIENT_ID)
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: false });
 
       if (error) {
         setErrorMessage('Unable to load gallery photos.');
@@ -63,7 +65,7 @@ export default function AdminGallery() {
       .from('gallery_photos')
       .select('id, image_url, caption, display_order')
       .eq('client_id', CLIENT_ID)
-      .order('display_order', { ascending: true });
+      .order('display_order', { ascending: false });
 
     setPhotos(data ?? []);
     const draftState: Record<string, string> = {};
@@ -83,26 +85,26 @@ export default function AdminGallery() {
 
     setIsUploading(true);
     setErrorMessage('');
+    setSuccessMessage('');
 
     let nextOrder = maxDisplayOrder + 1;
+    const failures: string[] = [];
+    const newIds: string[] = [];
 
     for (const file of files) {
       const safeName = file.name.replace(/\s+/g, '_');
       const filePath = `${CLIENT_ID}/${Date.now()}_${safeName}`;
 
-      const { data, error } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('gallery-photos')
         .upload(filePath, file, {
           contentType: file.type,
           upsert: false
         });
 
-      if (error) {
-        console.error('Upload error details:', JSON.stringify(error));
-      }
-
-      if (error) {
-        setErrorMessage('One or more uploads failed.');
+      if (uploadError) {
+        console.error('Storage upload failed:', uploadError);
+        failures.push(`${file.name}: storage upload — ${uploadError.message}`);
         continue;
       }
 
@@ -113,21 +115,47 @@ export default function AdminGallery() {
 
       const publicUrl = publicUrlData.publicUrl;
 
-      await supabase
+      const { data: inserted, error: insertError } = await supabase
         .from('gallery_photos')
         .insert({
           client_id: CLIENT_ID,
           image_url: publicUrl,
           display_order: nextOrder,
           caption: null
-        });
+        })
+        .select('id')
+        .single();
 
+      if (insertError) {
+        console.error('DB insert failed:', insertError);
+        failures.push(`${file.name}: ${insertError.message}`);
+        await supabase.storage.from('gallery-photos').remove([filePath]);
+        continue;
+      }
+
+      if (inserted?.id) newIds.push(inserted.id);
       nextOrder += 1;
     }
 
     event.target.value = '';
     setIsUploading(false);
+    if (failures.length) {
+      setErrorMessage(`${failures.length} of ${files.length} failed. ${failures[0]}`);
+    }
     await refreshPhotos();
+
+    if (newIds.length) {
+      setSuccessMessage(`Uploaded ${newIds.length} new ${newIds.length === 1 ? 'item' : 'items'} — showing at the top.`);
+      setHighlightedIds(new Set(newIds));
+      setTimeout(() => {
+        const firstNew = document.getElementById(`gallery-card-${newIds[0]}`);
+        firstNew?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+      setTimeout(() => {
+        setHighlightedIds(new Set());
+        setSuccessMessage('');
+      }, 6000);
+    }
   };
 
   const handleCaptionBlur = async (photo: GalleryPhoto) => {
@@ -217,6 +245,12 @@ export default function AdminGallery() {
             </div>
           )}
 
+          {successMessage && !errorMessage && (
+            <div className="mb-6 rounded-lg border border-teal/40 bg-teal/10 text-navy px-4 py-3 text-sm">
+              {successMessage}
+            </div>
+          )}
+
           {isLoading ? (
             <div className="text-center text-navy py-16">Loading...</div>
           ) : (
@@ -224,7 +258,15 @@ export default function AdminGallery() {
               {photos.map((photo, index) => {
                 const isVideo = /\.(mp4|mov|webm)$/i.test(photo.image_url);
                 return (
-                <div key={photo.id} className="bg-white rounded-2xl shadow-lg border border-navy/10 overflow-hidden">
+                <div
+                  key={photo.id}
+                  id={`gallery-card-${photo.id}`}
+                  className={`bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-500 ${
+                    highlightedIds.has(photo.id)
+                      ? 'border-2 border-coral ring-4 ring-coral/30'
+                      : 'border border-navy/10'
+                  }`}
+                >
                   <div className="relative">
                     {isVideo ? (
                       <video

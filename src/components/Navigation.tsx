@@ -109,12 +109,12 @@ export default function Navigation() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBackground}`}
     >
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between">
+      <div className="w-full px-3 lg:px-6">
+        <div className="flex items-center justify-between gap-4">
           <a
             href="#home"
             onClick={handleLogoClick}
-            className="flex items-center"
+            className="flex items-center flex-shrink-0 lg:ml-12"
           >
             <div className="h-[4rem] sm:h-[4.56rem] md:h-[5.14rem] flex items-center overflow-visible">
               <img
@@ -125,7 +125,7 @@ export default function Navigation() {
             </div>
           </a>
 
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex flex-1 justify-center items-center gap-8 text-[1.155rem]">
             {navLinks.map((link) => {
               if (link.label === 'Cruises') {
                 return (
@@ -139,14 +139,14 @@ export default function Navigation() {
                       {link.label}
                       <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
                     </Link>
-                    <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 absolute left-0 top-full pt-3 transition-opacity duration-200 z-50">
+                    <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 absolute left-1/2 -translate-x-1/2 top-full pt-3 transition-opacity duration-200 z-50">
                       <div className="bg-white rounded-xl shadow-2xl py-2 min-w-[300px] border border-ocean/5" role="menu">
                         {cruisesSubmenu.map((item) => (
                           <Link
                             key={item.to}
                             to={item.to}
                             role="menuitem"
-                            className={`block px-4 py-2.5 text-sm hover:bg-sand/30 hover:text-coral transition-colors ${item.highlight ? 'font-semibold text-ocean border-b border-ocean/10 mb-1 pb-3' : 'text-ocean/80'}`}
+                            className={`block px-4 py-2.5 text-base hover:bg-sand/30 hover:text-coral transition-colors ${item.highlight ? 'font-semibold text-ocean border-b border-ocean/10 mb-1 pb-3' : 'text-ocean/80'}`}
                           >
                             {item.label}
                           </Link>
@@ -176,6 +176,9 @@ export default function Navigation() {
                 </Link>
               );
             })}
+          </div>
+
+          <div className="hidden lg:flex items-center gap-5 flex-shrink-0 text-[1.155rem]">
             <a
               href="tel:+19547644344"
               className={`hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
@@ -204,7 +207,7 @@ export default function Navigation() {
 
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 h-[100svh] z-40 bg-white overflow-y-auto">
-          <div className="pt-20 pb-4">
+          <div className="pt-20 pb-4 text-[1.155rem]">
             {navLinks.map((link) => {
               if (link.label === 'Cruises') {
                 return (
@@ -224,7 +227,7 @@ export default function Navigation() {
                             key={item.to}
                             to={item.to}
                             onClick={() => { setIsMobileMenuOpen(false); setIsMobileCruisesOpen(false); }}
-                            className={`block pl-10 pr-6 py-2.5 hover:bg-sand/30 transition-colors min-h-[44px] flex items-center text-sm ${item.highlight ? 'font-semibold text-ocean' : 'text-ocean/75'}`}
+                            className={`block pl-10 pr-6 py-2.5 hover:bg-sand/30 transition-colors min-h-[44px] flex items-center text-base ${item.highlight ? 'font-semibold text-ocean' : 'text-ocean/75'}`}
                           >
                             {item.label}
                           </Link>

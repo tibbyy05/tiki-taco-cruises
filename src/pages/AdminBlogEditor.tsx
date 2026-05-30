@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
-import { Sparkles, X } from 'lucide-react';
+import { Lightbulb, Sparkles, X } from 'lucide-react';
 import { supabase, CLIENT_ID } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,6 +16,29 @@ const slugify = (text: string) =>
     .replace(/-+/g, '-')
     .slice(0, 80);
 
+const randomSuffix = () => Math.random().toString(36).slice(2, 6);
+
+async function buildUniqueSlug(title: string, excludeId?: string) {
+  const base = slugify(title) || 'post';
+  let candidate = base;
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const query = supabase
+      .from('tiki_blog_posts')
+      .select('id')
+      .eq('slug', candidate)
+      .limit(1);
+    const { data } = excludeId
+      ? await query.neq('id', excludeId)
+      : await query;
+
+    if (!data || data.length === 0) return candidate;
+    candidate = `${base}-${randomSuffix()}`;
+  }
+
+  return `${base}-${Date.now().toString(36)}`;
+}
+
 export default function AdminBlogEditor() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -24,10 +47,8 @@ export default function AdminBlogEditor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState('');
-  const [slug, setSlug] = useState('');
-  const [slugTouched, setSlugTouched] = useState(false);
+  const [description, setDescription] = useState('');
   const [excerpt, setExcerpt] = useState('');
-  const [content, setContent] = useState('');
   const [published, setPublished] = useState(true);
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(isEditing);
@@ -35,10 +56,11 @@ export default function AdminBlogEditor() {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
-  const [aiBrief, setAiBrief] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [aiError, setAiError] = useState('');
+  const [isImproving, setIsImproving] = useState(false);
+  const [aiNotice, setAiNotice] = useState('');
+
+  const [isGeneratingIdeas, setIsGeneratingIdeas] = useState(false);
+  const [ideas, setIdeas] = useState<Array<{ title: string; description: string }>>([]);
 
   useEffect(() => {
     if (!isEditing) return;
@@ -47,7 +69,7 @@ export default function AdminBlogEditor() {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('tiki_blog_posts')
-        .select('title, slug, excerpt, content, featured_image_url, published')
+        .select('title, excerpt, content, featured_image_url, published')
         .eq('id', id)
         .single();
 
@@ -55,10 +77,8 @@ export default function AdminBlogEditor() {
         setErrorMessage('Unable to load post.');
       } else {
         setTitle(data.title);
-        setSlug(data.slug ?? '');
-        setSlugTouched(true);
+        setDescription(data.content ?? '');
         setExcerpt(data.excerpt ?? '');
-        setContent(data.content ?? '');
         setPublished(data.published ?? true);
         setFeaturedImageUrl(data.featured_image_url);
       }
@@ -113,65 +133,78 @@ export default function AdminBlogEditor() {
     setFeaturedImageUrl(null);
   };
 
-  const handleGenerateWithAi = async () => {
-    if (aiBrief.trim().length < 10) {
-      setAiError('Please write at least a sentence or two about the post.');
-      return;
-    }
+  const handleGenerateIdeas = async () => {
+    setIsGeneratingIdeas(true);
+    setErrorMessage('');
+    setAiNotice('');
 
-    const hasExistingContent =
-      title.trim() !== '' || excerpt.trim() !== '' || content.trim() !== '';
-    if (hasExistingContent) {
-      const ok = window.confirm(
-        'This will replace the current title, excerpt, and content. Continue?'
-      );
-      if (!ok) return;
-    }
-
-    setIsGenerating(true);
-    setAiError('');
-
-    const { data, error } = await supabase.functions.invoke('expand-blog-post', {
-      body: { brief: aiBrief.trim() }
+    const { data, error } = await supabase.functions.invoke('generate-blog-ideas', {
+      body: {}
     });
 
-    setIsGenerating(false);
+    setIsGeneratingIdeas(false);
 
     if (error) {
-      setAiError(error.message ?? 'AI generation failed.');
+      setErrorMessage(error.message ?? 'Could not generate ideas.');
       return;
     }
-
     if (data?.error) {
-      setAiError(data.error);
+      setErrorMessage(data.error);
+      return;
+    }
+    if (!Array.isArray(data?.ideas) || data.ideas.length === 0) {
+      setErrorMessage('No ideas returned.');
       return;
     }
 
+    setIdeas(data.ideas);
+  };
+
+  const handleUseIdea = (idea: { title: string; description: string }) => {
+    const hasContent = title.trim() !== '' || description.trim() !== '';
+    if (hasContent) {
+      const ok = window.confirm('This replaces the current title and description. Continue?');
+      if (!ok) return;
+    }
+    setTitle(idea.title);
+    setDescription(idea.description);
+    setIdeas([]);
+    setAiNotice('Idea loaded. Click "Improve with AI" to expand it into a full post.');
+  };
+
+  const handleImproveWithAi = async () => {
+    if (title.trim().length < 3 && description.trim().length < 10) {
+      setErrorMessage('Add a title and a sentence or two before improving.');
+      return;
+    }
+
+    setIsImproving(true);
+    setErrorMessage('');
+    setAiNotice('');
+
+    const { data, error } = await supabase.functions.invoke('expand-blog-post', {
+      body: { title: title.trim(), description: description.trim() }
+    });
+
+    setIsImproving(false);
+
+    if (error) {
+      setErrorMessage(error.message ?? 'AI improvement failed.');
+      return;
+    }
+    if (data?.error) {
+      setErrorMessage(data.error);
+      return;
+    }
     if (!data?.title || !data?.content) {
-      setAiError('AI returned an unexpected response.');
+      setErrorMessage('AI returned an unexpected response.');
       return;
     }
 
     setTitle(data.title);
-    if (!isEditing && !slugTouched) {
-      setSlug(slugify(data.title));
-    }
+    setDescription(data.content);
     setExcerpt(data.excerpt ?? '');
-    setContent(data.content);
-    setIsAiPanelOpen(false);
-    setAiBrief('');
-  };
-
-  const handleTitleChange = (value: string) => {
-    setTitle(value);
-    if (!slugTouched) {
-      setSlug(slugify(value));
-    }
-  };
-
-  const handleSlugChange = (value: string) => {
-    setSlug(slugify(value));
-    setSlugTouched(true);
+    setAiNotice('Improved by AI. Review and save when ready.');
   };
 
   const handleSave = async () => {
@@ -179,19 +212,21 @@ export default function AdminBlogEditor() {
       setErrorMessage('Title is required.');
       return;
     }
-    if (!slug.trim()) {
-      setErrorMessage('Slug is required.');
+    if (!description.trim()) {
+      setErrorMessage('Description is required.');
       return;
     }
 
     setIsSaving(true);
     setErrorMessage('');
 
+    const slug = await buildUniqueSlug(title, isEditing ? id : undefined);
+
     const payload = {
       title: title.trim(),
-      slug: slug.trim(),
-      excerpt: excerpt.trim() || null,
-      content,
+      slug,
+      excerpt: excerpt.trim() || description.trim().slice(0, 155),
+      content: description,
       featured_image_url: featuredImageUrl,
       published
     };
@@ -222,6 +257,9 @@ export default function AdminBlogEditor() {
     navigate('/admin/blog');
   };
 
+  const canImprove =
+    !isImproving && (title.trim().length >= 3 || description.trim().length >= 10);
+
   return (
     <>
       <SEO
@@ -230,7 +268,7 @@ export default function AdminBlogEditor() {
         noindex={true}
       />
       <div className="min-h-screen bg-sand px-4 py-10 sm:py-12">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <AdminNav title={isEditing ? 'Edit Post' : 'New Post'} />
 
           {errorMessage && (
@@ -239,135 +277,124 @@ export default function AdminBlogEditor() {
             </div>
           )}
 
+          {aiNotice && !errorMessage && (
+            <div className="mb-6 rounded-lg border border-teal/30 bg-teal/10 text-navy px-4 py-3 text-sm">
+              {aiNotice}
+            </div>
+          )}
+
           {isLoading ? (
             <div className="text-center text-navy py-16">Loading...</div>
           ) : (
-            <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-8 space-y-5">
-              {!isAiPanelOpen ? (
+          <>
+            {ideas.length > 0 && (
+              <section className="mb-6 bg-white rounded-2xl shadow-lg border border-teal/30 p-6 sm:p-8">
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-lg font-bold text-navy flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-teal" />
+                    Pick an idea to start with
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIdeas([])}
+                    className="text-navy/60 hover:text-coral"
+                    aria-label="Dismiss ideas"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {ideas.map((idea, index) => (
+                    <div
+                      key={index}
+                      className="border border-teal/30 bg-teal/5 rounded-xl p-5 flex flex-col"
+                    >
+                      <h4 className="font-bold text-navy mb-3 text-base leading-snug">{idea.title}</h4>
+                      <p className="text-sm text-gray-700 flex-1 mb-4 leading-relaxed">{idea.description}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleUseIdea(idea)}
+                        className="bg-coral hover:bg-coral/90 text-white text-sm font-semibold px-4 py-2 rounded-full transition-all hover:scale-105"
+                      >
+                        Use this idea →
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <button
                   type="button"
-                  onClick={() => setIsAiPanelOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-teal/30 hover:border-teal text-teal hover:bg-teal/5 rounded-lg px-4 py-3 font-semibold transition-colors"
+                  onClick={handleGenerateIdeas}
+                  disabled={isGeneratingIdeas}
+                  className="w-full mt-5 text-sm text-teal hover:text-coral font-semibold py-2 disabled:opacity-50"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  Expand with AI
+                  {isGeneratingIdeas ? 'Thinking...' : 'Generate 3 more ideas'}
                 </button>
-              ) : (
-                <div className="border border-teal/30 bg-teal/5 rounded-lg p-4 sm:p-5 space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2 text-navy font-semibold">
-                      <Sparkles className="w-4 h-4 text-teal" />
-                      Expand with AI
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsAiPanelOpen(false);
-                        setAiError('');
-                      }}
-                      className="text-navy/60 hover:text-coral"
-                      aria-label="Close AI panel"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <p className="text-sm text-gray-700">
-                    Describe the post in a few sentences. AI will draft a title, excerpt, and full markdown body you can edit.
-                  </p>
-                  <textarea
-                    value={aiBrief}
-                    onChange={(event) => setAiBrief(event.target.value)}
-                    placeholder="e.g. A post about why the New River sunset cruise is the best way to see Fort Lauderdale. Mention the historic homes along Las Olas, the wildlife, and how it's perfect for date nights."
-                    rows={4}
-                    disabled={isGenerating}
-                    className="w-full rounded-lg border border-navy/20 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal resize-y disabled:bg-gray-100"
-                  />
-                  {aiError && (
-                    <div className="text-sm text-coral bg-coral/10 border border-coral/30 rounded-lg px-3 py-2">
-                      {aiError}
-                    </div>
-                  )}
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={handleGenerateWithAi}
-                      disabled={isGenerating || aiBrief.trim().length < 10}
-                      className="bg-teal hover:bg-teal/90 text-white px-5 py-2 rounded-full text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {isGenerating ? 'Generating...' : 'Generate Draft'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsAiPanelOpen(false);
-                        setAiError('');
-                      }}
-                      disabled={isGenerating}
-                      className="border border-navy/20 text-navy px-5 py-2 rounded-full text-sm font-semibold hover:border-coral hover:text-coral transition-colors disabled:opacity-60"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  {isGenerating && (
-                    <p className="text-xs text-gray-600">
-                      This usually takes 10–30 seconds.
-                    </p>
-                  )}
-                </div>
-              )}
+              </section>
+            )}
 
+            <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-8 space-y-6">
               <div>
                 <label className="block text-sm font-semibold text-navy mb-2" htmlFor="post-title">
-                  Title <span className="text-coral">*</span>
+                  Title
                 </label>
                 <input
                   id="post-title"
                   type="text"
                   value={title}
-                  onChange={(event) => handleTitleChange(event.target.value)}
-                  placeholder="Your blog post title"
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder="What's this post about?"
                   className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-navy mb-2" htmlFor="post-slug">
-                  URL Slug <span className="text-coral">*</span>
-                </label>
-                <div className="flex items-center gap-2 rounded-lg border border-navy/20 px-4 py-3 focus-within:ring-2 focus-within:ring-teal">
-                  <span className="text-sm text-gray-500 whitespace-nowrap">/blog/</span>
-                  <input
-                    id="post-slug"
-                    type="text"
-                    value={slug}
-                    onChange={(event) => handleSlugChange(event.target.value)}
-                    placeholder="url-friendly-slug"
-                    className="flex-1 min-w-0 focus:outline-none text-sm font-mono"
-                  />
-                </div>
-                {isEditing && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Changing the slug breaks any existing links to the old URL.
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-navy mb-2" htmlFor="post-excerpt">
-                  Excerpt / SEO Description
+                <label className="block text-sm font-semibold text-navy mb-2" htmlFor="post-description">
+                  Description
                 </label>
                 <textarea
-                  id="post-excerpt"
-                  value={excerpt}
-                  onChange={(event) => setExcerpt(event.target.value)}
-                  placeholder="A short summary shown on the blog list and in search results (150–160 characters)"
-                  rows={2}
+                  id="post-description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="Write a rough description of the post. A sentence, a paragraph, or a full draft — anything works. Click 'Improve with AI' to polish it into a full blog post."
+                  rows={12}
                   className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal resize-y"
                 />
-                <p className="text-xs text-gray-500 mt-1">{excerpt.length} characters</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Don't worry about formatting or SEO — AI handles all of that.
+                </p>
               </div>
 
-              <div>
+              <div className="space-y-3">
+                <div className={ideas.length > 0 ? '' : 'grid grid-cols-1 sm:grid-cols-2 gap-3'}>
+                  {ideas.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={handleGenerateIdeas}
+                      disabled={isGeneratingIdeas || isImproving}
+                      className="flex items-center justify-center gap-2 border-2 border-teal/40 hover:border-teal text-teal hover:bg-teal/5 px-5 py-3.5 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Lightbulb className="w-5 h-5" />
+                      {isGeneratingIdeas ? 'Thinking...' : 'Generate Ideas with AI'}
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleImproveWithAi}
+                    disabled={!canImprove || isGeneratingIdeas}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal to-teal/80 hover:from-teal/90 hover:to-teal/70 text-white px-5 py-3.5 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Sparkles className="w-5 h-5" />
+                    {isImproving ? 'Improving...' : 'Improve with AI'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600 text-center">
+                  {ideas.length > 0
+                    ? 'Pick an idea on the left, or write your own and improve it.'
+                    : 'Stuck? Generate ideas. Already have a draft? Improve it.'}
+                </p>
+              </div>
+
+              <div className="border-t border-navy/10 pt-6">
                 <label className="block text-sm font-semibold text-navy mb-2">
                   Featured Image
                 </label>
@@ -406,22 +433,8 @@ export default function AdminBlogEditor() {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-navy mb-2" htmlFor="post-content">
-                  Content (Markdown)
-                </label>
-                <textarea
-                  id="post-content"
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                  placeholder="Write your post in markdown. Use **bold**, *italic*, # headings, [links](url), etc."
-                  rows={16}
-                  className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal font-mono text-sm resize-y"
-                />
-              </div>
-
-              <div className="flex items-center gap-3 pt-2 border-t border-navy/10">
-                <label className="flex items-center gap-2 cursor-pointer pt-4">
+              <div className="border-t border-navy/10 pt-5 flex items-center">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={published}
@@ -439,7 +452,7 @@ export default function AdminBlogEditor() {
                 <button
                   type="button"
                   onClick={handleSave}
-                  disabled={isSaving || isUploading}
+                  disabled={isSaving || isUploading || isImproving}
                   className="bg-coral hover:bg-coral/90 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isSaving ? 'Saving...' : isEditing ? 'Save Changes' : 'Create Post'}
@@ -453,6 +466,7 @@ export default function AdminBlogEditor() {
                 </button>
               </div>
             </div>
+          </>
           )}
         </div>
       </div>

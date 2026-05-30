@@ -36,7 +36,7 @@ const Gallery: React.FC = () => {
         .from('gallery_photos')
         .select('id, image_url, caption, display_order')
         .eq('client_id', CLIENT_ID)
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: false });
 
       setGalleryItems(data && data.length > 0 ? data : fallbackGalleryItems);
       setIsLoading(false);

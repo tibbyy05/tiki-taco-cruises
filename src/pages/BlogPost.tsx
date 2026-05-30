@@ -69,22 +69,22 @@ export default function BlogPost() {
       />
 
       <article className="min-h-screen bg-sand">
-        <header className="bg-navy text-white pt-32 pb-12 sm:pt-40 sm:pb-16">
+        <header className="bg-navy text-white pt-24 pb-10 sm:pt-40 sm:pb-16">
           <div className="max-w-3xl mx-auto px-4">
             <Link
               to="/blog"
-              className="inline-flex items-center text-teal hover:text-white text-sm font-semibold mb-6 transition-colors"
+              className="inline-flex items-center text-teal hover:text-white text-sm font-semibold mb-5 sm:mb-6 -mx-2 px-2 py-2 transition-colors"
             >
               ← All posts
             </Link>
-            <p className="text-sm text-white/70 uppercase tracking-wide mb-3">
+            <p className="text-xs sm:text-sm text-white/70 uppercase tracking-wide mb-3">
               {formatDate(post.created_at)}
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold leading-tight">
               {post.title}
             </h1>
             {post.excerpt && (
-              <p className="mt-4 text-lg text-white/90 leading-relaxed">
+              <p className="mt-3 sm:mt-4 text-base sm:text-lg text-white/90 leading-relaxed">
                 {post.excerpt}
               </p>
             )}
@@ -92,25 +92,25 @@ export default function BlogPost() {
         </header>
 
         {post.featured_image_url && (
-          <div className="max-w-4xl mx-auto px-4 -mt-8 mb-8">
+          <div className="max-w-4xl mx-auto px-4 -mt-6 sm:-mt-8 mb-6 sm:mb-8">
             <img
               src={post.featured_image_url}
               alt={post.title}
-              className="w-full aspect-[16/9] object-cover rounded-2xl shadow-xl"
+              className="w-full aspect-[16/9] object-cover rounded-xl sm:rounded-2xl shadow-xl"
             />
           </div>
         )}
 
-        <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12">
-          <div className="blog-prose bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-10">
+        <div className="max-w-3xl mx-auto px-4 py-6 sm:py-12">
+          <div className="blog-prose bg-white rounded-xl sm:rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-10">
             <ReactMarkdown>{post.content}</ReactMarkdown>
           </div>
 
-          <div className="mt-10 bg-gradient-to-br from-coral to-coral/80 text-white rounded-2xl p-8 sm:p-10 text-center shadow-xl">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+          <div className="mt-8 sm:mt-10 bg-gradient-to-br from-coral to-coral/80 text-white rounded-xl sm:rounded-2xl p-6 sm:p-10 text-center shadow-xl">
+            <h2 className="text-xl sm:text-3xl font-bold mb-3">
               Ready to get on the water?
             </h2>
-            <p className="text-white/95 mb-6 max-w-md mx-auto">
+            <p className="text-sm sm:text-base text-white/95 mb-5 sm:mb-6 max-w-md mx-auto leading-relaxed">
               Browse our Fort Lauderdale cruise options and pick the one that fits your trip.
             </p>
             <Link
@@ -127,34 +127,45 @@ export default function BlogPost() {
       <Footer />
 
       <style>{`
-        .blog-prose { color: #1E3A5F; line-height: 1.75; }
+        .blog-prose {
+          color: #1E3A5F;
+          line-height: 1.75;
+          overflow-wrap: break-word;
+          word-wrap: break-word;
+        }
         .blog-prose h2 {
-          font-size: 1.75rem;
+          font-size: 1.4rem;
           font-weight: 700;
           color: #1E3A5F;
-          margin-top: 2.25rem;
-          margin-bottom: 0.75rem;
-          line-height: 1.25;
+          margin-top: 2rem;
+          margin-bottom: 0.65rem;
+          line-height: 1.3;
         }
         .blog-prose h2:first-child { margin-top: 0; }
         .blog-prose h3 {
-          font-size: 1.35rem;
+          font-size: 1.2rem;
           font-weight: 600;
           color: #1E3A5F;
-          margin-top: 1.75rem;
+          margin-top: 1.5rem;
           margin-bottom: 0.5rem;
+          line-height: 1.35;
+        }
+        @media (min-width: 640px) {
+          .blog-prose h2 { font-size: 1.75rem; margin-top: 2.25rem; }
+          .blog-prose h3 { font-size: 1.35rem; margin-top: 1.75rem; }
         }
         .blog-prose p { margin-bottom: 1.1rem; color: #4A5568; }
         .blog-prose a {
           color: #0891B2;
           text-decoration: underline;
           text-underline-offset: 2px;
+          word-break: break-word;
         }
         .blog-prose a:hover { color: #FF6B6B; }
         .blog-prose strong { color: #1E3A5F; font-weight: 600; }
         .blog-prose ul, .blog-prose ol {
           margin-bottom: 1.1rem;
-          padding-left: 1.5rem;
+          padding-left: 1.25rem;
         }
         .blog-prose ul { list-style: disc; }
         .blog-prose ol { list-style: decimal; }
@@ -174,8 +185,22 @@ export default function BlogPost() {
           padding: 0.15rem 0.4rem;
           border-radius: 0.25rem;
           font-size: 0.9em;
+          word-break: break-word;
+        }
+        .blog-prose pre {
+          background: #F5F7FA;
+          padding: 1rem;
+          border-radius: 0.5rem;
+          overflow-x: auto;
+          margin-bottom: 1.1rem;
+        }
+        .blog-prose pre code {
+          background: transparent;
+          padding: 0;
         }
         .blog-prose img {
+          max-width: 100%;
+          height: auto;
           border-radius: 0.75rem;
           margin: 1.5rem 0;
         }
@@ -183,6 +208,12 @@ export default function BlogPost() {
           border: 0;
           border-top: 1px solid #E2E8F0;
           margin: 2rem 0;
+        }
+        .blog-prose table {
+          display: block;
+          width: 100%;
+          overflow-x: auto;
+          margin-bottom: 1.1rem;
         }
       `}</style>
     </>
