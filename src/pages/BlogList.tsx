@@ -24,7 +24,8 @@ const formatDate = (iso: string) =>
   });
 
 export default function BlogList() {
-  const { posts } = useLoaderData() as BlogListData;
+  const loaderData = useLoaderData() as BlogListData | null;
+  const posts = loaderData?.posts ?? [];
 
   return (
     <>

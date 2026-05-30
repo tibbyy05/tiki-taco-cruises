@@ -1,20 +1,24 @@
-import { Link, useLoaderData } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useLoaderData, useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { supabase } from '../lib/supabase';
+
+interface BlogPostRecord {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  featured_image_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 interface BlogPostData {
-  post: {
-    id: string;
-    title: string;
-    slug: string;
-    excerpt: string | null;
-    content: string;
-    featured_image_url: string | null;
-    created_at: string;
-    updated_at: string;
-  };
+  post: BlogPostRecord;
 }
 
 const formatDate = (iso: string) =>
@@ -25,7 +29,64 @@ const formatDate = (iso: string) =>
   });
 
 export default function BlogPost() {
-  const { post } = useLoaderData() as BlogPostData;
+  const loaderData = useLoaderData() as BlogPostData | null;
+  const { slug } = useParams<{ slug: string }>();
+  const [fallbackPost, setFallbackPost] = useState<BlogPostRecord | null>(null);
+  const [fallbackState, setFallbackState] = useState<'idle' | 'loading' | 'missing'>('idle');
+
+  useEffect(() => {
+    if (loaderData?.post || !slug) return;
+    let cancelled = false;
+    setFallbackState('loading');
+    supabase
+      .from('tiki_blog_posts')
+      .select('id, title, slug, excerpt, content, featured_image_url, created_at, updated_at')
+      .eq('slug', slug)
+      .eq('published', true)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (cancelled) return;
+        if (data) {
+          setFallbackPost(data as BlogPostRecord);
+          setFallbackState('idle');
+        } else {
+          setFallbackState('missing');
+        }
+      });
+    return () => { cancelled = true; };
+  }, [loaderData, slug]);
+
+  const post = loaderData?.post ?? fallbackPost;
+
+  if (!post) {
+    return (
+      <>
+        <Navigation />
+        <SEO title="Loading post… | Tiki Taco Cruises" description="Loading blog post." noindex={true} />
+        <div className="min-h-screen bg-sand flex items-center justify-center px-4 pt-32 pb-16 text-center">
+          <div className="max-w-md">
+            {fallbackState === 'missing' ? (
+              <>
+                <h1 className="text-2xl sm:text-3xl font-bold text-navy mb-3">Post not found</h1>
+                <p className="text-gray-700 mb-6">
+                  This story may have been moved or unpublished.
+                </p>
+                <Link
+                  to="/blog"
+                  className="inline-flex bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105"
+                >
+                  Browse all posts
+                </Link>
+              </>
+            ) : (
+              <p className="text-navy">Loading…</p>
+            )}
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   const seoTitle = `${post.title} | Tiki Taco Cruises`;
   const seoDescription =
