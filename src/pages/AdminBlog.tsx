@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { Pencil, Trash2 } from 'lucide-react';
@@ -20,9 +20,24 @@ interface BlogPost {
 export default function AdminBlog() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+
+  const flash = (msg: string) => {
+    setStatusMessage(msg);
+    setTimeout(() => setStatusMessage(''), 6000);
+  };
+
+  useEffect(() => {
+    const incoming = (location.state as { flash?: string } | null)?.flash;
+    if (incoming) {
+      flash(incoming);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -70,6 +85,10 @@ export default function AdminBlog() {
     }
 
     setPosts((prev) => prev.filter((p) => p.id !== post.id));
+
+    const hook = import.meta.env.VITE_NETLIFY_BUILD_HOOK;
+    if (hook) fetch(hook, { method: 'POST' }).catch(() => {});
+    flash('Deleted. Site will update in ~2 min.');
   };
 
   const formatDate = (iso: string) =>
@@ -99,6 +118,12 @@ export default function AdminBlog() {
               </button>
             }
           />
+
+          {statusMessage && (
+            <div className="mb-6 rounded-lg border border-teal/30 bg-teal/10 text-teal px-4 py-3">
+              {statusMessage}
+            </div>
+          )}
 
           {errorMessage && (
             <div className="mb-6 rounded-lg border border-coral/30 bg-coral/10 text-coral px-4 py-3">

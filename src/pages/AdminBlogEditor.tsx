@@ -254,7 +254,12 @@ export default function AdminBlogEditor() {
       }
     }
 
-    navigate('/admin/blog');
+    const hook = import.meta.env.VITE_NETLIFY_BUILD_HOOK;
+    if (hook) fetch(hook, { method: 'POST' }).catch(() => {});
+
+    navigate('/admin/blog', {
+      state: { flash: 'Saved. Site will update in ~2 min.' }
+    });
   };
 
   const canImprove =
