@@ -74,7 +74,7 @@ export default function NorthBoundScenicCruise() {
       seo={{
         title: 'Scenic Cruise Tiki Boat | Ft Lauderdale Boat Tours',
         description: 'Take a scenic cruise in Fort Lauderdale along the Intracoastal with optional sandbar stops. Perfect for sightseeing, swimming, and relaxing on the water.',
-        canonical: 'https://tikitacocruises.com/north-bound-scenic-cruise',
+        canonical: 'https://tikitacocruises.com/north-bound-scenic-cruise/',
         jsonLd,
       }}
       hero={{

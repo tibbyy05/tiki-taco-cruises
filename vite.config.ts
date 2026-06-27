@@ -10,7 +10,7 @@ export default defineConfig({
   },
   ssgOptions: {
     entry: 'src/main.tsx',
-    dirStyle: 'flat',
+    dirStyle: 'nested',
     // Skip admin routes (auth-gated, dynamic) and the wildcard 404 from prerender.
     // The SPA fallback in _redirects serves them via client-side rendering.
     includedRoutes: (paths) =>

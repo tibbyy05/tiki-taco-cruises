@@ -112,7 +112,7 @@ export default function FortLauderdaleSunsetCruise() {
       <SEO
         title="Fort Lauderdale Sunset Cruise & Morning Cruise | 2-Hour Cruise"
         description="Enjoy a Fort Lauderdale sunset cruise or morning cruise on a 2-hour tiki boat ride. Scenic views, relaxed vibes, and perfect for smaller groups."
-        canonical="https://tikitacocruises.com/fort-lauderdale-sunset-cruise"
+        canonical="https://tikitacocruises.com/fort-lauderdale-sunset-cruise/"
         jsonLd={jsonLd}
       />
       <Navigation />

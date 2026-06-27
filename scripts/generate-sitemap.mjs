@@ -17,16 +17,16 @@ const CLIENT_ID = env.VITE_CLIENT_ID ?? process.env.VITE_CLIENT_ID;
 
 const staticRoutes = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
-  { path: '/cruise-destinations', changefreq: 'weekly', priority: '0.9' },
-  { path: '/new-river-cruise', changefreq: 'monthly', priority: '0.8' },
-  { path: '/north-bound-scenic-cruise', changefreq: 'monthly', priority: '0.8' },
-  { path: '/las-olas-boat-tour', changefreq: 'monthly', priority: '0.8' },
-  { path: '/intracoastal-waterway-corporate-cruise', changefreq: 'monthly', priority: '0.8' },
-  { path: '/fort-lauderdale-sunset-cruise', changefreq: 'monthly', priority: '0.8' },
-  { path: '/gallery', changefreq: 'monthly', priority: '0.6' },
-  { path: '/faq', changefreq: 'monthly', priority: '0.7' },
-  { path: '/contact-us', changefreq: 'monthly', priority: '0.7' },
-  { path: '/blog', changefreq: 'weekly', priority: '0.7' },
+  { path: '/cruise-destinations/', changefreq: 'weekly', priority: '0.9' },
+  { path: '/new-river-cruise/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/north-bound-scenic-cruise/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/las-olas-boat-tour/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/intracoastal-waterway-corporate-cruise/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/fort-lauderdale-sunset-cruise/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/gallery/', changefreq: 'monthly', priority: '0.6' },
+  { path: '/faq/', changefreq: 'monthly', priority: '0.7' },
+  { path: '/contact-us/', changefreq: 'monthly', priority: '0.7' },
+  { path: '/blog/', changefreq: 'weekly', priority: '0.7' },
 ];
 
 const todayIso = new Date().toISOString().slice(0, 10);
@@ -72,7 +72,7 @@ async function main() {
     ),
     ...posts.map((p) =>
       urlEntry({
-        loc: `${SITE_URL}/blog/${p.slug}`,
+        loc: `${SITE_URL}/blog/${p.slug}/`,
         lastmod: (p.updated_at ?? p.created_at ?? new Date().toISOString()).slice(0, 10),
         changefreq: 'monthly',
         priority: '0.6',

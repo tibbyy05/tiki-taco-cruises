@@ -118,7 +118,7 @@ export const routes: RouteRecord[] = [
             .select('slug')
             .eq('client_id', CLIENT_ID)
             .eq('published', true);
-          return data?.map((p) => p.slug) ?? [];
+          return data?.map((p) => `/blog/${p.slug}`) ?? [];
         },
       },
       { path: 'cruise-destinations', element: wrap(<CruiseDestinations />) },

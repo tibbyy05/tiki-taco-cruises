@@ -78,7 +78,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
       seo={{
         title: 'Intracoastal Waterway Corporate Cruise | Tiki Boat Day Cruise',
         description: 'Host a corporate cruise in Fort Lauderdale on a private tiki boat. Ideal for team outings, client events, and company celebrations on the water.',
-        canonical: 'https://tikitacocruises.com/intracoastal-waterway-corporate-cruise',
+        canonical: 'https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/',
         jsonLd,
       }}
       hero={{

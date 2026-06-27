@@ -95,7 +95,7 @@ export default function NewRiverCruise() {
       seo={{
         title: 'New River Cruise | Stranahan House Fort Lauderdale',
         description: 'Cruise the New River on a Fort Lauderdale tiki boat. Enjoy a scenic historic tour with waterfront views, downtown sights, and the Stranahan House from the water.',
-        canonical: 'https://tikitacocruises.com/new-river-cruise',
+        canonical: 'https://tikitacocruises.com/new-river-cruise/',
         jsonLd,
       }}
       hero={{

@@ -74,7 +74,7 @@ export default function LasOlasBoatTour() {
       seo={{
         title: 'Tiki Taco Party Pontoon Boat | Las Olas Boat Tour',
         description: 'Book a party pontoon boat in Fort Lauderdale. Cruise Las Olas and the Intracoastal with music, drinks, and the perfect setup for bachelorettes and groups.',
-        canonical: 'https://tikitacocruises.com/las-olas-boat-tour',
+        canonical: 'https://tikitacocruises.com/las-olas-boat-tour/',
         jsonLd,
       }}
       hero={{
