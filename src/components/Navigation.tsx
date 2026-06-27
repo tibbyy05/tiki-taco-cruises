@@ -38,7 +38,8 @@ export default function Navigation() {
     { href: '/gallery', label: 'Gallery', isHash: false },
     { href: '/blog', label: 'Blog', isHash: false },
     { href: isHomePage ? '#features' : '/#features', label: 'Amenities', isHash: true },
-    { href: '/faq', label: 'FAQ', isHash: false }
+    { href: '/faq', label: 'FAQ', isHash: false },
+    { href: '/contact-us', label: 'Contact', isHash: false }
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isHash: boolean) => {

@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
 import FAQ from './pages/FAQ';
+import ContactUs from './pages/ContactUs';
 import AdminLogin from './pages/AdminLogin';
 import AdminGallery from './pages/AdminGallery';
 import AdminBlog from './pages/AdminBlog';
@@ -31,6 +32,7 @@ export const routes: RouteRecord[] = [
       { index: true, element: wrap(<Home />) },
       { path: 'gallery', element: wrap(<Gallery />) },
       { path: 'faq', element: wrap(<FAQ />) },
+      { path: 'contact-us', element: wrap(<ContactUs />) },
       { path: 'admin', element: wrap(<AdminLogin />) },
       {
         path: 'admin/gallery',

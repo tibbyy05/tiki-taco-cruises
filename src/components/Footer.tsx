@@ -108,6 +108,14 @@ export default function Footer() {
                   FAQ
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/contact-us"
+                  className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
+                >
+                  Contact
+                </Link>
+              </li>
               {[
                 { href: '#features', label: 'Amenities' },
                 { href: '#testimonials', label: 'Reviews' }
