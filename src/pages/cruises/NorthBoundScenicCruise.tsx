@@ -1,5 +1,73 @@
 import CruisePage from '../../components/CruisePage';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "url": "https://tikitacocruises.com/",
+      "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "priceRange": "$60-$1140",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#webpage",
+      "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
+      "name": "Northbound Scenic Cruise in Fort Lauderdale",
+      "description": "A 4-hour private Fort Lauderdale tiki cruise heading north along the Intracoastal Waterway with scenic views and an optional sandbar stop.",
+      "about": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
+        { "@type": "ListItem", "position": 3, "name": "Northbound Scenic Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/north-bound-scenic-cruise" }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service",
+      "name": "Northbound Scenic Cruise in Fort Lauderdale",
+      "serviceType": "Private tiki boat cruise",
+      "category": "Boat tour",
+      "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#webpage" },
+      "description": "Head north along the Intracoastal for a mix of sightseeing, swimming, relaxing, and an optional Fort Lauderdale sandbar stop.",
+      "provider": { "@id": "https://tikitacocruises.com/#business" },
+      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "offers": {
+        "@type": "Offer",
+        "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#offer",
+        "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
+        "price": "1140",
+        "priceCurrency": "USD",
+        "itemOffered": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" },
+        "priceSpecification": [
+          { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
+          { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
+          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
+        ]
+      }
+    }
+  ]
+};
+
 export default function NorthBoundScenicCruise() {
   return (
     <CruisePage
@@ -7,6 +75,7 @@ export default function NorthBoundScenicCruise() {
         title: 'Scenic Cruise Tiki Boat | Ft Lauderdale Boat Tours',
         description: 'Take a scenic cruise in Fort Lauderdale along the Intracoastal with optional sandbar stops. Perfect for sightseeing, swimming, and relaxing on the water.',
         canonical: 'https://tikitacocruises.com/north-bound-scenic-cruise',
+        jsonLd,
       }}
       hero={{
         title: 'Northbound Scenic Cruise in Fort Lauderdale',

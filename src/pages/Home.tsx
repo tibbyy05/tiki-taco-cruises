@@ -13,42 +13,115 @@ import ScrollReveal from '../components/ScrollReveal';
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": "https://tikitacocruises.com/#business",
-  "name": "Tiki Taco Cruises",
-  "description": "Experience Fort Lauderdale from the water with a private chartered tiki cruise designed for relaxation, celebration, and unforgettable views.",
-  "url": "https://tikitacocruises.com/",
-  "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
-  "image": "https://tikitacocruises.com/tiki-taco-logo.png",
-  "telephone": "+1-954-764-4344",
-  "email": "tikitacocruises@gmail.com",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "1881 SE 17th St",
-    "addressLocality": "Fort Lauderdale",
-    "addressRegion": "FL",
-    "postalCode": "33316",
-    "addressCountry": "US"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 26.0998,
-    "longitude": -80.1186
-  },
-  "areaServed": {
-    "@type": "City",
-    "name": "Fort Lauderdale"
-  },
-  "openingHoursSpecification": [
+  "@graph": [
     {
-      "@type": "OpeningHoursSpecification",
-      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-      "opens": "08:00",
-      "closes": "20:00"
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "description": "Tiki Taco Cruises offers private tiki boat tours, pontoon rentals, scenic cruises, party cruises, sunset cruises, and corporate cruise experiences in Fort Lauderdale.",
+      "url": "https://tikitacocruises.com/",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "image": [
+        "https://tikitacocruises.com/Night_Intracoastal2.jpg"
+      ],
+      "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
+      "priceRange": "$60-$1140",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 26.0998,
+        "longitude": -80.1186
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Fort Lauderdale"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      },
+      "sameAs": [
+        "https://www.instagram.com/tikitacocruises"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://tikitacocruises.com/#webpage",
+      "url": "https://tikitacocruises.com/",
+      "name": "Fort Lauderdale Tiki Cruise & Private Boat Tour",
+      "description": "Experience Fort Lauderdale from the water with a private tiki cruise designed for relaxation, celebration, and unforgettable views.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/#business"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://tikitacocruises.com/#popular-cruises",
+      "name": "Popular Tiki Cruise Destinations",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "New River Historic Cruise",
+          "url": "https://tikitacocruises.com/new-river-cruise"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Northbound Sandbar & Scenic Cruise",
+          "url": "https://tikitacocruises.com/north-bound-scenic-cruise"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Las Olas & Intracoastal Party Cruise",
+          "url": "https://tikitacocruises.com/las-olas-boat-tour"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Corporate & Private Event Cruise",
+          "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise"
+        },
+        {
+          "@type": "ListItem",
+          "position": 5,
+          "name": "2-Hour Morning & Sunset Cruises",
+          "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise"
+        }
+      ]
     }
-  ],
-  "sameAs": [
-    "https://www.instagram.com/tikitacocruises"
   ]
 };
 

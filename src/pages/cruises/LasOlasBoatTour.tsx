@@ -1,5 +1,73 @@
 import CruisePage from '../../components/CruisePage';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "url": "https://tikitacocruises.com/",
+      "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "priceRange": "$60-$1140",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour#webpage",
+      "url": "https://tikitacocruises.com/las-olas-boat-tour",
+      "name": "Las Olas & Intracoastal Party Cruise",
+      "description": "A 4-hour private Fort Lauderdale party cruise with Las Olas views, Intracoastal sightseeing, music, drinks, and group celebration space.",
+      "about": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
+        { "@type": "ListItem", "position": 3, "name": "Las Olas & Intracoastal Party Cruise", "item": "https://tikitacocruises.com/las-olas-boat-tour" }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour#service",
+      "name": "Las Olas & Intracoastal Party Cruise",
+      "serviceType": "Private tiki party cruise",
+      "category": "Boat tour",
+      "url": "https://tikitacocruises.com/las-olas-boat-tour",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#webpage" },
+      "description": "A private Las Olas and Intracoastal party cruise in Fort Lauderdale designed for bachelorette parties, birthdays, weekend groups, and social celebrations.",
+      "provider": { "@id": "https://tikitacocruises.com/#business" },
+      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "offers": {
+        "@type": "Offer",
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour#offer",
+        "url": "https://tikitacocruises.com/las-olas-boat-tour",
+        "price": "1140",
+        "priceCurrency": "USD",
+        "itemOffered": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" },
+        "priceSpecification": [
+          { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
+          { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
+          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
+        ]
+      }
+    }
+  ]
+};
+
 export default function LasOlasBoatTour() {
   return (
     <CruisePage
@@ -7,6 +75,7 @@ export default function LasOlasBoatTour() {
         title: 'Tiki Taco Party Pontoon Boat | Las Olas Boat Tour',
         description: 'Book a party pontoon boat in Fort Lauderdale. Cruise Las Olas and the Intracoastal with music, drinks, and the perfect setup for bachelorettes and groups.',
         canonical: 'https://tikitacocruises.com/las-olas-boat-tour',
+        jsonLd,
       }}
       hero={{
         title: 'Las Olas & Intracoastal Party Cruise',

@@ -1,5 +1,94 @@
 import CruisePage from '../../components/CruisePage';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "url": "https://tikitacocruises.com/",
+      "telephone": "+1-954-764-4344",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "priceRange": "$60-$1140",
+      "email": "tikitacocruises@gmail.com",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://tikitacocruises.com/new-river-cruise#webpage",
+      "url": "https://tikitacocruises.com/new-river-cruise",
+      "name": "New River Cruise in Fort Lauderdale",
+      "description": "A 4-hour private New River tiki cruise in Fort Lauderdale with historic downtown views, waterfront homes, local landmarks, and scenic cruising.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/new-river-cruise#service"
+      },
+      "mainEntity": {
+        "@id": "https://tikitacocruises.com/new-river-cruise#service"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://tikitacocruises.com/new-river-cruise#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
+        { "@type": "ListItem", "position": 3, "name": "New River Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/new-river-cruise" }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://tikitacocruises.com/new-river-cruise#service",
+      "name": "New River Cruise in Fort Lauderdale",
+      "serviceType": "Private tiki boat cruise",
+      "category": "Boat tour",
+      "url": "https://tikitacocruises.com/new-river-cruise",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/new-river-cruise#webpage" },
+      "description": "Cruise through downtown Fort Lauderdale along the New River, passing historic landmarks, waterfront homes, yachts, and iconic city views.",
+      "provider": { "@id": "https://tikitacocruises.com/#business" },
+      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "hoursAvailable": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "10:00",
+          "closes": "14:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "14:00",
+          "closes": "18:00"
+        }
+      ],
+      "offers": {
+        "@type": "Offer",
+        "@id": "https://tikitacocruises.com/new-river-cruise#offer",
+        "url": "https://tikitacocruises.com/new-river-cruise",
+        "price": "1140",
+        "priceCurrency": "USD",
+        "itemOffered": { "@id": "https://tikitacocruises.com/new-river-cruise#service" },
+        "priceSpecification": [
+          { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
+          { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
+          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
+        ]
+      }
+    }
+  ]
+};
+
 export default function NewRiverCruise() {
   return (
     <CruisePage
@@ -7,6 +96,7 @@ export default function NewRiverCruise() {
         title: 'New River Cruise | Stranahan House Fort Lauderdale',
         description: 'Cruise the New River on a Fort Lauderdale tiki boat. Enjoy a scenic historic tour with waterfront views, downtown sights, and the Stranahan House from the water.',
         canonical: 'https://tikitacocruises.com/new-river-cruise',
+        jsonLd,
       }}
       hero={{
         title: 'New River Cruise in Fort Lauderdale',

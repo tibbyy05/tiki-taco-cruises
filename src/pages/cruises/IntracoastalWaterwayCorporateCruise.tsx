@@ -1,5 +1,77 @@
 import CruisePage from '../../components/CruisePage';
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "url": "https://tikitacocruises.com/",
+      "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "priceRange": "$60-$1140",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#webpage",
+      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
+      "name": "Corporate Cruise in Fort Lauderdale",
+      "description": "A 4-hour private corporate and event cruise in Fort Lauderdale for team outings, client events, and private group gatherings along the Intracoastal Waterway.",
+      "about": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
+        { "@type": "ListItem", "position": 3, "name": "Corporate Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise" }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service",
+      "name": "Corporate Cruise in Fort Lauderdale",
+      "serviceType": "Private corporate boat cruise",
+      "category": "Corporate event boat tour",
+      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#webpage" },
+      "description": "A private, customizable Fort Lauderdale corporate cruise for team outings, client entertainment, and private group gatherings along the Intracoastal Waterway.",
+      "provider": { "@id": "https://tikitacocruises.com/#business" },
+      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "audience": {
+        "@type": "BusinessAudience",
+        "name": "Corporate groups, teams, and private event planners"
+      },
+      "offers": {
+        "@type": "Offer",
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#offer",
+        "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
+        "price": "1140",
+        "priceCurrency": "USD",
+        "itemOffered": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" },
+        "priceSpecification": [
+          { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private corporate cruise for up to 12 passengers." },
+          { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
+          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
+        ]
+      }
+    }
+  ]
+};
+
 export default function IntracoastalWaterwayCorporateCruise() {
   return (
     <CruisePage
@@ -7,6 +79,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
         title: 'Intracoastal Waterway Corporate Cruise | Tiki Boat Day Cruise',
         description: 'Host a corporate cruise in Fort Lauderdale on a private tiki boat. Ideal for team outings, client events, and company celebrations on the water.',
         canonical: 'https://tikitacocruises.com/intracoastal-waterway-corporate-cruise',
+        jsonLd,
       }}
       hero={{
         title: 'Corporate Cruise in Fort Lauderdale',

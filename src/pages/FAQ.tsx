@@ -6,87 +6,208 @@ import Footer from '../components/Footer';
 
 const faqSchema = {
   "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
+  "@graph": [
     {
-      "@type": "Question",
-      "name": "How long are the cruises?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "We offer both 2-hour and 4-hour cruise options. Choose a quick morning or sunset cruise, or book a longer private experience."
+      "@type": "LocalBusiness",
+      "@id": "https://tikitacocruises.com/#business",
+      "name": "Tiki Taco Cruises",
+      "alternateName": "Tiki Taco",
+      "description": "Tiki Taco Cruises offers private tiki boat cruises, pontoon rentals, scenic boat tours, party cruises, sunset cruises, and corporate cruise experiences in Fort Lauderdale.",
+      "url": "https://tikitacocruises.com/",
+      "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
+      "image": [
+        "https://tikitacocruises.com/Night_Intracoastal2.jpg"
+      ],
+      "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
+      "priceRange": "$60-$1140",
+      "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "1881 SE 17th St",
+        "addressLocality": "Fort Lauderdale",
+        "addressRegion": "FL",
+        "postalCode": "33316",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 26.0998,
+        "longitude": -80.1186
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Fort Lauderdale"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Broward County"
+        }
+      ],
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "08:00",
+          "closes": "20:00"
+        }
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+1-954-764-4344",
+        "email": "tikitacocruises@gmail.com",
+        "contactType": "customer service",
+        "areaServed": "US",
+        "availableLanguage": "English"
+      },
+      "sameAs": [
+        "https://www.instagram.com/tikitacocruises"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
-      "@type": "Question",
-      "name": "What does a 4-hour cruise cost?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "4-hour cruises are $1,140 for up to 12 passengers. Additional guests are $60 per person."
-      }
+      "@type": "FAQPage",
+      "@id": "https://tikitacocruises.com/faq#webpage",
+      "url": "https://tikitacocruises.com/faq",
+      "name": "Fort Lauderdale Tiki Cruise FAQs",
+      "headline": "Fort Lauderdale Tiki Cruise FAQs",
+      "description": "Frequently asked questions about Tiki Taco Cruises, including cruise duration, pricing, start times, departure location, weather policy, pets, alcohol, and what to bring.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-how-long-are-the-cruises",
+          "name": "How long are the cruises?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We offer both 2-hour and 4-hour cruise options. Choose a quick morning or sunset cruise, or book a longer private experience."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-what-does-a-4-hour-cruise-cost",
+          "name": "What does a 4-hour cruise cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "4-hour cruises are $1,140 for up to 12 passengers. Additional guests are $60 per person."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-what-does-a-2-hour-cruise-cost",
+          "name": "What does a 2-hour cruise cost?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "2-hour morning and sunset cruises are $60 per person with a 6-person minimum."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-what-are-the-start-times",
+          "name": "What are the start times?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "4-hour cruises start at 10:00 AM or 2:00 PM. 2-hour cruises run from 8:00\u201310:00 AM and 6:00\u20138:00 PM."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-what-should-we-bring",
+          "name": "What should we bring?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Bring drinks, snacks, sunscreen, towels, and anything you'd like for your time on the water."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-can-we-bring-alcohol",
+          "name": "Can we bring alcohol?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, you're welcome to bring your own drinks."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-is-this-a-private-cruise",
+          "name": "Is this a private cruise?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, all cruises are private for your group."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-where-do-we-depart-from",
+          "name": "Where do we depart from?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All cruises depart from the Hilton Marina in Fort Lauderdale."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-what-happens-if-the-weather-is-bad",
+          "name": "What happens if the weather is bad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "If weather conditions are unsafe, you'll be able to reschedule your cruise."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://tikitacocruises.com/faq#question-are-pets-allowed",
+          "name": "Are pets allowed?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Well-behaved dogs are welcome. Please bring a leash and clean up after your pet. There is a $25 pet cleaning fee. Let us know in advance so we can prepare the boat accordingly."
+          }
+        }
+      ]
     },
     {
-      "@type": "Question",
-      "name": "What does a 2-hour cruise cost?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "2-hour morning and sunset cruises are $60 per person with a 6-person minimum."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What are the start times?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "4-hour cruises start at 10:00 AM or 2:00 PM. 2-hour cruises run from 8:00\u201310:00 AM and 6:00\u20138:00 PM."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What should we bring?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Bring drinks, snacks, sunscreen, towels, and anything you'd like for your time on the water."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can we bring alcohol?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, you're welcome to bring your own drinks."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is this a private cruise?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes, all cruises are private for your group."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Where do we depart from?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "All cruises depart from the Hilton Marina in Fort Lauderdale."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What happens if the weather is bad?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "If weather conditions are unsafe, you'll be able to reschedule your cruise."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Are pets allowed?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Well-behaved dogs are welcome! Please bring a leash and clean up after your pet. There is a $25 pet cleaning fee. Let us know in advance so we can prepare the boat accordingly."
-      }
+      "@type": "BreadcrumbList",
+      "@id": "https://tikitacocruises.com/faq#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "FAQ",
+          "item": "https://tikitacocruises.com/faq"
+        }
+      ]
     }
   ]
 };
