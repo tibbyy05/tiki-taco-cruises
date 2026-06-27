@@ -77,7 +77,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Quick Links</h3>
+            <p className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Quick Links</p>
             <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
@@ -134,7 +134,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Contact Info</h3>
+            <p className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Contact Info</p>
             <ul className="space-y-3 sm:space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-coral flex-shrink-0 mt-1" />
@@ -160,7 +160,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Business Hours</h3>
+            <p className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Business Hours</p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3">
                 <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-coral flex-shrink-0 mt-1" />
