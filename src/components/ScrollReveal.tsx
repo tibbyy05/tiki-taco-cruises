@@ -8,16 +8,24 @@ interface ScrollRevealProps {
   direction?: RevealDirection;
   delay?: number;
   className?: string;
+  /**
+   * Fraction of the element that must be visible to trigger the reveal.
+   * Use 'some' for sections taller than the viewport (e.g. the mobile
+   * gallery, ~4x screen height) — a fractional threshold can never be met
+   * there and the content stays invisible.
+   */
+  amount?: number | 'some' | 'all';
 }
 
 export default function ScrollReveal({
   children,
   direction = 'up',
   delay = 0,
-  className
+  className,
+  amount = 0.2
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isInView = useInView(ref, { once: true, amount });
 
   const initialOffset = () => {
     switch (direction) {

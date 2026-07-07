@@ -283,7 +283,7 @@ export default function Home() {
         </div>
       </section>
 
-      <ScrollReveal>
+      <ScrollReveal amount="some">
         <Gallery />
       </ScrollReveal>
       <Features />
