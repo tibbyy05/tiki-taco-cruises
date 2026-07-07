@@ -32,6 +32,16 @@ export default function Navigation() {
     if (!isMobileMenuOpen) setIsMobileCruisesOpen(false);
   }, [isMobileMenuOpen]);
 
+  // Lock background scrolling while the mobile menu overlay is open.
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [isMobileMenuOpen]);
+
   const navLinks = [
     { href: isHomePage ? '#home' : '/#home', label: 'Home', isHash: true },
     { href: '/cruise-destinations/', label: 'Cruises', isHash: false },
@@ -101,18 +111,17 @@ export default function Navigation() {
     window.location.href = '/#booking';
   };
 
-  const navBackground = !isHomePage || isScrolled
-    ? 'bg-white/95 shadow-md'
-    : 'bg-transparent';
+  const isSolid = !isHomePage || isScrolled || isMobileMenuOpen;
+  const navBackground = isSolid ? 'bg-white/95 shadow-md' : 'bg-transparent';
   const navPadding = !isHomePage || isScrolled ? 'py-[0.45rem]' : 'py-[0.6rem]';
-  const navTextColor = !isHomePage || isScrolled ? 'text-ocean' : 'text-white';
+  const navTextColor = isSolid ? 'text-ocean' : 'text-white';
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBackground}`}
     >
       {/* July Special banner */}
-      <div className="bg-coral text-white text-center text-xs sm:text-sm font-semibold tracking-wide py-1.5 px-4">
+      <div className="relative z-50 bg-coral text-white text-center text-xs sm:text-sm font-semibold tracking-wide py-1.5 px-4">
         <svg
           viewBox="0 0 1900 1000"
           className="inline-block h-[0.95em] w-auto align-[-0.1em] mr-2 rounded-[1px] shadow-sm"
@@ -151,7 +160,7 @@ export default function Navigation() {
           Call (954) 764-4344
         </a>
       </div>
-      <div className={`w-full px-3 lg:px-6 ${navPadding}`}>
+      <div className={`relative z-50 w-full px-3 lg:px-6 ${navPadding} ${isMobileMenuOpen ? 'bg-white' : ''}`}>
         <div className="flex items-center justify-between gap-4">
           <a
             href="#home"

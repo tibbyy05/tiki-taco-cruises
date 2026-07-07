@@ -173,14 +173,14 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/20 pt-6 sm:pt-8 pb-24">
-          <div className="flex items-center text-xs sm:text-sm">
-            <div className="flex-1">
+        <div className="border-t border-white/20 pt-6 sm:pt-8 pb-24 md:pb-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 text-xs sm:text-sm text-center md:text-left">
+            <div className="md:flex-1 order-3 md:order-1">
               <p className="text-white/60">
                 {currentYear} Tiki Taco. All rights reserved.
               </p>
             </div>
-            <p id="footer-bottom" className="text-white/40 text-center">
+            <p id="footer-bottom" className="text-white/40 text-center order-2">
               Website powered by{' '}
               <a
                 href="https://ai-genda.com"
@@ -191,10 +191,10 @@ export default function Footer() {
                 ai-genda.com
               </a>
             </p>
-            <div className="flex-1 flex justify-end gap-4 sm:gap-6 text-white/60">
-              <a href="#" className="text-teal hover:text-coral transition-colors">Privacy Policy</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors">Terms of Service</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors">Cancellation Policy</a>
+            <div className="md:flex-1 flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 sm:gap-x-6 text-white/60 order-1 md:order-3">
+              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Privacy Policy</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Terms of Service</a>
+              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Cancellation Policy</a>
             </div>
           </div>
         </div>
