@@ -81,7 +81,7 @@ export default function Footer() {
             <ul className="space-y-2 sm:space-y-3">
               <li>
                 <Link
-                  to="/cruise-destinations"
+                  to="/cruise-destinations/"
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Popular Cruises
@@ -89,7 +89,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/gallery"
+                  to="/gallery/"
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Gallery
@@ -97,9 +97,9 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/faq"
+                  to="/faq/"
                   onClick={() => {
-                    if (location.pathname === '/faq') {
+                    if (location.pathname === '/faq/') {
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                   }}
@@ -110,7 +110,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/contact-us"
+                  to="/contact-us/"
                   className="text-teal hover:text-coral transition-colors text-sm sm:text-base block py-1 min-h-[44px] flex items-center"
                 >
                   Contact
@@ -146,7 +146,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-coral flex-shrink-0" />
-                <a href="tel:+19547644344" className="text-teal hover:text-coral transition-colors text-sm sm:text-base min-h-[44px] flex items-center">
+                <a href="tel:+19547644344" suppressHydrationWarning className="text-teal hover:text-coral transition-colors text-sm sm:text-base min-h-[44px] flex items-center">
                   (954) 764-4344
                 </a>
               </li>

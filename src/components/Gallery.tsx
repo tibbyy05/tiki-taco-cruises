@@ -1,10 +1,57 @@
-import { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
-import { staticGalleryImages as galleryImages } from '../data/galleryImages';
+import { staticGalleryImages } from '../data/galleryImages';
+import { supabase, CLIENT_ID } from '../lib/supabase';
+
+interface GalleryMedia {
+  id: string;
+  src: string;
+  alt: string;
+  mediaType?: 'video';
+}
+
+const staticMedia: GalleryMedia[] = staticGalleryImages.map((img) => ({
+  id: `static-${img.id}`,
+  src: img.src,
+  alt: img.alt,
+  mediaType: img.mediaType,
+}));
+
+const HOMEPAGE_PHOTO_LIMIT = 12;
 
 export default function Gallery() {
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [galleryImages, setGalleryImages] = useState<GalleryMedia[]>(staticMedia);
+
+  useEffect(() => {
+    // Same source as the Gallery page (owner-managed via admin), so the
+    // homepage always reflects the latest uploads. Static images remain
+    // the prerendered fallback until data arrives (or if the table is empty).
+    const fetchLatest = async () => {
+      const { data } = await supabase
+        .from('gallery_photos')
+        .select('id, image_url, caption, display_order')
+        .eq('client_id', CLIENT_ID)
+        .order('display_order', { ascending: false })
+        .limit(HOMEPAGE_PHOTO_LIMIT);
+
+      if (data && data.length > 0) {
+        setGalleryImages(
+          data.map((item) => ({
+            id: item.id,
+            src: item.image_url,
+            alt: item.caption?.trim() || 'Tiki Taco cruise in Fort Lauderdale',
+            mediaType: /\.(mp4|mov|webm)$/i.test(item.image_url) ? ('video' as const) : undefined,
+          }))
+        );
+        setSelectedImage(null);
+      }
+    };
+
+    fetchLatest();
+  }, []);
 
   const openLightbox = (index: number) => {
     setSelectedImage(index);
@@ -71,6 +118,16 @@ export default function Gallery() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <Link
+            to="/gallery/"
+            className="bg-white/10 hover:bg-white/20 border border-white/30 text-white px-8 py-3.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+            data-gtm-id="learn-more"
+          >
+            View Full Gallery <ArrowRight className="w-5 h-5" />
+          </Link>
         </div>
       </div>
 

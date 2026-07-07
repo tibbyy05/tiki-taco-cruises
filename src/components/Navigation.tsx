@@ -3,12 +3,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 
 const cruisesSubmenu = [
-  { to: '/cruise-destinations', label: 'All Cruise Destinations', highlight: true },
-  { to: '/new-river-cruise', label: 'New River Historic Cruise' },
-  { to: '/north-bound-scenic-cruise', label: 'Northbound Sandbar & Scenic Cruise' },
-  { to: '/las-olas-boat-tour', label: 'Las Olas & Intracoastal Party Cruise' },
-  { to: '/intracoastal-waterway-corporate-cruise', label: 'Corporate & Private Event Cruise' },
-  { to: '/fort-lauderdale-sunset-cruise', label: '2-Hour Morning & Sunset Cruises' },
+  { to: '/cruise-destinations/', label: 'All Cruise Destinations', highlight: true },
+  { to: '/new-river-cruise/', label: 'New River Historic Cruise' },
+  { to: '/north-bound-scenic-cruise/', label: 'Northbound Sandbar & Scenic Cruise' },
+  { to: '/las-olas-boat-tour/', label: 'Las Olas & Intracoastal Party Cruise' },
+  { to: '/intracoastal-waterway-corporate-cruise/', label: 'Corporate & Private Event Cruise' },
+  { to: '/fort-lauderdale-sunset-cruise/', label: '2-Hour Morning & Sunset Cruises' },
 ];
 
 export default function Navigation() {
@@ -34,12 +34,12 @@ export default function Navigation() {
 
   const navLinks = [
     { href: isHomePage ? '#home' : '/#home', label: 'Home', isHash: true },
-    { href: '/cruise-destinations', label: 'Cruises', isHash: false },
-    { href: '/gallery', label: 'Gallery', isHash: false },
-    { href: '/blog', label: 'Blog', isHash: false },
+    { href: '/cruise-destinations/', label: 'Cruises', isHash: false },
+    { href: '/gallery/', label: 'Gallery', isHash: false },
+    { href: '/blog/', label: 'Blog', isHash: false },
     { href: isHomePage ? '#features' : '/#features', label: 'Amenities', isHash: true },
-    { href: '/faq', label: 'FAQ', isHash: false },
-    { href: '/contact-us', label: 'Contact', isHash: false }
+    { href: '/faq/', label: 'FAQ', isHash: false },
+    { href: '/contact-us/', label: 'Contact', isHash: false }
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, isHash: boolean) => {
@@ -102,15 +102,56 @@ export default function Navigation() {
   };
 
   const navBackground = !isHomePage || isScrolled
-    ? 'bg-white/95 shadow-md py-[0.45rem]'
-    : 'bg-transparent py-[0.6rem]';
+    ? 'bg-white/95 shadow-md'
+    : 'bg-transparent';
+  const navPadding = !isHomePage || isScrolled ? 'py-[0.45rem]' : 'py-[0.6rem]';
   const navTextColor = !isHomePage || isScrolled ? 'text-ocean' : 'text-white';
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBackground}`}
     >
-      <div className="w-full px-3 lg:px-6">
+      {/* July Special banner */}
+      <div className="bg-coral text-white text-center text-xs sm:text-sm font-semibold tracking-wide py-1.5 px-4">
+        <svg
+          viewBox="0 0 1900 1000"
+          className="inline-block h-[0.95em] w-auto align-[-0.1em] mr-2 rounded-[1px] shadow-sm"
+          aria-hidden="true"
+        >
+          <defs>
+            <polygon id="us-star" points="0,-30 6.7,-9.3 28.5,-9.3 10.9,3.5 17.6,24.3 0,11.5 -17.6,24.3 -10.9,3.5 -28.5,-9.3 -6.7,-9.3" />
+            <g id="us-row6">
+              <use href="#us-star" x="63.3" /><use href="#us-star" x="190" /><use href="#us-star" x="316.7" /><use href="#us-star" x="443.3" /><use href="#us-star" x="570" /><use href="#us-star" x="696.7" />
+            </g>
+            <g id="us-row5">
+              <use href="#us-star" x="126.7" /><use href="#us-star" x="253.3" /><use href="#us-star" x="380" /><use href="#us-star" x="506.7" /><use href="#us-star" x="633.3" />
+            </g>
+          </defs>
+          <rect width="1900" height="1000" fill="#B22234" />
+          <path
+            d="M0,115.4H1900 M0,269.2H1900 M0,423.1H1900 M0,576.9H1900 M0,730.8H1900 M0,884.6H1900"
+            stroke="#FFFFFF"
+            strokeWidth="76.9"
+          />
+          <rect width="760" height="538.5" fill="#3C3B6E" />
+          <g fill="#FFFFFF">
+            <use href="#us-row6" y="53.8" />
+            <use href="#us-row5" y="107.7" />
+            <use href="#us-row6" y="161.5" />
+            <use href="#us-row5" y="215.4" />
+            <use href="#us-row6" y="269.2" />
+            <use href="#us-row5" y="323.1" />
+            <use href="#us-row6" y="376.9" />
+            <use href="#us-row5" y="430.8" />
+            <use href="#us-row6" y="484.6" />
+          </g>
+        </svg>
+        Celebrate 250 Years of Freedom — July Special: $250/hour for up to 15 guests ·{' '}
+        <a href="tel:+19547644344" suppressHydrationWarning className="underline underline-offset-2 hover:text-white/80 transition-colors" data-gtm-id="call-to-book">
+          Call (954) 764-4344
+        </a>
+      </div>
+      <div className={`w-full px-3 lg:px-6 ${navPadding}`}>
         <div className="flex items-center justify-between gap-4">
           <a
             href="#home"
@@ -132,7 +173,7 @@ export default function Navigation() {
                 return (
                   <div key={link.href} className="relative group">
                     <Link
-                      to="/cruise-destinations"
+                      to="/cruise-destinations/"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`font-medium transition-colors duration-300 hover:text-coral inline-flex items-center gap-1 ${navTextColor}`}
                       aria-haspopup="true"
@@ -181,7 +222,7 @@ export default function Navigation() {
 
           <div className="hidden lg:flex items-center gap-5 flex-shrink-0 text-[1.155rem]">
             <a
-              href="tel:+19547644344"
+              href="tel:+19547644344" suppressHydrationWarning
               className={`hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
             >
               (954) 764-4344
@@ -208,7 +249,7 @@ export default function Navigation() {
 
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 h-[100svh] z-40 bg-white overflow-y-auto">
-          <div className="pt-20 pb-4 text-[1.155rem]">
+          <div className="pt-28 pb-4 text-[1.155rem]">
             {navLinks.map((link) => {
               if (link.label === 'Cruises') {
                 return (

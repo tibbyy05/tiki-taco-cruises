@@ -24,40 +24,40 @@ const jsonLd = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#webpage",
-      "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#webpage",
+      "url": "https://tikitacocruises.com/north-bound-scenic-cruise/",
       "name": "Northbound Scenic Cruise in Fort Lauderdale",
       "description": "A 4-hour private Fort Lauderdale tiki cruise heading north along the Intracoastal Waterway with scenic views and an optional sandbar stop.",
-      "about": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" }
+      "about": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#service" }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#breadcrumb",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
-        { "@type": "ListItem", "position": 3, "name": "Northbound Scenic Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/north-bound-scenic-cruise" }
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
+        { "@type": "ListItem", "position": 3, "name": "Northbound Scenic Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/north-bound-scenic-cruise/" }
       ]
     },
     {
       "@type": "Service",
-      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service",
+      "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#service",
       "name": "Northbound Scenic Cruise in Fort Lauderdale",
       "serviceType": "Private tiki boat cruise",
       "category": "Boat tour",
-      "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#webpage" },
+      "url": "https://tikitacocruises.com/north-bound-scenic-cruise/",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#webpage" },
       "description": "Head north along the Intracoastal for a mix of sightseeing, swimming, relaxing, and an optional Fort Lauderdale sandbar stop.",
       "provider": { "@id": "https://tikitacocruises.com/#business" },
       "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
       "offers": {
         "@type": "Offer",
-        "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#offer",
-        "url": "https://tikitacocruises.com/north-bound-scenic-cruise",
+        "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#offer",
+        "url": "https://tikitacocruises.com/north-bound-scenic-cruise/",
         "price": "1140",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise#service" },
+        "itemOffered": { "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#service" },
         "priceSpecification": [
           { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
           { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
@@ -182,13 +182,13 @@ export default function NorthBoundScenicCruise() {
       relatedRoutes={[
         {
           name: 'New River Historic Cruise',
-          path: '/new-river-cruise',
+          path: '/new-river-cruise/',
           description: 'A relaxed, scenic cruise through the heart of Fort Lauderdale along the New River.',
           image: '/Night_Intracoastal2.jpg',
         },
         {
           name: 'Las Olas & Intracoastal Party Cruise',
-          path: '/las-olas-boat-tour',
+          path: '/las-olas-boat-tour/',
           description: 'Iconic Las Olas views with a lively, social cruise experience.',
           image: '/Night_Intracoastal2.jpg',
         },

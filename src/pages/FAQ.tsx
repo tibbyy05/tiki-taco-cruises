@@ -84,8 +84,8 @@ const faqSchema = {
     },
     {
       "@type": "FAQPage",
-      "@id": "https://tikitacocruises.com/faq#webpage",
-      "url": "https://tikitacocruises.com/faq",
+      "@id": "https://tikitacocruises.com/faq/#webpage",
+      "url": "https://tikitacocruises.com/faq/",
       "name": "Fort Lauderdale Tiki Cruise FAQs",
       "headline": "Fort Lauderdale Tiki Cruise FAQs",
       "description": "Frequently asked questions about Tiki Taco Cruises, including cruise duration, pricing, start times, departure location, weather policy, pets, alcohol, and what to bring.",
@@ -101,7 +101,7 @@ const faqSchema = {
       "mainEntity": [
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-how-long-are-the-cruises",
+          "@id": "https://tikitacocruises.com/faq/#question-how-long-are-the-cruises",
           "name": "How long are the cruises?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -110,7 +110,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-what-does-a-4-hour-cruise-cost",
+          "@id": "https://tikitacocruises.com/faq/#question-what-does-a-4-hour-cruise-cost",
           "name": "What does a 4-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -119,7 +119,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-what-does-a-2-hour-cruise-cost",
+          "@id": "https://tikitacocruises.com/faq/#question-what-does-a-2-hour-cruise-cost",
           "name": "What does a 2-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -128,7 +128,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-what-are-the-start-times",
+          "@id": "https://tikitacocruises.com/faq/#question-what-are-the-start-times",
           "name": "What are the start times?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -137,7 +137,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-what-should-we-bring",
+          "@id": "https://tikitacocruises.com/faq/#question-what-should-we-bring",
           "name": "What should we bring?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -146,7 +146,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-can-we-bring-alcohol",
+          "@id": "https://tikitacocruises.com/faq/#question-can-we-bring-alcohol",
           "name": "Can we bring alcohol?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -155,7 +155,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-is-this-a-private-cruise",
+          "@id": "https://tikitacocruises.com/faq/#question-is-this-a-private-cruise",
           "name": "Is this a private cruise?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -164,7 +164,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-where-do-we-depart-from",
+          "@id": "https://tikitacocruises.com/faq/#question-where-do-we-depart-from",
           "name": "Where do we depart from?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -173,7 +173,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-what-happens-if-the-weather-is-bad",
+          "@id": "https://tikitacocruises.com/faq/#question-what-happens-if-the-weather-is-bad",
           "name": "What happens if the weather is bad?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -182,7 +182,7 @@ const faqSchema = {
         },
         {
           "@type": "Question",
-          "@id": "https://tikitacocruises.com/faq#question-are-pets-allowed",
+          "@id": "https://tikitacocruises.com/faq/#question-are-pets-allowed",
           "name": "Are pets allowed?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -193,7 +193,7 @@ const faqSchema = {
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/faq#breadcrumb",
+      "@id": "https://tikitacocruises.com/faq/#breadcrumb",
       "itemListElement": [
         {
           "@type": "ListItem",
@@ -205,7 +205,7 @@ const faqSchema = {
           "@type": "ListItem",
           "position": 2,
           "name": "FAQ",
-          "item": "https://tikitacocruises.com/faq"
+          "item": "https://tikitacocruises.com/faq/"
         }
       ]
     }

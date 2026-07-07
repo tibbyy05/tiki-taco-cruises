@@ -24,40 +24,40 @@ const jsonLd = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://tikitacocruises.com/las-olas-boat-tour#webpage",
-      "url": "https://tikitacocruises.com/las-olas-boat-tour",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour/#webpage",
+      "url": "https://tikitacocruises.com/las-olas-boat-tour/",
       "name": "Las Olas & Intracoastal Party Cruise",
       "description": "A 4-hour private Fort Lauderdale party cruise with Las Olas views, Intracoastal sightseeing, music, drinks, and group celebration space.",
-      "about": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" }
+      "about": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/las-olas-boat-tour#breadcrumb",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
-        { "@type": "ListItem", "position": 3, "name": "Las Olas & Intracoastal Party Cruise", "item": "https://tikitacocruises.com/las-olas-boat-tour" }
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
+        { "@type": "ListItem", "position": 3, "name": "Las Olas & Intracoastal Party Cruise", "item": "https://tikitacocruises.com/las-olas-boat-tour/" }
       ]
     },
     {
       "@type": "Service",
-      "@id": "https://tikitacocruises.com/las-olas-boat-tour#service",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service",
       "name": "Las Olas & Intracoastal Party Cruise",
       "serviceType": "Private tiki party cruise",
       "category": "Boat tour",
-      "url": "https://tikitacocruises.com/las-olas-boat-tour",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#webpage" },
+      "url": "https://tikitacocruises.com/las-olas-boat-tour/",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#webpage" },
       "description": "A private Las Olas and Intracoastal party cruise in Fort Lauderdale designed for bachelorette parties, birthdays, weekend groups, and social celebrations.",
       "provider": { "@id": "https://tikitacocruises.com/#business" },
       "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
       "offers": {
         "@type": "Offer",
-        "@id": "https://tikitacocruises.com/las-olas-boat-tour#offer",
-        "url": "https://tikitacocruises.com/las-olas-boat-tour",
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour/#offer",
+        "url": "https://tikitacocruises.com/las-olas-boat-tour/",
         "price": "1140",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/las-olas-boat-tour#service" },
+        "itemOffered": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" },
         "priceSpecification": [
           { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
           { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
@@ -182,13 +182,13 @@ export default function LasOlasBoatTour() {
       relatedRoutes={[
         {
           name: 'Northbound Sandbar & Scenic Cruise',
-          path: '/north-bound-scenic-cruise',
+          path: '/north-bound-scenic-cruise/',
           description: 'Head north along the Intracoastal for a mix of sightseeing and sandbar fun.',
           image: '/Sandbar.png',
         },
         {
           name: 'Corporate & Private Event Cruise',
-          path: '/intracoastal-waterway-corporate-cruise',
+          path: '/intracoastal-waterway-corporate-cruise/',
           description: 'A private, customizable cruise for team outings and client events.',
           image: '/Night_Intracoastal2.jpg',
         },

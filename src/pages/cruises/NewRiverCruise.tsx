@@ -24,37 +24,37 @@ const jsonLd = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://tikitacocruises.com/new-river-cruise#webpage",
-      "url": "https://tikitacocruises.com/new-river-cruise",
+      "@id": "https://tikitacocruises.com/new-river-cruise/#webpage",
+      "url": "https://tikitacocruises.com/new-river-cruise/",
       "name": "New River Cruise in Fort Lauderdale",
       "description": "A 4-hour private New River tiki cruise in Fort Lauderdale with historic downtown views, waterfront homes, local landmarks, and scenic cruising.",
       "isPartOf": {
         "@id": "https://tikitacocruises.com/#website"
       },
       "about": {
-        "@id": "https://tikitacocruises.com/new-river-cruise#service"
+        "@id": "https://tikitacocruises.com/new-river-cruise/#service"
       },
       "mainEntity": {
-        "@id": "https://tikitacocruises.com/new-river-cruise#service"
+        "@id": "https://tikitacocruises.com/new-river-cruise/#service"
       }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/new-river-cruise#breadcrumb",
+      "@id": "https://tikitacocruises.com/new-river-cruise/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
-        { "@type": "ListItem", "position": 3, "name": "New River Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/new-river-cruise" }
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
+        { "@type": "ListItem", "position": 3, "name": "New River Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/new-river-cruise/" }
       ]
     },
     {
       "@type": "Service",
-      "@id": "https://tikitacocruises.com/new-river-cruise#service",
+      "@id": "https://tikitacocruises.com/new-river-cruise/#service",
       "name": "New River Cruise in Fort Lauderdale",
       "serviceType": "Private tiki boat cruise",
       "category": "Boat tour",
-      "url": "https://tikitacocruises.com/new-river-cruise",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/new-river-cruise#webpage" },
+      "url": "https://tikitacocruises.com/new-river-cruise/",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/new-river-cruise/#webpage" },
       "description": "Cruise through downtown Fort Lauderdale along the New River, passing historic landmarks, waterfront homes, yachts, and iconic city views.",
       "provider": { "@id": "https://tikitacocruises.com/#business" },
       "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
@@ -74,11 +74,11 @@ const jsonLd = {
       ],
       "offers": {
         "@type": "Offer",
-        "@id": "https://tikitacocruises.com/new-river-cruise#offer",
-        "url": "https://tikitacocruises.com/new-river-cruise",
+        "@id": "https://tikitacocruises.com/new-river-cruise/#offer",
+        "url": "https://tikitacocruises.com/new-river-cruise/",
         "price": "1140",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/new-river-cruise#service" },
+        "itemOffered": { "@id": "https://tikitacocruises.com/new-river-cruise/#service" },
         "priceSpecification": [
           { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
           { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
@@ -203,13 +203,13 @@ export default function NewRiverCruise() {
       relatedRoutes={[
         {
           name: 'Northbound Sandbar & Scenic Cruise',
-          path: '/north-bound-scenic-cruise',
+          path: '/north-bound-scenic-cruise/',
           description: 'Head north along the Intracoastal for a mix of sightseeing and sandbar fun.',
           image: '/Sandbar.png',
         },
         {
           name: 'Las Olas & Intracoastal Party Cruise',
-          path: '/las-olas-boat-tour',
+          path: '/las-olas-boat-tour/',
           description: 'Iconic Las Olas views with a lively, social cruise experience.',
           image: '/Night_Intracoastal2.jpg',
         },

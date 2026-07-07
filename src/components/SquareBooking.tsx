@@ -63,10 +63,16 @@ const SquareBooking: React.FC = () => {
         </div>
         <h2>Book Your Fort Lauderdale Tiki Cruise</h2>
         <p>Reserve your private tiki cruise today and experience Fort Lauderdale from the water, perfect for groups, celebrations, and unforgettable days on the Intracoastal.</p>
-        <button className="booking-open-btn" onClick={openModal} data-gtm-id="open-booking-calendar">
-          Open Booking Calendar
-        </button>
-        <p className="booking-note">Secure booking powered by Square</p>
+        <a className="booking-open-btn" href="tel:+19547644344" suppressHydrationWarning data-gtm-id="call-to-book">
+          Call to Book — (954) 764-4344
+        </a>
+        <p className="booking-note">
+          or{' '}
+          <button className="booking-calendar-link" onClick={openModal} data-gtm-id="open-booking-calendar">
+            open the booking calendar
+          </button>{' '}
+          — secure booking powered by Square
+        </p>
       </div>
       {isOpen && createPortal(
         <div className="booking-modal" role="dialog" aria-modal="true">
@@ -135,6 +141,7 @@ const SquareBooking: React.FC = () => {
         }
 
         .booking-open-btn {
+          display: inline-block;
           background: #FF6B6B;
           color: white;
           padding: 14px 32px;
@@ -142,8 +149,24 @@ const SquareBooking: React.FC = () => {
           font-weight: 700;
           border: none;
           cursor: pointer;
+          text-decoration: none;
           transition: transform 0.3s, box-shadow 0.3s;
           box-shadow: 0 12px 30px rgba(255, 107, 107, 0.35);
+        }
+
+        .booking-calendar-link {
+          background: none;
+          border: none;
+          padding: 0;
+          font: inherit;
+          color: #1a365d;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+          cursor: pointer;
+        }
+
+        .booking-calendar-link:hover {
+          color: #FF6B6B;
         }
 
         .booking-open-btn:hover {

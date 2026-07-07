@@ -72,7 +72,7 @@ export default function BlogPost() {
                   This story may have been moved or unpublished.
                 </p>
                 <Link
-                  to="/blog"
+                  to="/blog/"
                   className="inline-flex bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105"
                 >
                   Browse all posts
@@ -115,7 +115,7 @@ export default function BlogPost() {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://tikitacocruises.com/blog/${post.slug}`,
+      '@id': `https://tikitacocruises.com/blog/${post.slug}/`,
     },
   };
 
@@ -133,7 +133,7 @@ export default function BlogPost() {
         <header className="bg-navy text-white pt-24 pb-10 sm:pt-40 sm:pb-16">
           <div className="max-w-3xl mx-auto px-4">
             <Link
-              to="/blog"
+              to="/blog/"
               className="inline-flex items-center text-teal hover:text-white text-sm font-semibold mb-5 sm:mb-6 -mx-2 px-2 py-2 transition-colors"
             >
               ← All posts
@@ -175,7 +175,7 @@ export default function BlogPost() {
               Browse our Fort Lauderdale cruise options and pick the one that fits your trip.
             </p>
             <Link
-              to="/cruise-destinations"
+              to="/cruise-destinations/"
               className="inline-flex bg-white text-coral px-6 py-3 rounded-full font-semibold hover:bg-sand transition-all duration-300 hover:scale-105"
               data-gtm-id="learn-more"
             >

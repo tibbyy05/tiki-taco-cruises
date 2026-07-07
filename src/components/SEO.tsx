@@ -26,7 +26,8 @@ const DEFAULT_OG_IMAGE = 'https://tikitacocruises.com/fort-lauderdale-hero.jpg';
 
 export default function SEO({ title, description, canonical, ogTitle, ogImage, noindex = false, jsonLd }: SEOProps) {
   const { pathname } = useLocation();
-  const url = canonical || `https://tikitacocruises.com${pathname}`;
+  const normalizedPath = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  const url = canonical || `https://tikitacocruises.com${normalizedPath}`;
   const image = ogImage || DEFAULT_OG_IMAGE;
   const socialTitle = ogTitle || title;
 

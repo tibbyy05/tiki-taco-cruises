@@ -72,31 +72,12 @@ export default function Hero() {
       </div>
 
       <div className="hero-content">
-        <span className="hero-badge">Fort Lauderdale’s Premier Tiki Cruise</span>
+        <span className="hero-badge">Made for Big Celebrations – Up to 18 Guests</span>
         <h1>Fort Lauderdale Tiki Cruise & Private Boat Tour</h1>
         <p>Experience Fort Lauderdale from the water with a private tiki cruise designed for relaxation, celebration, and unforgettable views.</p>
         <div className="hero-actions">
-          <button
-            type="button"
-            onClick={() => {
-              const bookingSection = document.getElementById('booking');
-              bookingSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              const modalOpener = (window as { openBookingModal?: () => void }).openBookingModal;
-              if (modalOpener) {
-                modalOpener();
-              } else {
-                window.location.hash = '';
-                window.location.hash = 'booking';
-              }
-            }}
-            className="hero-cta magnetic-btn"
-            data-magnetic
-            data-gtm-id="book-now"
-          >
-            Book Now
-          </button>
-          <a href="/cruise-destinations" className="hero-secondary magnetic-btn" data-magnetic>
-            Explore Destinations
+          <a href="/cruise-destinations/" className="hero-secondary magnetic-btn" data-magnetic>
+            View All Cruises
           </a>
         </div>
       </div>

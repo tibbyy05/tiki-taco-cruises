@@ -15,7 +15,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Clock, Users, Check, ArrowRight, ChevronRight, ChevronDown } from 'lucide-react';
+import { Clock, Users, Check, ArrowRight, ChevronRight, ChevronDown, Phone } from 'lucide-react';
 import SEO from './SEO';
 import Navigation from './Navigation';
 import Footer from './Footer';
@@ -99,7 +99,6 @@ export default function CruisePage({
   hero,
   pricing,
   highlights,
-  includedItems,
   itinerary,
   whatToExpect,
   sections,
@@ -152,11 +151,11 @@ export default function CruisePage({
               </div>
             </div>
             <a
-              href="/#booking"
-              className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px]"
-              data-gtm-id="book-now"
+              href="tel:+19547644344" suppressHydrationWarning
+              className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] inline-flex items-center gap-2"
+              data-gtm-id="call-to-book"
             >
-              Book Now
+              <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
             </a>
           </div>
         </div>
@@ -168,7 +167,7 @@ export default function CruisePage({
           <div className="flex items-center gap-2">
             <Link to="/" className="hover:text-coral transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link to="/cruise-destinations" className="hover:text-coral transition-colors">Cruises</Link>
+            <Link to="/cruise-destinations/" className="hover:text-coral transition-colors">Cruises</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-ocean">{hero.title}</span>
           </div>
@@ -260,6 +259,15 @@ export default function CruisePage({
                 {pricing.hourlyRate && (
                   <div className="text-ocean/60 text-sm mt-1">{pricing.hourlyRate}/hr</div>
                 )}
+              </div>
+              <div className="mt-6">
+                <a
+                  href="tel:+19547644344" suppressHydrationWarning
+                  className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+                  data-gtm-id="call-to-book"
+                >
+                  <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
+                </a>
               </div>
             </div>
           </div>
@@ -420,15 +428,15 @@ export default function CruisePage({
         </section>
       )}
 
-      {/* Sticky Book Now Button (Mobile) */}
+      {/* Sticky Call to Book Button (Mobile) */}
       {isScrolled && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl z-40 md:hidden p-4 border-t border-ocean/10">
           <a
-            href="/#booking"
-            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
-            data-gtm-id="book-now"
+            href="tel:+19547644344" suppressHydrationWarning
+            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center gap-2"
+            data-gtm-id="call-to-book"
           >
-            Book Now
+            <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
           </a>
         </div>
       )}

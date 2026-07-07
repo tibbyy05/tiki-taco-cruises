@@ -2,13 +2,30 @@
 # Tiki Taco Cruises — Netlify Redirects
 # ===================================================================
 
-# --- Phase 2: All cruise URL redirects active ---
-/destinations              /cruise-destinations          301
-/destinations/beach-coast-cruise /cruise-destinations    301
-/destinations/full-waterway-tour /cruise-destinations    301
-/destinations/las-olas-cruise    /las-olas-boat-tour     301
-/destinations/sandbar-party      /north-bound-scenic-cruise  301
-/destinations/intracoastal-tour  /intracoastal-waterway-corporate-cruise  301
+# --- Phase 2: Legacy cruise URL redirects (point directly at canonical trailing-slash URLs) ---
+/destinations                            /cruise-destinations/                       301
+/destinations/beach-coast-cruise         /cruise-destinations/                       301
+/destinations/full-waterway-tour         /cruise-destinations/                       301
+/destinations/las-olas-cruise            /las-olas-boat-tour/                        301
+/destinations/sandbar-party              /north-bound-scenic-cruise/                 301
+/destinations/intracoastal-tour          /intracoastal-waterway-corporate-cruise/    301
+
+# --- Force trailing slash on canonical page URLs ---
+# Without these, the SPA fallback below catches /blog and serves index.html (homepage) with 200.
+/cruise-destinations                     /cruise-destinations/                       301
+/faq                                     /faq/                                       301
+/contact-us                              /contact-us/                                301
+/gallery                                 /gallery/                                   301
+/blog                                    /blog/                                      301
+/new-river-cruise                        /new-river-cruise/                          301
+/north-bound-scenic-cruise               /north-bound-scenic-cruise/                 301
+/las-olas-boat-tour                      /las-olas-boat-tour/                        301
+/intracoastal-waterway-corporate-cruise  /intracoastal-waterway-corporate-cruise/    301
+/fort-lauderdale-sunset-cruise           /fort-lauderdale-sunset-cruise/             301
+
+# Blog post slugs. File-on-disk (/blog/<slug>/index.html) takes precedence, so this rule
+# only fires when a request comes in without the trailing slash.
+/blog/*                                  /blog/:splat/                               301
 
 # --- SPA fallback (must be last) ---
 /*    /index.html   200

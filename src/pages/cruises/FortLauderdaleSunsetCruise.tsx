@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Clock, Users, Check, ChevronRight, ArrowRight, Sunrise, Sunset } from 'lucide-react';
+import { Clock, Check, ChevronRight, ArrowRight, Sunrise, Sunset, Phone } from 'lucide-react';
 import SEO from '../../components/SEO';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
@@ -30,30 +30,30 @@ const jsonLd = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#webpage",
-      "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise",
+      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#webpage",
+      "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
       "name": "Fort Lauderdale Sunset Cruise & Morning Cruise",
       "description": "A 2-hour Fort Lauderdale tiki cruise option available as a morning cruise or sunset cruise along the Intracoastal Waterway.",
-      "about": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#service" }
+      "about": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#breadcrumb",
+      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
-        { "@type": "ListItem", "position": 3, "name": "Fort Lauderdale Sunset Cruise & Morning Cruise", "item": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise" }
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
+        { "@type": "ListItem", "position": 3, "name": "Fort Lauderdale Sunset Cruise & Morning Cruise", "item": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/" }
       ]
     },
     {
       "@type": "Service",
-      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#service",
+      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service",
       "name": "Fort Lauderdale Sunset Cruise & Morning Cruise",
       "serviceType": "2-hour tiki boat cruise",
       "category": "Boat tour",
-      "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#webpage" },
+      "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#webpage" },
       "description": "A shorter 2-hour Fort Lauderdale tiki cruise available as a morning cruise or sunset cruise, ideal for sightseeing, skyline views, and a relaxed Intracoastal experience.",
       "provider": { "@id": "https://tikitacocruises.com/#business" },
       "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
@@ -75,11 +75,11 @@ const jsonLd = {
       ],
       "offers": {
         "@type": "Offer",
-        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#offer",
-        "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise",
+        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#offer",
+        "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
         "price": "60",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise#service" },
+        "itemOffered": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" },
         "eligibleQuantity": {
           "@type": "QuantitativeValue",
           "minValue": 6,
@@ -141,11 +141,11 @@ export default function FortLauderdaleSunsetCruise() {
               Looking for a shorter option? This 2-hour cruise gives you the full Fort Lauderdale experience, whether you're starting your day on the water or catching the sunset.
             </p>
             <a
-              href="/#booking"
-              className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px]"
-              data-gtm-id="book-now"
+              href="tel:+19547644344" suppressHydrationWarning
+              className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] inline-flex items-center gap-2"
+              data-gtm-id="call-to-book"
             >
-              Book Now
+              <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
             </a>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function FortLauderdaleSunsetCruise() {
           <div className="flex items-center gap-2">
             <Link to="/" className="hover:text-coral transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link to="/cruise-destinations" className="hover:text-coral transition-colors">Cruises</Link>
+            <Link to="/cruise-destinations/" className="hover:text-coral transition-colors">Cruises</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-ocean">Sunset & Morning Cruise</span>
           </div>
@@ -270,11 +270,11 @@ export default function FortLauderdaleSunsetCruise() {
             Ready to Book Your 2-Hour Cruise?
           </h2>
           <a
-            href="/#booking"
+            href="tel:+19547644344" suppressHydrationWarning
             className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] inline-flex items-center gap-2"
-            data-gtm-id="book-now"
+            data-gtm-id="call-to-book"
           >
-            Book Now <ArrowRight className="w-5 h-5" />
+            <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
           </a>
         </div>
       </section>
@@ -289,13 +289,13 @@ export default function FortLauderdaleSunsetCruise() {
             {[
               {
                 name: 'New River Historic Cruise',
-                path: '/new-river-cruise',
+                path: '/new-river-cruise/',
                 description: 'A 4-hour scenic cruise through downtown Fort Lauderdale along the New River.',
                 image: '/Night_Intracoastal2.jpg',
               },
               {
                 name: 'Northbound Sandbar & Scenic Cruise',
-                path: '/north-bound-scenic-cruise',
+                path: '/north-bound-scenic-cruise/',
                 description: 'Head north along the Intracoastal for sightseeing and sandbar fun.',
                 image: '/Sandbar.png',
               },
@@ -328,15 +328,15 @@ export default function FortLauderdaleSunsetCruise() {
         </div>
       </section>
 
-      {/* Sticky Book Now (Mobile) */}
+      {/* Sticky Call to Book (Mobile) */}
       {isScrolled && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl z-40 md:hidden p-4 border-t border-ocean/10">
           <a
-            href="/#booking"
-            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center"
-            data-gtm-id="book-now"
+            href="tel:+19547644344" suppressHydrationWarning
+            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center gap-2"
+            data-gtm-id="call-to-book"
           >
-            Book Now
+            <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
           </a>
         </div>
       )}

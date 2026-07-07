@@ -116,7 +116,7 @@ const Gallery: React.FC = () => {
             "@type": "ImageGallery",
             "name": "Tiki Taco Fort Lauderdale Pontoon Rental Gallery",
             "description": "Photo gallery showcasing Fort Lauderdale pontoon rental experiences",
-            "url": "https://tikitacocruises.com/gallery",
+            "url": "https://tikitacocruises.com/gallery/",
             "provider": {
               "@type": "LocalBusiness",
               "name": "Tiki Taco",

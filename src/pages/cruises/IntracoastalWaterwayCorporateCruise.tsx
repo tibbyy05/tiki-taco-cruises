@@ -24,30 +24,30 @@ const jsonLd = {
     },
     {
       "@type": "WebPage",
-      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#webpage",
-      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#webpage",
+      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
       "name": "Corporate Cruise in Fort Lauderdale",
       "description": "A 4-hour private corporate and event cruise in Fort Lauderdale for team outings, client events, and private group gatherings along the Intracoastal Waterway.",
-      "about": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" }
+      "about": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" },
+      "mainEntity": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#breadcrumb",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations" },
-        { "@type": "ListItem", "position": 3, "name": "Corporate Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise" }
+        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
+        { "@type": "ListItem", "position": 3, "name": "Corporate Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/" }
       ]
     },
     {
       "@type": "Service",
-      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service",
       "name": "Corporate Cruise in Fort Lauderdale",
       "serviceType": "Private corporate boat cruise",
       "category": "Corporate event boat tour",
-      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#webpage" },
+      "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
+      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#webpage" },
       "description": "A private, customizable Fort Lauderdale corporate cruise for team outings, client entertainment, and private group gatherings along the Intracoastal Waterway.",
       "provider": { "@id": "https://tikitacocruises.com/#business" },
       "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
@@ -57,11 +57,11 @@ const jsonLd = {
       },
       "offers": {
         "@type": "Offer",
-        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#offer",
-        "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise",
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#offer",
+        "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
         "price": "1140",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise#service" },
+        "itemOffered": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" },
         "priceSpecification": [
           { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private corporate cruise for up to 12 passengers." },
           { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
@@ -186,13 +186,13 @@ export default function IntracoastalWaterwayCorporateCruise() {
       relatedRoutes={[
         {
           name: 'New River Historic Cruise',
-          path: '/new-river-cruise',
+          path: '/new-river-cruise/',
           description: 'A relaxed, scenic cruise through the heart of Fort Lauderdale along the New River.',
           image: '/Night_Intracoastal2.jpg',
         },
         {
           name: 'Las Olas & Intracoastal Party Cruise',
-          path: '/las-olas-boat-tour',
+          path: '/las-olas-boat-tour/',
           description: 'Iconic Las Olas views with a lively, social cruise experience.',
           image: '/Night_Intracoastal2.jpg',
         },

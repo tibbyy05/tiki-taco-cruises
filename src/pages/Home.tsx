@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Award, Anchor, Shield, BadgeCheck, ArrowRight } from 'lucide-react';
+import { Award, Anchor, Shield, BadgeCheck, ArrowRight, Check } from 'lucide-react';
 import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Hero from '../components/Hero';
@@ -94,31 +94,31 @@ const localBusinessSchema = {
           "@type": "ListItem",
           "position": 1,
           "name": "New River Historic Cruise",
-          "url": "https://tikitacocruises.com/new-river-cruise"
+          "url": "https://tikitacocruises.com/new-river-cruise/"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Northbound Sandbar & Scenic Cruise",
-          "url": "https://tikitacocruises.com/north-bound-scenic-cruise"
+          "url": "https://tikitacocruises.com/north-bound-scenic-cruise/"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": "Las Olas & Intracoastal Party Cruise",
-          "url": "https://tikitacocruises.com/las-olas-boat-tour"
+          "url": "https://tikitacocruises.com/las-olas-boat-tour/"
         },
         {
           "@type": "ListItem",
           "position": 4,
           "name": "Corporate & Private Event Cruise",
-          "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise"
+          "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/"
         },
         {
           "@type": "ListItem",
           "position": 5,
           "name": "2-Hour Morning & Sunset Cruises",
-          "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise"
+          "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/"
         }
       ]
     }
@@ -135,21 +135,42 @@ const trustBadges = [
 const popularCruises = [
   {
     title: 'New River Historic Cruise',
-    subtext: 'Cruise through downtown Fort Lauderdale along the New River and Intracoastal, passing historic landmarks, waterfront homes, yachts, and iconic city views.',
-    link: '/new-river-cruise',
+    subtext: 'Cruise through downtown Fort Lauderdale with a touch of local history',
+    link: '/new-river-cruise/',
     image: '/Night_Intracoastal2.jpg',
+    bullets: [
+      'Historic downtown & New River landmarks',
+      'Waterfront homes, yachts & hidden canals',
+      'Calm, scenic cruising route',
+      'Max capacity: 18 people',
+      'Price starting at $1,140',
+    ],
   },
   {
     title: 'Northbound Sandbar & Scenic Cruise',
-    subtext: "Head north along the Intracoastal to one of Fort Lauderdale's popular sandbars for a scenic, swim-friendly stop, perfect for groups, parties, and laid-back celebrations.",
-    link: '/north-bound-scenic-cruise',
+    subtext: 'Swim, float, and relax at a Fort Lauderdale sandbar',
+    link: '/north-bound-scenic-cruise/',
     image: '/Sandbar.png',
+    bullets: [
+      'Popular Fort Lauderdale sandbar stop',
+      'Swimming, floating & relaxing',
+      'Scenic Intracoastal views',
+      'Max capacity: 18 people',
+      'Price starting at $1,140',
+    ],
   },
   {
     title: 'Intracoastal Scenic Day Cruise',
-    subtext: "Enjoy a relaxing ride along the Intracoastal Waterway with calm waters, panoramic views, and a classic Fort Lauderdale boating experience.",
-    link: '/intracoastal-waterway-corporate-cruise',
+    subtext: 'Calm waters and panoramic views on a classic Fort Lauderdale cruise',
+    link: '/intracoastal-waterway-corporate-cruise/',
     image: '/fort-lauderdale-hero.jpg',
+    bullets: [
+      'Relaxing Intracoastal Waterway ride',
+      'Panoramic skyline & waterfront views',
+      'Perfect for groups & celebrations',
+      'Max capacity: 18 people',
+      'Price starting at $1,140',
+    ],
   },
 ];
 
@@ -228,7 +249,15 @@ export default function Home() {
                   </div>
                   <div className="p-5 sm:p-6 flex flex-col flex-1">
                     <h3 className="text-xl sm:text-2xl font-bold text-ocean mb-2">{cruise.title}</h3>
-                    <p className="text-gray-700 text-sm sm:text-base mb-5 flex-1">{cruise.subtext}</p>
+                    <p className="text-ocean/70 mb-4 text-sm sm:text-base">{cruise.subtext}</p>
+                    <ul className="space-y-2 mb-6 flex-1">
+                      {cruise.bullets.map((bullet, bi) => (
+                        <li key={bi} className="flex items-start gap-2 text-ocean/80 text-sm sm:text-base">
+                          <Check className="w-4 h-4 text-coral flex-shrink-0 mt-1" />
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
                     <Link
                       to={cruise.link}
                       className="w-full bg-coral hover:bg-coral/90 text-white py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 text-base min-h-[44px] flex items-center justify-center gap-2"
@@ -240,6 +269,16 @@ export default function Home() {
                 </div>
               </ScrollReveal>
             ))}
+          </div>
+
+          <div className="text-center mt-10 sm:mt-12">
+            <Link
+              to="/cruise-destinations/"
+              className="bg-ocean hover:bg-ocean/90 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+              data-gtm-id="learn-more"
+            >
+              View All Cruises <ArrowRight className="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </section>

@@ -60,7 +60,7 @@ export default function ContactUs() {
                   <li className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
                     <a
-                      href="tel:+19547644344"
+                      href="tel:+19547644344" suppressHydrationWarning
                       className="text-gray-700 hover:text-coral transition-colors text-base sm:text-lg"
                     >
                       (954) 764-4344
@@ -116,10 +116,10 @@ export default function ContactUs() {
 
                 <a
                   href="/#booking"
-                  data-gtm-id="book-now"
+                  data-gtm-id="booking-calendar"
                   className="inline-flex items-center justify-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full text-base sm:text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] w-full sm:w-auto"
                 >
-                  Book Now
+                  Booking Calendar
                 </a>
               </div>
 

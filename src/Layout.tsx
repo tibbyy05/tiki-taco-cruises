@@ -3,7 +3,6 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import LoadingScreen from './components/LoadingScreen';
-import StickyBookingBar from './components/StickyBookingBar';
 import ScrollToTop from './components/ScrollToTop';
 
 function MagneticCursor() {
@@ -72,7 +71,6 @@ export default function Layout() {
           <Outlet />
         </div>
       </AnimatePresence>
-      <StickyBookingBar />
     </AuthProvider>
   );
 }

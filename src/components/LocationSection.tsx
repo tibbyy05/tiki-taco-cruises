@@ -29,7 +29,7 @@ export default function LocationSection() {
             </a>
             <p className="mb-4">
               <a
-                href="tel:+19547644344"
+                href="tel:+19547644344" suppressHydrationWarning
                 className="text-coral hover:text-coral/80 font-semibold text-base sm:text-lg transition-colors"
               >
                 (954) 764-4344

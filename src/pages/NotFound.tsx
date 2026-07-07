@@ -32,7 +32,7 @@ export default function NotFound() {
                 Back to Home
               </Link>
               <Link
-                to="/cruise-destinations"
+                to="/cruise-destinations/"
                 className="bg-ocean hover:bg-ocean/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 min-h-[44px] flex items-center justify-center"
               >
                 View Cruises

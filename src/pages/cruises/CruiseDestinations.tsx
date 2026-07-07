@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Check, ArrowRight, MapPin, Users, Clock, Compass } from 'lucide-react';
+import { Check, ArrowRight, MapPin, Users, Clock, Compass, Phone } from 'lucide-react';
 import SEO from '../../components/SEO';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
@@ -11,53 +11,69 @@ interface CruiseCard {
   path: string;
   subtext: string;
   bullets: string[];
+  duration: string;
+  capacity: string;
+  price: string;
 }
+
+const FOUR_HOUR_PRICING = {
+  duration: '4 Hours',
+  capacity: 'Up to 18 Guests',
+  price: '$1,140 for up to 12 guests · +$60 per extra guest',
+};
 
 const featuredCruises: CruiseCard[] = [
   {
     title: 'Las Olas & Intracoastal Party Cruise',
-    path: '/las-olas-boat-tour',
+    path: '/las-olas-boat-tour/',
     subtext: 'Luxury views with a social, high-energy vibe',
     bullets: ['Las Olas Boulevard views', 'Waterfront mansions & yachts', 'Perfect for parties & groups'],
+    ...FOUR_HOUR_PRICING,
   },
   {
     title: 'Northbound Sandbar & Scenic Cruise',
-    path: '/north-bound-scenic-cruise',
+    path: '/north-bound-scenic-cruise/',
     subtext: 'Swim, float, and relax at a Fort Lauderdale sandbar',
     bullets: ['Popular Fort Lauderdale sandbar stop', 'Swimming, floating & relaxing', 'Scenic Intracoastal views'],
+    ...FOUR_HOUR_PRICING,
   },
   {
     title: 'Corporate & Private Event Cruise',
-    path: '/intracoastal-waterway-corporate-cruise',
+    path: '/intracoastal-waterway-corporate-cruise/',
     subtext: 'A unique setting for team outings and client events',
     bullets: ['Private, customizable experience', 'Great for team building or hosting', 'Relaxed, upscale environment'],
+    ...FOUR_HOUR_PRICING,
   },
 ];
 
 const allCruises: CruiseCard[] = [
   {
     title: 'New River Historic Cruise',
-    path: '/new-river-cruise',
+    path: '/new-river-cruise/',
     subtext: 'Cruise through the heart of Fort Lauderdale along the New River, passing historic landmarks, downtown views, and waterfront homes. This route is ideal for those looking for a more relaxed, scenic experience with a touch of local history.',
     bullets: ['Historic downtown Fort Lauderdale views', 'Waterfront homes & hidden canals', 'Calm, scenic cruising route', 'Great for sightseeing & photos'],
+    ...FOUR_HOUR_PRICING,
   },
   {
     title: 'Northbound Sandbar & Scenic Cruise',
-    path: '/north-bound-scenic-cruise',
+    path: '/north-bound-scenic-cruise/',
     subtext: "Head north along the Intracoastal for a mix of sightseeing and fun. This cruise often includes a stop at one of Fort Lauderdale's popular sandbars, making it perfect for swimming, relaxing, and socializing.",
     bullets: ['Popular Fort Lauderdale sandbar stop', 'Swimming, floating & relaxing', 'Scenic Intracoastal views', 'Social, laid-back atmosphere'],
+    ...FOUR_HOUR_PRICING,
   },
   {
     title: 'Las Olas & Intracoastal Party Cruise',
-    path: '/las-olas-boat-tour',
+    path: '/las-olas-boat-tour/',
     subtext: 'Take in iconic Las Olas views while enjoying a lively, social cruise experience. This route is popular for celebrations, group outings, and anyone looking to combine sightseeing with a party atmosphere.',
     bullets: ['Las Olas Boulevard views', 'Luxury yachts & waterfront estates', 'Perfect for groups & celebrations', 'Music, drinks & social vibe'],
+    ...FOUR_HOUR_PRICING,
   },
   {
     title: 'Corporate & Private Event Cruise',
-    path: '/intracoastal-waterway-corporate-cruise',
+    path: '/intracoastal-waterway-corporate-cruise/',
     subtext: 'Host your next event on the water with a fully customizable cruise. Ideal for corporate outings, client entertainment, or private group gatherings.',
     bullets: ['Private, customizable experience', 'Great for team outings & events', 'Comfortable, upscale setting', 'Easy group planning'],
+    ...FOUR_HOUR_PRICING,
   },
 ];
 
@@ -89,6 +105,15 @@ function CruiseCardComponent({ cruise }: { cruise: CruiseCard }) {
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col h-full">
       <div className="p-6 sm:p-8 flex flex-col flex-1">
         <h3 className="text-xl sm:text-2xl font-bold text-ocean mb-2">{cruise.title}</h3>
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ocean/70 mb-2">
+          <span className="flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-coral" />{cruise.duration}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Users className="w-4 h-4 text-coral" />{cruise.capacity}
+          </span>
+        </div>
+        <p className="text-sm font-semibold text-ocean mb-3">{cruise.price}</p>
         <p className="text-ocean/70 mb-4 text-sm sm:text-base">{cruise.subtext}</p>
         <ul className="space-y-2 mb-6 flex-1">
           {cruise.bullets.map((bullet, i) => (
@@ -126,7 +151,7 @@ export default function CruiseDestinations() {
             "@type": "TouristAttraction",
             "name": "Fort Lauderdale Charter Cruise Destinations",
             "description": "Premium charter cruise destinations throughout Fort Lauderdale's waterways",
-            "url": "https://tikitacocruises.com/cruise-destinations",
+            "url": "https://tikitacocruises.com/cruise-destinations/",
             "provider": {
               "@type": "LocalBusiness",
               "name": "Tiki Taco",
@@ -224,7 +249,7 @@ export default function CruiseDestinations() {
                   ))}
                 </ul>
                 <Link
-                  to="/fort-lauderdale-sunset-cruise"
+                  to="/fort-lauderdale-sunset-cruise/"
                   className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
                   data-gtm-id="learn-more"
                 >
@@ -290,11 +315,11 @@ export default function CruiseDestinations() {
               If you're planning a relaxing cruise, a sandbar day, or a full-on celebration, there's a Fort Lauderdale cruise destination for you.
             </p>
             <a
-              href="/#booking"
+              href="tel:+19547644344" suppressHydrationWarning
               className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px] shadow-lg"
-              data-gtm-id="book-now"
+              data-gtm-id="call-to-book"
             >
-              Book Now <ArrowRight className="w-5 h-5" />
+              <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
             </a>
           </div>
         </section>
@@ -338,7 +363,7 @@ export default function CruiseDestinations() {
               Find answers to common questions about our Fort Lauderdale tiki cruises.
             </p>
             <Link
-              to="/faq"
+              to="/faq/"
               className="bg-ocean hover:bg-ocean/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
             >
               View All FAQs <ArrowRight className="w-5 h-5" />

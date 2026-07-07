@@ -58,7 +58,7 @@ export default function BlogList() {
                 We're putting the finishing touches on our first stories. In the meantime, come see Fort Lauderdale from the water.
               </p>
               <Link
-                to="/cruise-destinations"
+                to="/cruise-destinations/"
                 className="inline-flex bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105"
                 data-gtm-id="learn-more"
               >
@@ -70,7 +70,7 @@ export default function BlogList() {
               {posts.map((post, i) => (
                 <Link
                   key={post.id}
-                  to={`/blog/${post.slug}`}
+                  to={`/blog/${post.slug}/`}
                   className="group bg-white rounded-2xl shadow-lg border border-navy/10 overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
                   data-gtm-id="learn-more"
                 >
