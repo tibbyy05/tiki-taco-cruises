@@ -84,10 +84,9 @@ export default function NorthBoundScenicCruise() {
       }}
       pricing={{
         duration: '4 Hours',
-        price: '$1,140',
+        price: '$285/hour',
         basePassengers: 'Up to 12 Passengers',
         additionalGuestPrice: '$60',
-        hourlyRate: '$285',
         startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[

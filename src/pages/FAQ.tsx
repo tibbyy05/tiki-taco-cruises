@@ -114,7 +114,7 @@ const faqSchema = {
           "name": "What does a 4-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "4-hour cruises are $1,140 for up to 12 passengers. Additional guests are $60 per person."
+            "text": "4-hour cruises are $285 per hour for up to 12 passengers. Additional guests are $60 per person."
           }
         },
         {
@@ -219,7 +219,7 @@ const faqs = [
   },
   {
     question: 'What does a 4-hour cruise cost?',
-    answer: '4-hour cruises are $1,140 for up to 12 passengers. Additional guests are $60 per person.',
+    answer: '4-hour cruises are $285 per hour for up to 12 passengers. Additional guests are $60 per person.',
   },
   {
     question: 'What does a 2-hour cruise cost?',

@@ -19,7 +19,7 @@ interface CruiseCard {
 const FOUR_HOUR_PRICING = {
   duration: '4 Hours',
   capacity: 'Up to 18 Guests',
-  price: '$1,140 for up to 12 guests · +$60 per extra guest',
+  price: '$285/hour for up to 12 guests · +$60 per extra guest',
 };
 
 const featuredCruises: CruiseCard[] = [
