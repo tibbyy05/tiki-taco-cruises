@@ -63,7 +63,7 @@ export default function BlogPost() {
       <>
         <Navigation />
         <SEO title="Loading post… | Tiki Taco Cruises" description="Loading blog post." noindex={true} />
-        <div className="min-h-screen bg-sand flex items-center justify-center px-4 pt-32 pb-16 text-center">
+        <div className="min-h-screen bg-sand flex items-center justify-center px-4 pt-40 pb-16 text-center">
           <div className="max-w-md">
             {fallbackState === 'missing' ? (
               <>
@@ -130,7 +130,7 @@ export default function BlogPost() {
       />
 
       <article className="min-h-screen bg-sand">
-        <header className="bg-navy text-white pt-24 pb-10 sm:pt-40 sm:pb-16">
+        <header className="bg-navy text-white pt-36 pb-10 sm:pt-40 md:pt-44 lg:pt-40 sm:pb-16">
           <div className="max-w-3xl mx-auto px-4">
             <Link
               to="/blog/"

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import LoadingScreen from './components/LoadingScreen';
 import ScrollToTop from './components/ScrollToTop';
+import StickyCallBar from './components/StickyCallBar';
 
 function MagneticCursor() {
   const location = useLocation();
@@ -71,6 +72,7 @@ export default function Layout() {
           <Outlet />
         </div>
       </AnimatePresence>
+      <StickyCallBar />
     </AuthProvider>
   );
 }

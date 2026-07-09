@@ -39,7 +39,7 @@ export default function ContactUs() {
       <div className="min-h-screen">
         <Navigation />
 
-        <section className="pt-24 sm:pt-28 md:pt-32 pb-10 sm:pb-12 md:pb-16 px-4 bg-sand">
+        <section className="pt-36 sm:pt-40 md:pt-44 lg:pt-40 pb-10 sm:pb-12 md:pb-16 px-4 bg-sand">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-4 sm:mb-6">
               Contact Us

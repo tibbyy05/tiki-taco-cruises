@@ -13,7 +13,7 @@
  *     relatedRoutes={[{ name: "...", path: "/...", description: "..." }]}
  *   />
  */
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Clock, Users, Check, ArrowRight, ChevronRight, ChevronDown, Phone } from 'lucide-react';
 import SEO from './SEO';
@@ -109,14 +109,7 @@ export default function CruisePage({
   relatedRoutes,
 }: CruisePageProps) {
   const navigate = useNavigate();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 300);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
     <div className="min-h-screen">
@@ -134,7 +127,7 @@ export default function CruisePage({
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         </div>
-        <div className="relative w-full flex items-center justify-center px-4 sm:px-6 pt-32 sm:pt-36 md:pt-28 pb-12 md:pb-0">
+        <div className="relative w-full flex items-center justify-center px-4 sm:px-6 pt-36 sm:pt-40 md:pt-44 lg:pt-36 pb-12 md:pb-0">
           <div className="text-center text-white max-w-4xl mx-auto w-full">
             <div className="inline-flex items-center gap-2 bg-coral/90 backdrop-blur-sm px-4 py-2 rounded-full mb-4 text-sm sm:text-base">
               <Clock className="w-4 h-4" />
@@ -426,19 +419,6 @@ export default function CruisePage({
             </div>
           </div>
         </section>
-      )}
-
-      {/* Sticky Call to Book Button (Mobile) */}
-      {isScrolled && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white shadow-2xl z-40 md:hidden p-4 border-t border-ocean/10">
-          <a
-            href="tel:+19547644344" suppressHydrationWarning
-            className="w-full bg-coral hover:bg-coral/90 text-white py-4 rounded-xl font-semibold text-lg transition-all duration-300 min-h-[44px] flex items-center justify-center gap-2"
-            data-gtm-id="call-to-book"
-          >
-            <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
-          </a>
-        </div>
       )}
 
       <Footer />

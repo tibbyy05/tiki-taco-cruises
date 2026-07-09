@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Phone } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 export default function Hero() {
@@ -54,6 +54,16 @@ export default function Hero() {
     >
       {/* Fullscreen Video Background */}
       <div className="absolute inset-0 hero-video-container">
+        {/* Static poster rendered as a real <img> so the page always has an
+            LCP candidate — a bare autoplay video emits none in headless
+            Chrome, which made Lighthouse/PageSpeed fail with NO_FCP. The
+            video paints over it once frames decode. */}
+        <img
+          src="/hero-poster.jpg"
+          alt="Aerial view of the Fort Lauderdale Intracoastal Waterway"
+          className="hero-poster"
+          decoding="async"
+        />
         <video
           ref={videoRef}
           className="hero-video"
@@ -62,7 +72,6 @@ export default function Hero() {
           loop
           playsInline
           preload="metadata"
-          poster="/DJI_0062.JPG"
         >
           <source src="https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/Website%20Stuff/Tiki%20Taco%20Website/HeroVideo2.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -76,6 +85,14 @@ export default function Hero() {
         <h1>Fort Lauderdale Tiki Cruise & Private Boat Tour</h1>
         <p>Experience Fort Lauderdale from the water with a private tiki cruise designed for relaxation, celebration, and unforgettable views.</p>
         <div className="hero-actions">
+          <a
+            href="tel:+19547644344" suppressHydrationWarning
+            className="hero-cta magnetic-btn"
+            data-magnetic
+            data-gtm-id="call-to-book"
+          >
+            <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
+          </a>
           <a href="/cruise-destinations/" className="hero-secondary magnetic-btn" data-magnetic>
             View All Cruises
           </a>
@@ -102,7 +119,17 @@ export default function Hero() {
           overflow: hidden;
         }
 
+        .hero-poster {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+
         .hero-video {
+          position: relative;
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -173,6 +200,10 @@ export default function Hero() {
         }
 
         .hero-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          white-space: nowrap;
           background: rgba(255, 107, 107, 0.85);
           backdrop-filter: blur(10px);
           color: white;
@@ -268,8 +299,38 @@ export default function Hero() {
         }
 
         @media (max-width: 768px) {
-          .hero-video {
+          .hero-video,
+          .hero-poster {
             object-position: center 70%;
+          }
+        }
+
+        /* Compact hero stack on small screens so the badge clears the fixed
+           nav + banner and the buttons clear the scroll hint */
+        @media (max-width: 640px) {
+          .hero-content {
+            top: 53%;
+          }
+
+          .hero-badge {
+            font-size: 0.7rem;
+            margin-bottom: 12px;
+          }
+
+          .hero-content h1 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+          }
+
+          .hero-content p {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+          }
+
+          .hero-cta,
+          .hero-secondary {
+            padding: 12px 24px;
+            font-size: 0.95rem;
           }
         }
       `}</style>

@@ -36,7 +36,7 @@ export default function BlogList() {
       />
 
       <div className="min-h-screen bg-sand">
-        <section className="relative bg-navy text-white pt-24 pb-12 sm:pt-40 sm:pb-20">
+        <section className="relative bg-navy text-white pt-36 pb-12 sm:pt-40 md:pt-44 lg:pt-40 sm:pb-20">
           <div className="absolute inset-0 bg-gradient-to-br from-navy via-navy/95 to-teal/40" />
           <div className="relative max-w-5xl mx-auto px-4 text-center">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold mb-3 sm:mb-4 leading-tight">

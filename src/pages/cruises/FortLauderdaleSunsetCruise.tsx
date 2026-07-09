@@ -128,7 +128,7 @@ export default function FortLauderdaleSunsetCruise() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         </div>
-        <div className="relative w-full flex items-center justify-center px-4 sm:px-6 pt-32 sm:pt-36 md:pt-28 pb-12 md:pb-0">
+        <div className="relative w-full flex items-center justify-center px-4 sm:px-6 pt-36 sm:pt-40 md:pt-44 lg:pt-36 pb-12 md:pb-0">
           <div className="text-center text-white max-w-4xl mx-auto w-full">
             <div className="inline-flex items-center gap-2 bg-coral/90 backdrop-blur-sm px-4 py-2 rounded-full mb-4 text-sm sm:text-base">
               <Clock className="w-4 h-4" />

@@ -22,6 +22,13 @@
     font-family: 'Playfair Display', serif;
   }
 
+  /* Hash-link scroll targets must clear the fixed nav + promo banner */
+  #features,
+  #booking,
+  #routes {
+    scroll-margin-top: 160px;
+  }
+
   .glass-card {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);

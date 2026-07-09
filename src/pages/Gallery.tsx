@@ -277,6 +277,9 @@ const Gallery: React.FC = () => {
             justify-content: center;
             color: white;
             text-align: center;
+            /* Clear the fixed nav + promo banner */
+            padding-top: 130px;
+            box-sizing: content-box;
           }
           
           .hero-overlay {

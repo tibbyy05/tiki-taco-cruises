@@ -258,7 +258,7 @@ export default function Navigation() {
 
       {isMobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 h-[100svh] z-40 bg-white overflow-y-auto">
-          <div className="pt-28 pb-4 text-[1.155rem]">
+          <div className="pt-36 pb-4 text-[1.155rem]">
             {navLinks.map((link) => {
               if (link.label === 'Cruises') {
                 return (
