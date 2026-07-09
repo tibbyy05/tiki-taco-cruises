@@ -4,6 +4,7 @@ import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { supabase, CLIENT_ID } from '../lib/supabase';
+import { compressImage } from '../lib/compressImage';
 import { useAuth } from '../context/AuthContext';
 
 interface GalleryPhoto {
@@ -19,6 +20,8 @@ export default function AdminGallery() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [optimizeStatus, setOptimizeStatus] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [highlightedIds, setHighlightedIds] = useState<Set<string>>(new Set());
@@ -91,7 +94,10 @@ export default function AdminGallery() {
     const failures: string[] = [];
     const newIds: string[] = [];
 
-    for (const file of files) {
+    for (const rawFile of files) {
+      // Phone photos arrive at up to ~6 MB; shrink images before upload so
+      // the public gallery stays fast. Videos pass through untouched.
+      const file = await compressImage(rawFile);
       const safeName = file.name.replace(/\s+/g, '_');
       const filePath = `${CLIENT_ID}/${Date.now()}_${safeName}`;
 
@@ -158,6 +164,80 @@ export default function AdminGallery() {
     }
   };
 
+  // One-time cleanup: photos uploaded before compression was added are
+  // full-size originals (up to ~6 MB). Re-encode each one in the browser,
+  // swap the DB row to the smaller copy, and delete the fat original.
+  const handleOptimizeExisting = async () => {
+    const targets = photos.filter((photo) => !/\.(mp4|mov|webm)$/i.test(photo.image_url));
+    if (!targets.length) return;
+    if (!window.confirm(`Compress ${targets.length} existing photos? This replaces each image file with a web-optimized copy.`)) return;
+
+    setIsOptimizing(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    let optimized = 0;
+    let skipped = 0;
+    let savedBytes = 0;
+    const failures: string[] = [];
+
+    for (let i = 0; i < targets.length; i++) {
+      const photo = targets[i];
+      setOptimizeStatus(`Compressing photo ${i + 1} of ${targets.length}…`);
+
+      try {
+        const oldPath = extractStoragePath(photo.image_url);
+        if (!oldPath) { skipped += 1; continue; }
+
+        const response = await fetch(photo.image_url);
+        if (!response.ok) throw new Error(`download failed (${response.status})`);
+        const blob = await response.blob();
+        const originalName = oldPath.split('/').pop() ?? 'photo.jpg';
+        const originalFile = new File([blob], originalName, { type: blob.type || 'image/jpeg' });
+
+        const compressed = await compressImage(originalFile);
+        // Not worth churning storage for marginal gains
+        if (compressed.size >= blob.size * 0.85) { skipped += 1; continue; }
+
+        const newPath = `${CLIENT_ID}/${Date.now()}_${compressed.name.replace(/\s+/g, '_')}`;
+        const { error: uploadError } = await supabase.storage
+          .from('gallery-photos')
+          .upload(newPath, compressed, { contentType: compressed.type, upsert: false });
+        if (uploadError) throw new Error(uploadError.message);
+
+        const { data: publicUrlData } = supabase.storage
+          .from('gallery-photos')
+          .getPublicUrl(newPath);
+
+        const { error: updateError } = await supabase
+          .from('gallery_photos')
+          .update({ image_url: publicUrlData.publicUrl })
+          .eq('id', photo.id);
+        if (updateError) {
+          // DB still points at the original; remove the orphaned new copy
+          await supabase.storage.from('gallery-photos').remove([newPath]);
+          throw new Error(updateError.message);
+        }
+
+        await supabase.storage.from('gallery-photos').remove([oldPath]);
+        optimized += 1;
+        savedBytes += blob.size - compressed.size;
+      } catch (error) {
+        failures.push(`${photo.image_url.split('/').pop()}: ${error instanceof Error ? error.message : 'failed'}`);
+      }
+    }
+
+    setOptimizeStatus('');
+    setIsOptimizing(false);
+    await refreshPhotos();
+
+    const savedMb = (savedBytes / 1048576).toFixed(1);
+    if (failures.length) {
+      setErrorMessage(`${failures.length} photo(s) failed to compress. ${failures[0]}`);
+    }
+    setSuccessMessage(`Compressed ${optimized} photo(s), saved ${savedMb} MB.${skipped ? ` ${skipped} already small enough.` : ''}`);
+  };
+
   const handleCaptionBlur = async (photo: GalleryPhoto) => {
     const newCaption = captionDrafts[photo.id]?.trim() ?? '';
     if ((photo.caption ?? '') === newCaption) return;
@@ -220,13 +300,22 @@ export default function AdminGallery() {
           <AdminNav
             title="Gallery Manager"
             actions={
-              <button
-                onClick={handleUploadClick}
-                disabled={isUploading}
-                className="bg-coral hover:bg-coral/90 text-white px-5 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isUploading ? 'Uploading...' : 'Upload Photos'}
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleOptimizeExisting}
+                  disabled={isUploading || isOptimizing || isLoading}
+                  className="border-2 border-navy/20 hover:border-teal text-navy px-5 py-2 rounded-full font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isOptimizing ? 'Compressing...' : 'Compress Existing'}
+                </button>
+                <button
+                  onClick={handleUploadClick}
+                  disabled={isUploading || isOptimizing}
+                  className="bg-coral hover:bg-coral/90 text-white px-5 py-2.5 rounded-full font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {isUploading ? 'Uploading...' : 'Upload Photos'}
+                </button>
+              </div>
             }
           />
 
@@ -238,6 +327,12 @@ export default function AdminGallery() {
             onChange={handleUploadFiles}
             className="hidden"
           />
+
+          {optimizeStatus && (
+            <div className="mb-6 rounded-lg border border-navy/20 bg-white text-navy px-4 py-3 text-sm">
+              {optimizeStatus}
+            </div>
+          )}
 
           {errorMessage && (
             <div className="mb-6 rounded-lg border border-coral/30 bg-coral/10 text-coral px-4 py-3">
