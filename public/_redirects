@@ -23,14 +23,10 @@
 /intracoastal-waterway-corporate-cruise  /intracoastal-waterway-corporate-cruise/    301
 /fort-lauderdale-sunset-cruise           /fort-lauderdale-sunset-cruise/             301
 
-# Blog post slugs. File-on-disk (/blog/<slug>/index.html) takes precedence, so this rule
-# only fires when a request comes in without the trailing slash.
-# Must be :slug (single segment), NOT /blog/* — a splat captures a trailing slash and
-# appends another (/blog/x/ -> /blog/x// -> ...), an infinite 301 loop for any blog URL
-# with no file on disk (deleted/unpublished/mistyped posts). With :slug the redirect
-# target equals the request path in that case, so Netlify skips the rule and the SPA
-# fallback serves the "Post not found" page instead.
-/blog/:slug                              /blog/:slug/                                301
+# Blog post slug canonicalization lives in netlify/edge-functions/blog-trailing-slash.js.
+# It can NOT be a rule here: redirect matching ignores trailing slashes, so any
+# "/blog/... -> /blog/.../" rule also matches the slash form and 301-loops on every
+# blog URL with no static file (deleted/unpublished/mistyped posts).
 
 # --- SPA fallback (must be last) ---
 /*    /index.html   200
