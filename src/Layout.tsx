@@ -5,6 +5,28 @@ import { AuthProvider } from './context/AuthContext';
 import LoadingScreen from './components/LoadingScreen';
 import ScrollToTop from './components/ScrollToTop';
 import StickyCallBar from './components/StickyCallBar';
+import { trackPageView, trackCtaClick } from './lib/trackPageView';
+
+function PageViewTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+
+  // Delegated CTA click tracking; capture phase so stopPropagation in
+  // button handlers can't hide clicks from us.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const el = (event.target as Element | null)?.closest?.('[data-gtm-id]');
+      if (el) trackCtaClick(el.getAttribute('data-gtm-id') ?? '');
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, []);
+
+  return null;
+}
 
 function MagneticCursor() {
   const location = useLocation();
@@ -64,6 +86,7 @@ export default function Layout() {
     <AuthProvider>
       <ScrollToTop />
       <MagneticCursor />
+      <PageViewTracker />
       {showLoading && (
         <LoadingScreen onFinish={() => setShowLoading(false)} />
       )}

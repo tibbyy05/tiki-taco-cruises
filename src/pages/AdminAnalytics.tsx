@@ -1,18 +1,51 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface AnalyticsData {
   days: number;
-  totals: { users: number; sessions: number; pageViews: number; avgSessionSeconds: number };
+  totals: {
+    users: number;
+    sessions: number;
+    pageViews: number;
+    avgSessionSeconds: number;
+    callClicks?: number;
+    bookClicks?: number;
+  };
   trend: Array<{ date: string; users: number; pageViews: number }>;
-  sources: Array<{ source: string; sessions: number; users: number }>;
-  pages: Array<{ path: string; pageViews: number; users: number }>;
+  sources: Array<{ source: string; sessions: number; users: number; calls?: number }>;
+  pages: Array<{ path: string; pageViews: number; users: number; calls?: number }>;
   devices: Array<{ device: string; users: number }>;
 }
+
+// Shape returned by the tiki_analytics_summary RPC (self-hosted tracking).
+interface SelfHostedSummary {
+  totals: { pageViews: number; visitors: number; callClicks: number; bookClicks: number };
+  trend: Array<{ date: string; views: number; visitors: number }>;
+  pages: Array<{ path: string; views: number; visitors: number; calls: number }>;
+  sources: Array<{ source: string; views: number; visitors: number; calls: number }>;
+  devices: Array<{ device: string; visitors: number }>;
+}
+
+const fromSelfHosted = (raw: SelfHostedSummary, days: number): AnalyticsData => ({
+  days,
+  totals: {
+    users: raw.totals.visitors,
+    sessions: raw.totals.visitors,
+    pageViews: raw.totals.pageViews,
+    avgSessionSeconds: 0,
+    callClicks: raw.totals.callClicks,
+    bookClicks: raw.totals.bookClicks,
+  },
+  trend: raw.trend.map((t) => ({ date: t.date, users: t.visitors, pageViews: t.views })),
+  sources: raw.sources.map((s) => ({ source: s.source, sessions: s.views, users: s.visitors, calls: s.calls })),
+  pages: raw.pages.map((p) => ({ path: p.path, pageViews: p.views, users: p.visitors, calls: p.calls })),
+  devices: raw.devices.map((d) => ({ device: d.device, users: d.visitors })),
+});
 
 type LoadState = 'loading' | 'ready' | 'not-configured' | 'error';
 
@@ -100,6 +133,22 @@ export default function AdminAnalytics() {
   const [days, setDays] = useState('28');
   const [state, setState] = useState<LoadState>('loading');
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
+
+  // Self-hosted page-view tracking (tiki_page_views) — used when the GA
+  // connection isn't configured yet.
+  const loadSelfHosted = useCallback(async () => {
+    const { data: raw, error } = await supabase.rpc('tiki_analytics_summary', {
+      days: Number(days),
+    });
+    if (error || !raw) {
+      setState('not-configured');
+      return;
+    }
+    setData(fromSelfHosted(raw as SelfHostedSummary, Number(days)));
+    setDataSource('self');
+    setState('ready');
+  }, [days]);
 
   const load = useCallback(async () => {
     if (!session?.access_token) return;
@@ -109,19 +158,22 @@ export default function AdminAnalytics() {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       if (res.status === 501) {
-        setState('not-configured');
+        await loadSelfHosted();
         return;
       }
       if (!res.ok) {
         setState('error');
         return;
       }
-      setData(await res.json());
+      const body = await res.json();
+      setData(body);
+      setDataSource('ga');
       setState('ready');
     } catch {
-      setState('error');
+      // Local dev has no Netlify functions — fall back to self-hosted stats.
+      await loadSelfHosted();
     }
-  }, [days, session?.access_token]);
+  }, [days, session?.access_token, loadSelfHosted]);
 
   useEffect(() => {
     load();
@@ -132,12 +184,26 @@ export default function AdminAnalytics() {
   }
 
   const statCards = data
-    ? [
-        { icon: Users, label: 'Visitors', value: data.totals.users.toLocaleString() },
-        { icon: MousePointerClick, label: 'Sessions', value: data.totals.sessions.toLocaleString() },
-        { icon: Eye, label: 'Page Views', value: data.totals.pageViews.toLocaleString() },
-        { icon: Timer, label: 'Avg. Visit', value: formatDuration(data.totals.avgSessionSeconds) },
-      ]
+    ? dataSource === 'ga'
+      ? [
+          { icon: Users, label: 'Visitors', value: data.totals.users.toLocaleString() },
+          { icon: MousePointerClick, label: 'Sessions', value: data.totals.sessions.toLocaleString() },
+          { icon: Eye, label: 'Page Views', value: data.totals.pageViews.toLocaleString() },
+          { icon: Timer, label: 'Avg. Visit', value: formatDuration(data.totals.avgSessionSeconds) },
+        ]
+      : [
+          { icon: Users, label: 'Visitors', value: data.totals.users.toLocaleString() },
+          { icon: Eye, label: 'Page Views', value: data.totals.pageViews.toLocaleString() },
+          { icon: Phone, label: 'Call Clicks', value: (data.totals.callClicks ?? 0).toLocaleString() },
+          {
+            icon: MousePointerClick,
+            label: 'Call Rate',
+            value:
+              data.totals.users > 0
+                ? `${(((data.totals.callClicks ?? 0) / data.totals.users) * 100).toFixed(1)}%`
+                : '—',
+          },
+        ]
     : [];
 
   const maxSourceSessions = Math.max(...(data?.sources.map((s) => s.sessions) ?? [0]), 1);
@@ -189,8 +255,14 @@ export default function AdminAnalytics() {
             <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-8 max-w-3xl">
               <h2 className="text-2xl font-bold text-navy mb-3">One-time setup needed</h2>
               <p className="text-gray-700 mb-4">
-                The site is already collecting traffic data with Google Analytics. To show it here,
-                connect a Google service account (about 5 minutes):
+                <span className="font-semibold">Quick option (no Google):</span> run{' '}
+                <code className="bg-sand px-1 rounded">supabase/migrations/20260709_tiki_page_views.sql</code>{' '}
+                in the Supabase SQL editor to turn on built-in page-view tracking — stats appear here
+                as visitors browse the site.
+              </p>
+              <p className="text-gray-700 mb-4">
+                For richer data (the site already collects it with Google Analytics), connect a
+                Google service account (about 5 minutes):
               </p>
               <ol className="list-decimal list-inside space-y-2 text-gray-700 text-sm leading-relaxed">
                 <li>
@@ -265,6 +337,14 @@ export default function AdminAnalytics() {
                           <div className="w-14 text-right text-sm font-semibold text-navy">
                             {s.sessions.toLocaleString()}
                           </div>
+                          {typeof s.calls === 'number' && (
+                            <div
+                              className={`w-16 flex-shrink-0 text-right text-xs font-semibold inline-flex items-center justify-end gap-1 ${s.calls > 0 ? 'text-coral' : 'text-gray-400'}`}
+                              title="Call to Book clicks"
+                            >
+                              <Phone className="w-3 h-3" /> {s.calls}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -287,6 +367,14 @@ export default function AdminAnalytics() {
                           <div className="w-14 text-right text-sm font-semibold text-navy">
                             {p.pageViews.toLocaleString()}
                           </div>
+                          {typeof p.calls === 'number' && (
+                            <div
+                              className={`w-16 flex-shrink-0 text-right text-xs font-semibold inline-flex items-center justify-end gap-1 ${p.calls > 0 ? 'text-coral' : 'text-gray-400'}`}
+                              title="Call to Book clicks"
+                            >
+                              <Phone className="w-3 h-3" /> {p.calls}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -315,7 +403,9 @@ export default function AdminAnalytics() {
               </div>
 
               <p className="text-xs text-gray-500">
-                Source: Google Analytics 4 · Data may lag real-time activity by 24–48 hours.
+                {dataSource === 'ga'
+                  ? 'Source: Google Analytics 4 · Data may lag real-time activity by 24–48 hours.'
+                  : 'Source: built-in site tracking (collecting since Jul 2026) · Connect Google Analytics for richer data — see setup in the docs card when disconnected.'}
               </p>
             </div>
           )}
