@@ -27,6 +27,9 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
           <NavLink to="/admin/blog" className={tabClass}>
             Blog
           </NavLink>
+          <NavLink to="/admin/analytics" className={tabClass}>
+            Analytics
+          </NavLink>
           <NavLink to="/admin/account" className={tabClass}>
             Account
           </NavLink>

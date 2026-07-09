@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
+import { isAdminEmail } from '../lib/adminAllowlist';
 
 export default function AdminLogin() {
-  const { user, signIn } = useAuth();
+  const { user, signIn, signOut } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (user) {
+  if (user && isAdminEmail(user.email)) {
     return <Navigate to="/admin/gallery" replace />;
   }
 
@@ -22,6 +23,10 @@ export default function AdminLogin() {
     const { error } = await signIn(email, password);
     if (error) {
       setErrorMessage(error.message ?? 'Unable to sign in. Please try again.');
+    } else if (!isAdminEmail(email)) {
+      // Valid Supabase account, but not a Tiki admin (shared auth pool).
+      await signOut();
+      setErrorMessage('This account does not have admin access.');
     }
 
     setIsSubmitting(false);
