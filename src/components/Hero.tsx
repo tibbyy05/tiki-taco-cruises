@@ -97,6 +97,16 @@ export default function Hero() {
             View All Cruises
           </a>
         </div>
+        <a
+          href="https://www.google.com/maps?cid=1115630382324282086"
+          target="_blank"
+          rel="noreferrer"
+          className="hero-reviews"
+          aria-label="Rated 5.0 from 88 Google reviews — read them on Google Maps"
+        >
+          <span className="hero-reviews-stars" aria-hidden="true">★★★★★</span>
+          <span className="hero-reviews-text">5.0 · 88 Google Reviews</span>
+        </a>
       </div>
 
       {/* Scroll down indicator */}
@@ -256,6 +266,33 @@ export default function Hero() {
           }
         }
 
+        .hero-reviews {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 18px;
+          padding: 6px 14px;
+          border-radius: 999px;
+          background: rgba(0, 0, 0, 0.35);
+          backdrop-filter: blur(6px);
+          color: white;
+          font-size: 0.9rem;
+          font-weight: 600;
+          text-decoration: none;
+          transition: background 0.3s;
+        }
+
+        .hero-reviews:hover {
+          background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-reviews-stars {
+          color: #FFC94A;
+          letter-spacing: 2px;
+          font-size: 0.95rem;
+          line-height: 1;
+        }
+
         .hero-scroll-hint {
           position: absolute;
           bottom: 28px;
@@ -306,7 +343,7 @@ export default function Hero() {
         }
 
         /* Compact hero stack on small screens so the badge clears the fixed
-           nav + banner and the buttons clear the scroll hint */
+           nav + banner and the reviews pill clears the scroll hint */
         @media (max-width: 640px) {
           .hero-content {
             top: 53%;
@@ -314,23 +351,46 @@ export default function Hero() {
 
           .hero-badge {
             font-size: 0.7rem;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
           }
 
           .hero-content h1 {
-            font-size: 2rem;
-            margin-bottom: 12px;
+            font-size: 1.9rem;
+            margin-bottom: 10px;
           }
 
           .hero-content p {
-            font-size: 0.95rem;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+          }
+
+          .hero-actions {
+            gap: 10px;
           }
 
           .hero-cta,
           .hero-secondary {
-            padding: 12px 24px;
-            font-size: 0.95rem;
+            padding: 10px 22px;
+            font-size: 0.9rem;
+          }
+
+          .hero-reviews {
+            margin-top: 12px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            gap: 6px;
+          }
+
+          .hero-reviews-stars {
+            font-size: 0.85rem;
+          }
+
+          .hero-scroll-hint {
+            bottom: 12px;
+          }
+
+          .hero-scroll-text {
+            display: none;
           }
         }
       `}</style>
