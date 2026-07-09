@@ -57,10 +57,12 @@ export default function Hero() {
         {/* Static poster rendered as a real <img> so the page always has an
             LCP candidate — a bare autoplay video emits none in headless
             Chrome, which made Lighthouse/PageSpeed fail with NO_FCP. The
-            video paints over it once frames decode. */}
+            image is the video's exact first frame (extracted via ffmpeg),
+            so the handoff to playback is invisible. Regenerate it if the
+            hero video ever changes. */}
         <img
           src="/hero-poster.jpg"
-          alt="Aerial view of the Fort Lauderdale Intracoastal Waterway"
+          alt="Aerial view of a Tiki Taco boat cruising the Fort Lauderdale Intracoastal Waterway"
           className="hero-poster"
           decoding="async"
         />
