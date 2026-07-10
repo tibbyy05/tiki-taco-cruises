@@ -316,7 +316,7 @@ export default function CruiseDestinations() {
             </p>
             <a
               href="tel:+19547644344" suppressHydrationWarning
-              className="bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px] shadow-lg"
+              className="calltrk-noswap bg-coral hover:bg-coral/90 text-white px-10 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px] shadow-lg"
               data-gtm-id="call-to-book"
             >
               <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344

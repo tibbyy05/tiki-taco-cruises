@@ -61,7 +61,7 @@ export default function ContactUs() {
                     <Phone className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
                     <a
                       href="tel:+19547644344" suppressHydrationWarning
-                      className="text-gray-700 hover:text-coral transition-colors text-base sm:text-lg"
+                      className="calltrk-noswap text-gray-700 hover:text-coral transition-colors text-base sm:text-lg"
                     >
                       (954) 764-4344
                     </a>

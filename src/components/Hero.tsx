@@ -144,7 +144,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-4 mb-4 sm:mb-6">
               <a
                 href="tel:+19547644344" suppressHydrationWarning
-                className="w-full sm:w-auto justify-center bg-coral hover:bg-coral/90 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base inline-flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] shadow-lg shadow-coral/30 min-h-[44px] sm:min-h-[48px] magnetic-btn"
+                className="calltrk-noswap w-full sm:w-auto justify-center bg-coral hover:bg-coral/90 text-white px-6 sm:px-8 py-2.5 sm:py-3.5 rounded-lg font-semibold text-sm sm:text-base inline-flex items-center gap-2 transition-all duration-300 hover:scale-[1.03] shadow-lg shadow-coral/30 min-h-[44px] sm:min-h-[48px] magnetic-btn"
                 data-magnetic
                 data-gtm-id="call-to-book"
               >
