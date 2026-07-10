@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Award, Anchor, Shield, BadgeCheck, ArrowRight, Check } from 'lucide-react';
 import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
@@ -184,6 +185,17 @@ export default function Home() {
         canonical="https://tikitacocruises.com/"
         jsonLd={localBusinessSchema}
       />
+      {/* Kick off the LCP hero image download immediately (homepage only —
+          index.html is shared by all SSG pages, so it can't live there) */}
+      <Helmet>
+        <link
+          rel="preload"
+          as="image"
+          imageSrcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
+          imageSizes="100vw"
+          {...({ fetchpriority: 'high' } as Record<string, string>)}
+        />
+      </Helmet>
       <Navigation />
       <Hero />
       <GuestReviews />
@@ -243,6 +255,8 @@ export default function Home() {
                     <img
                       src={cruise.image}
                       alt={cruise.title}
+                      width={1200}
+                      height={675}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
                       decoding="async"

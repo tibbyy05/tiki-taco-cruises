@@ -1,0 +1,13 @@
+# Long-lived caching for static assets. Fonts never change; site images
+# change rarely (and cache-bust naturally when we swap filenames).
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/hero-slide-*
+  Cache-Control: public, max-age=604800
+
+/*.jpg
+  Cache-Control: public, max-age=604800
+
+/*.png
+  Cache-Control: public, max-age=604800

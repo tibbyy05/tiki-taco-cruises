@@ -19,7 +19,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#FF6B6B" />
     <!-- Title, meta description, OG, Twitter, and canonical tags are managed by react-helmet-async via the <SEO> component on each page. Do not add static versions of these here — Helmet appends rather than replaces meta tags, producing duplicates (and for crawlers without JS rendering, a static value on index.html applies to every route via the SPA fallback, causing cross-page duplication). -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonts are self-hosted (see @font-face in src/index.css); preload the
+         two weights used above the fold so text renders in one round trip -->
+    <link rel="preload" href="/fonts/dm-sans-latin-400.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/playfair-display-latin-700.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <!-- Google Tag Manager (noscript) -->

@@ -35,6 +35,8 @@ function HeroCarousel() {
           key={slide.src}
           src={slide.src}
           alt={slide.alt}
+          width={1000}
+          height={1000}
           loading={i === 0 ? 'eager' : 'lazy'}
           decoding="async"
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
@@ -94,6 +96,10 @@ export default function Hero() {
             navy section background fills the space below it */}
         <img
           src="/hero-slide-1.jpg"
+          srcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
+          sizes="100vw"
+          width={1000}
+          height={1000}
           alt=""
           aria-hidden="true"
           className="w-full h-full object-contain object-top"
