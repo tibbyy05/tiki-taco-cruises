@@ -1,19 +1,9 @@
 import { ChevronDown, Phone } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [showScrollHint, setShowScrollHint] = useState(true);
   const [parallaxOffset, setParallaxOffset] = useState(0);
-
-  useEffect(() => {
-    // Ensure video plays when component mounts
-    if (videoRef.current) {
-      videoRef.current.play().catch((error) => {
-        console.log('Video autoplay prevented:', error);
-      });
-    }
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,34 +42,17 @@ export default function Hero() {
         } as React.CSSProperties
       }
     >
-      {/* Fullscreen Video Background */}
-      <div className="absolute inset-0 hero-video-container">
-        {/* Static poster rendered as a real <img> so the page always has an
-            LCP candidate — a bare autoplay video emits none in headless
-            Chrome, which made Lighthouse/PageSpeed fail with NO_FCP. The
-            image is the video's exact first frame (extracted via ffmpeg),
-            so the handoff to playback is invisible. Regenerate it if the
-            hero video ever changes. */}
+      {/* Fullscreen Image Background — a real <img> (not CSS background) so
+          the page always has an LCP candidate; without one, PageSpeed
+          Insights fails outright with NO_FCP. */}
+      <div className="absolute inset-0 hero-image-container">
         <img
-          src="/hero-poster.jpg"
-          alt="Aerial view of a Tiki Taco boat cruising the Fort Lauderdale Intracoastal Waterway"
-          className="hero-poster"
+          src="/hero-image.jpg"
+          alt="Guests boarding a Tiki Taco cruise at the dock in Fort Lauderdale"
+          className="hero-image"
           decoding="async"
         />
-        <video
-          ref={videoRef}
-          className="hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-        >
-          <source src="https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/Website%20Stuff/Tiki%20Taco%20Website/HeroVideo2.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        {/* Subtle overlay for better text readability if needed */}
-        <div className="hero-video-overlay"></div>
+        <div className="hero-overlay"></div>
       </div>
 
       <div className="hero-content">
@@ -122,7 +95,7 @@ export default function Hero() {
       </button>
 
       <style>{`
-        .hero-video-container {
+        .hero-image-container {
           position: absolute;
           top: 0;
           left: 0;
@@ -131,37 +104,26 @@ export default function Hero() {
           overflow: hidden;
         }
 
-        .hero-poster {
+        .hero-image {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center;
+          object-position: center 40%;
         }
 
-        .hero-video {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
-          /* Keep video stable to avoid perceived shake on playback */
-          transform: translateZ(0);
-          will-change: transform;
-        }
-
-        .hero-video-overlay {
+        .hero-overlay {
           position: absolute;
           inset: 0;
           background: linear-gradient(
             to bottom,
-            rgba(0, 0, 0, 0.15) 0%,
-            rgba(0, 0, 0, 0.5) 100%
+            rgba(10, 25, 47, 0.35) 0%,
+            rgba(10, 25, 47, 0.45) 55%,
+            rgba(10, 25, 47, 0.65) 100%
           );
           pointer-events: none;
           z-index: 1;
-          transform: translateY(var(--hero-overlay-parallax));
         }
 
         .hero-content {
@@ -338,9 +300,8 @@ export default function Hero() {
         }
 
         @media (max-width: 768px) {
-          .hero-video,
-          .hero-poster {
-            object-position: center 70%;
+          .hero-image {
+            object-position: center 45%;
           }
         }
 
