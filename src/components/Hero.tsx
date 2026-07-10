@@ -97,15 +97,14 @@ export default function Hero() {
         {/* contain + top anchor shows the whole photo (no zoom-crop); the
             navy section background fills the space below it */}
         <picture>
-          <source
-            type="image/webp"
-            srcSet="/hero-slide-1-mobile.webp 750w, /hero-slide-1.webp 1000w"
-            sizes="100vw"
-          />
+          {/* Explicit media split (not srcset densities): high-DPR phones
+              would otherwise pull the 1000px file — 750px is plenty for a
+              ~390px-wide viewport and 40% smaller. */}
+          <source media="(max-width: 640px)" type="image/webp" srcSet="/hero-slide-1-mobile.webp" />
+          <source type="image/webp" srcSet="/hero-slide-1.webp" />
+          <source media="(max-width: 640px)" srcSet="/hero-slide-1-mobile.jpg" />
           <img
             src="/hero-slide-1.jpg"
-            srcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
-            sizes="100vw"
             width={1000}
             height={1000}
             alt=""

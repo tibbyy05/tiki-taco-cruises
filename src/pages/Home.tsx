@@ -191,8 +191,15 @@ export default function Home() {
         <link
           rel="preload"
           as="image"
-          imageSrcSet="/hero-slide-1-mobile.webp 750w, /hero-slide-1.webp 1000w"
-          imageSizes="100vw"
+          href="/hero-slide-1-mobile.webp"
+          media="(max-width: 640px)"
+          {...({ fetchpriority: 'high' } as Record<string, string>)}
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero-slide-1.webp"
+          media="(min-width: 641px)"
           {...({ fetchpriority: 'high' } as Record<string, string>)}
         />
       </Helmet>
