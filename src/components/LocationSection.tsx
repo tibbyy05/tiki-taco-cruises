@@ -30,9 +30,9 @@ export default function LocationSection() {
             <p className="mb-4">
               <a
                 href="tel:+19547644344" suppressHydrationWarning
-                className="calltrk-noswap text-coral hover:text-coral/80 font-semibold text-base sm:text-lg transition-colors"
+                className="text-coral hover:text-coral/80 font-semibold text-base sm:text-lg transition-colors"
               >
-                (954) 764-4344
+                <span className="cr-number" suppressHydrationWarning>(954) 764-4344</span>
               </a>
             </p>
             <p className="text-gray-700 text-base sm:text-lg mb-6">

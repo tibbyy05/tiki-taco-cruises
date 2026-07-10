@@ -156,8 +156,8 @@ export default function Navigation() {
           </g>
         </svg>
         Celebrate 250 Years of Freedom — July Special: $250/hour for up to 15 guests ·{' '}
-        <a href="tel:+19547644344" suppressHydrationWarning className="calltrk-noswap underline underline-offset-2 hover:text-white/80 transition-colors" data-gtm-id="call-to-book">
-          Call (954) 764-4344
+        <a href="tel:+19547644344" suppressHydrationWarning className="underline underline-offset-2 hover:text-white/80 transition-colors" data-gtm-id="call-to-book">
+          <span className="cr-number" suppressHydrationWarning>Call (954) 764-4344</span>
         </a>
       </div>
       <div className={`relative z-50 w-full px-3 lg:px-6 ${navPadding} ${isMobileMenuOpen ? 'bg-white' : ''}`}>
@@ -232,9 +232,9 @@ export default function Navigation() {
           <div className="hidden lg:flex items-center gap-5 flex-shrink-0 text-[1.155rem]">
             <a
               href="tel:+19547644344" suppressHydrationWarning
-              className={`calltrk-noswap hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
+              className={`hidden xl:flex items-center gap-2 font-semibold transition-colors duration-300 hover:text-coral ${navTextColor}`}
             >
-              (954) 764-4344
+              <span className="cr-number" suppressHydrationWarning>(954) 764-4344</span>
             </a>
             <button
               onClick={handleBookingClick}
@@ -249,13 +249,13 @@ export default function Navigation() {
           <div className="lg:hidden flex items-center gap-2.5">
             <a
               href="tel:+19547644344" suppressHydrationWarning
-              className={`calltrk-noswap inline-flex items-center gap-2 text-sm font-semibold whitespace-nowrap min-h-[44px] ${navTextColor}`}
+              className={`inline-flex items-center gap-2 text-sm font-semibold whitespace-nowrap min-h-[44px] ${navTextColor}`}
               data-gtm-id="call-to-book"
             >
               <span className="w-8 h-8 rounded-full border border-current flex items-center justify-center flex-shrink-0">
                 <Phone className="w-4 h-4" />
               </span>
-              (954) 764-4344
+              <span className="cr-number" suppressHydrationWarning>(954) 764-4344</span>
             </a>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

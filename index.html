@@ -1,36 +1,41 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager — deferred until first interaction or shortly
-         after load so it doesn't compete with the hero image for bandwidth
-         on slow connections. dataLayer queues events in the meantime. -->
-    <script>
-window.dataLayer = window.dataLayer || [];
-(function(){
-  var loaded = false;
-  function loadGtm(){
-    if (loaded) return; loaded = true;
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PXM6BDVH');
+})(window,document,'script','dataLayer','GTM-PXM6BDVH');</script>
+    <!-- End Google Tag Manager -->
+    <!-- Phone-number reveal: CallRail (loaded via GTM) swaps the displayed
+         number per visitor for call attribution. Number text (.cr-number)
+         stays invisible (space reserved) until the swap has happened or
+         2.5s passes, so visitors never see the number change on screen. -->
+    <script>
+(function(){
+  var done = false;
+  function reveal(){
+    if (done) return; done = true;
+    document.documentElement.classList.add('cr-ready');
+    if (window.__crInterval) clearInterval(window.__crInterval);
   }
-  if (/calltrk/.test(document.cookie)) {
-    // Returning visitor: CallRail already assigned them a tracking number and
-    // their assets are cached, so load immediately — otherwise the page
-    // repaints with the real number and visibly swaps back a few seconds
-    // later on every refresh.
-    loadGtm();
-  } else {
-    ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){
-      window.addEventListener(e, loadGtm, {once:true, passive:true});
-    });
-    window.addEventListener('load', function(){ setTimeout(loadGtm, 3500); });
+  function swapped(){
+    var els = document.querySelectorAll('.cr-number');
+    for (var i = 0; i < els.length; i++) {
+      var t = els[i].textContent || '';
+      if (/\d{3}[\s.\-]?\d{4}/.test(t) && t.indexOf('764-4344') === -1) return true;
+    }
+    return false;
   }
+  document.addEventListener('DOMContentLoaded', function(){
+    if (swapped()) return reveal();
+    window.__crInterval = setInterval(function(){ if (swapped()) reveal(); }, 150);
+    setTimeout(reveal, 2500);
+  });
 })();
     </script>
-    <!-- End Google Tag Manager -->
+    <noscript><style>.cr-number { visibility: visible !important; }</style></noscript>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />

@@ -6,14 +6,9 @@ import LoadingScreen from './components/LoadingScreen';
 import ScrollToTop from './components/ScrollToTop';
 import StickyCallBar from './components/StickyCallBar';
 import { trackPageView, trackCtaClick } from './lib/trackPageView';
-import { enforcePhoneNumber } from './lib/enforcePhoneNumber';
 
 function PageViewTracker() {
   const location = useLocation();
-
-  useEffect(() => {
-    enforcePhoneNumber();
-  }, []);
 
   useEffect(() => {
     trackPageView(location.pathname);

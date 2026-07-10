@@ -74,6 +74,17 @@
     font-family: 'Playfair Display', serif;
   }
 
+  /* Phone numbers stay invisible (space reserved, no layout shift) until
+     CallRail's per-visitor number swap settles — see the reveal script in
+     index.html. Falls back to visible without JS. */
+  .cr-number {
+    visibility: hidden;
+  }
+
+  html.cr-ready .cr-number {
+    visibility: visible;
+  }
+
   /* Hash-link scroll targets must clear the fixed nav + promo banner */
   #features,
   #booking,

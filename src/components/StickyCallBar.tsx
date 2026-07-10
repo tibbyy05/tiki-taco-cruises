@@ -39,7 +39,7 @@ export default function StickyCallBar() {
       >
         <a
           href="tel:+19547644344" suppressHydrationWarning
-          className="calltrk-noswap flex items-center justify-center gap-2 text-white font-semibold text-sm py-3.5 min-h-[52px] active:bg-coral/80"
+          className="flex items-center justify-center gap-2 text-white font-semibold text-sm py-3.5 min-h-[52px] active:bg-coral/80"
           data-gtm-id="call-to-book"
         >
           <Phone className="w-4 h-4" /> Call Now
@@ -61,11 +61,11 @@ export default function StickyCallBar() {
       >
         <a
           href="tel:+19547644344" suppressHydrationWarning
-          className="calltrk-noswap bg-coral hover:bg-coral/90 text-white px-5 sm:px-7 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 text-sm sm:text-base magnetic-btn shadow-xl whitespace-nowrap inline-flex items-center gap-2 min-h-[44px]"
+          className="bg-coral hover:bg-coral/90 text-white px-5 sm:px-7 py-3 rounded-full font-semibold transition-all duration-300 hover:scale-105 text-sm sm:text-base magnetic-btn shadow-xl whitespace-nowrap inline-flex items-center gap-2 min-h-[44px]"
           data-magnetic
           data-gtm-id="call-to-book"
         >
-          <Phone className="w-4 h-4 sm:w-5 sm:h-5" /> Call to Book — (954) 764-4344
+          <Phone className="w-4 h-4 sm:w-5 sm:h-5" /><span className="cr-number" suppressHydrationWarning>Call to Book — (954) 764-4344</span>
         </a>
       </div>
     </>

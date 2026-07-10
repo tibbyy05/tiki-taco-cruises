@@ -145,10 +145,10 @@ export default function CruisePage({
             </div>
             <a
               href="tel:+19547644344" suppressHydrationWarning
-              className="calltrk-noswap bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] inline-flex items-center gap-2"
+              className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-2xl min-h-[44px] inline-flex items-center gap-2"
               data-gtm-id="call-to-book"
             >
-              <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
+              <Phone className="w-5 h-5" /><span className="cr-number" suppressHydrationWarning>Call to Book — (954) 764-4344</span>
             </a>
           </div>
         </div>
@@ -256,10 +256,10 @@ export default function CruisePage({
               <div className="mt-6">
                 <a
                   href="tel:+19547644344" suppressHydrationWarning
-                  className="calltrk-noswap bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+                  className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
                   data-gtm-id="call-to-book"
                 >
-                  <Phone className="w-5 h-5" /> Call to Book — (954) 764-4344
+                  <Phone className="w-5 h-5" /><span className="cr-number" suppressHydrationWarning>Call to Book — (954) 764-4344</span>
                 </a>
               </div>
             </div>

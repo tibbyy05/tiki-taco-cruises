@@ -63,8 +63,8 @@ const SquareBooking: React.FC = () => {
         </div>
         <h2>Book Your Fort Lauderdale Tiki Cruise</h2>
         <p>Reserve your private tiki cruise today and experience Fort Lauderdale from the water, perfect for groups, celebrations, and unforgettable days on the Intracoastal.</p>
-        <a className="calltrk-noswap booking-open-btn" href="tel:+19547644344" suppressHydrationWarning data-gtm-id="call-to-book">
-          Call to Book — (954) 764-4344
+        <a className="booking-open-btn" href="tel:+19547644344" suppressHydrationWarning data-gtm-id="call-to-book">
+          <span className="cr-number" suppressHydrationWarning>Call to Book — (954) 764-4344</span>
         </a>
         <p className="booking-note">
           or{' '}
