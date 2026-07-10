@@ -31,18 +31,20 @@ function HeroCarousel() {
       onMouseLeave={() => setPaused(false)}
     >
       {slides.map((slide, i) => (
-        <img
-          key={slide.src}
-          src={slide.src}
-          alt={slide.alt}
-          width={1000}
-          height={1000}
-          loading={i === 0 ? 'eager' : 'lazy'}
-          decoding="async"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
-            i === active ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
+        <picture key={slide.src}>
+          <source type="image/webp" srcSet={slide.src.replace('.jpg', '.webp')} />
+          <img
+            src={slide.src}
+            alt={slide.alt}
+            width={1000}
+            height={1000}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            decoding="async"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+              i === active ? 'opacity-100' : 'opacity-0'
+            }`}
+          />
+        </picture>
       ))}
       <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 z-10">
         {slides.map((_, i) => (
@@ -94,17 +96,24 @@ export default function Hero() {
       <div className="absolute inset-0 lg:hidden">
         {/* contain + top anchor shows the whole photo (no zoom-crop); the
             navy section background fills the space below it */}
-        <img
-          src="/hero-slide-1.jpg"
-          srcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
-          sizes="100vw"
-          width={1000}
-          height={1000}
-          alt=""
-          aria-hidden="true"
-          className="w-full h-full object-contain object-top"
-          decoding="async"
-        />
+        <picture>
+          <source
+            type="image/webp"
+            srcSet="/hero-slide-1-mobile.webp 750w, /hero-slide-1.webp 1000w"
+            sizes="100vw"
+          />
+          <img
+            src="/hero-slide-1.jpg"
+            srcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
+            sizes="100vw"
+            width={1000}
+            height={1000}
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-contain object-top"
+            decoding="async"
+          />
+        </picture>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a192f]/25 via-[#0a192f]/60 to-[#0a192f]" />
       </div>
 

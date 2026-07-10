@@ -11,6 +11,14 @@ export default defineConfig({
   ssgOptions: {
     entry: 'src/main.tsx',
     dirStyle: 'nested',
+    // Inline each page's critical CSS and async-load the rest — removes the
+    // render-blocking stylesheet request from first paint.
+    beastiesOptions: {
+      preload: 'media',
+      // Component <style> blocks contain React-escaped quotes that beasties
+      // can't parse; only the external stylesheet needs critical-CSS work.
+      reduceInlineStyles: false,
+    },
     // Skip admin routes (auth-gated, dynamic) and the wildcard 404 from prerender.
     // The SPA fallback in _redirects serves them via client-side rendering.
     includedRoutes: (paths) =>

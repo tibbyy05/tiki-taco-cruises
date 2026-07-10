@@ -191,7 +191,7 @@ export default function Home() {
         <link
           rel="preload"
           as="image"
-          imageSrcSet="/hero-slide-1-mobile.jpg 750w, /hero-slide-1.jpg 1000w"
+          imageSrcSet="/hero-slide-1-mobile.webp 750w, /hero-slide-1.webp 1000w"
           imageSizes="100vw"
           {...({ fetchpriority: 'high' } as Record<string, string>)}
         />
@@ -252,15 +252,18 @@ export default function Home() {
               <ScrollReveal key={index} delay={index * 0.1} className="h-full">
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group h-full flex flex-col">
                   <div className="relative h-56 overflow-hidden">
-                    <img
-                      src={cruise.image}
-                      alt={cruise.title}
-                      width={1200}
-                      height={675}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <picture>
+                      <source type="image/webp" srcSet={cruise.image.replace(/\.(jpg|png)$/, '.webp')} />
+                      <img
+                        src={cruise.image}
+                        alt={cruise.title}
+                        width={1200}
+                        height={675}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </picture>
                   </div>
                   <div className="p-5 sm:p-6 flex flex-col flex-1">
                     <h3 className="text-xl sm:text-2xl font-bold text-ocean mb-2">{cruise.title}</h3>
