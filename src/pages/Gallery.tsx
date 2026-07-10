@@ -4,6 +4,7 @@ import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { supabase, CLIENT_ID } from '../lib/supabase';
+import { siteImageUrl } from '../lib/siteImageUrl';
 import { staticGalleryImages } from '../data/galleryImages';
 
 interface GalleryItem {
@@ -38,7 +39,8 @@ const Gallery: React.FC = () => {
         .eq('client_id', CLIENT_ID)
         .order('display_order', { ascending: false });
 
-      setGalleryItems(data && data.length > 0 ? data : fallbackGalleryItems);
+      const items = data && data.length > 0 ? data : fallbackGalleryItems;
+      setGalleryItems(items.map((item) => ({ ...item, image_url: siteImageUrl(item.image_url) })));
       setIsLoading(false);
     };
 

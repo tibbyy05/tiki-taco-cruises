@@ -28,5 +28,12 @@
 # "/blog/... -> /blog/.../" rule also matches the slash form and 301-loops on every
 # blog URL with no static file (deleted/unpublished/mistyped posts).
 
+# --- Branded media URLs: proxy Supabase storage through our own domain ---
+# Public pages render /images/... (see src/lib/siteImageUrl.ts); Netlify fetches
+# from the bucket behind the scenes so visitors never see the Supabase URL.
+/images/gallery/*  https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/gallery-photos/:splat   200
+/images/blog/*     https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/tiki-blog-images/:splat  200
+/images/site/*     https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/:splat           200
+
 # --- SPA fallback (must be last) ---
 /*    /index.html   200

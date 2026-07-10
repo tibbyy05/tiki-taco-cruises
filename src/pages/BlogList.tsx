@@ -1,4 +1,5 @@
 import { Link, useLoaderData } from 'react-router-dom';
+import { siteImageUrl } from '../lib/siteImageUrl';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
@@ -77,7 +78,7 @@ export default function BlogList() {
                   <div className="aspect-[16/9] bg-sand overflow-hidden">
                     {post.featured_image_url ? (
                       <img
-                        src={post.featured_image_url}
+                        src={siteImageUrl(post.featured_image_url)}
                         alt=""
                         loading={i === 0 ? 'eager' : 'lazy'}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

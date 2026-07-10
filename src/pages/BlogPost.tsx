@@ -5,6 +5,7 @@ import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { supabase } from '../lib/supabase';
+import { siteImageUrl, absoluteSiteImageUrl } from '../lib/siteImageUrl';
 
 interface BlogPostRecord {
   id: string;
@@ -98,7 +99,7 @@ export default function BlogPost() {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt ?? undefined,
-    image: post.featured_image_url ?? undefined,
+    image: post.featured_image_url ? absoluteSiteImageUrl(post.featured_image_url) : undefined,
     datePublished: post.created_at,
     dateModified: post.updated_at,
     author: {
@@ -125,7 +126,7 @@ export default function BlogPost() {
       <SEO
         title={seoTitle}
         description={seoDescription}
-        ogImage={post.featured_image_url ?? undefined}
+        ogImage={post.featured_image_url ? absoluteSiteImageUrl(post.featured_image_url) : undefined}
         jsonLd={jsonLd}
       />
 
@@ -155,7 +156,7 @@ export default function BlogPost() {
         {post.featured_image_url && (
           <div className="max-w-4xl mx-auto px-4 -mt-6 sm:-mt-8 mb-6 sm:mb-8">
             <img
-              src={post.featured_image_url}
+              src={siteImageUrl(post.featured_image_url)}
               alt={post.title}
               className="w-full aspect-[16/9] object-cover rounded-xl sm:rounded-2xl shadow-xl"
             />
@@ -164,7 +165,15 @@ export default function BlogPost() {
 
         <div className="max-w-3xl mx-auto px-4 py-6 sm:py-12">
           <div className="blog-prose bg-white rounded-xl sm:rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-10">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            <ReactMarkdown
+              components={{
+                img: ({ src, alt, ...rest }) => (
+                  <img src={siteImageUrl(typeof src === 'string' ? src : '')} alt={alt ?? ''} loading="lazy" {...rest} />
+                ),
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
 
           <div className="mt-8 sm:mt-10 bg-gradient-to-br from-coral to-coral/80 text-white rounded-xl sm:rounded-2xl p-6 sm:p-10 text-center shadow-xl">

@@ -4,6 +4,7 @@ import { X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import { staticGalleryImages } from '../data/galleryImages';
 import { supabase, CLIENT_ID } from '../lib/supabase';
+import { siteImageUrl } from '../lib/siteImageUrl';
 
 interface GalleryMedia {
   id: string;
@@ -14,7 +15,7 @@ interface GalleryMedia {
 
 const staticMedia: GalleryMedia[] = staticGalleryImages.map((img) => ({
   id: `static-${img.id}`,
-  src: img.src,
+  src: siteImageUrl(img.src),
   alt: img.alt,
   mediaType: img.mediaType,
 }));
@@ -41,7 +42,7 @@ export default function Gallery() {
         setGalleryImages(
           data.map((item) => ({
             id: item.id,
-            src: item.image_url,
+            src: siteImageUrl(item.image_url),
             alt: item.caption?.trim() || 'Tiki Taco cruise in Fort Lauderdale',
             mediaType: /\.(mp4|mov|webm)$/i.test(item.image_url) ? ('video' as const) : undefined,
           }))
