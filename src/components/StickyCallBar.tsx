@@ -28,9 +28,13 @@ export default function StickyCallBar() {
 
   return (
     <>
-      {/* Mobile: persistent two-button bottom bar */}
+      {/* Mobile: two-button bottom bar — slides in once the visitor scrolls,
+          so it can't sit under (or get fat-fingered with) the browser's own
+          bottom toolbar while the page is at rest */}
       <div
-        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-coral shadow-[0_-4px_16px_rgba(0,0,0,0.25)] grid grid-cols-2 divide-x divide-white/25"
+        className={`md:hidden fixed bottom-0 inset-x-0 z-50 bg-coral shadow-[0_-4px_16px_rgba(0,0,0,0.25)] grid grid-cols-2 divide-x divide-white/25 transition-transform duration-300 ${
+          isScrolled ? 'translate-y-0' : 'translate-y-full'
+        }`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <a

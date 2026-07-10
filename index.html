@@ -16,10 +16,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-PXM6BDVH');
   }
-  ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){
-    window.addEventListener(e, loadGtm, {once:true, passive:true});
-  });
-  window.addEventListener('load', function(){ setTimeout(loadGtm, 3500); });
+  if (/calltrk/.test(document.cookie)) {
+    // Returning visitor: CallRail already assigned them a tracking number and
+    // their assets are cached, so load immediately — otherwise the page
+    // repaints with the real number and visibly swaps back a few seconds
+    // later on every refresh.
+    loadGtm();
+  } else {
+    ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){
+      window.addEventListener(e, loadGtm, {once:true, passive:true});
+    });
+    window.addEventListener('load', function(){ setTimeout(loadGtm, 3500); });
+  }
 })();
     </script>
     <!-- End Google Tag Manager -->
