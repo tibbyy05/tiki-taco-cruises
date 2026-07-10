@@ -137,7 +137,7 @@ const popularCruises = [
     title: 'New River Historic Cruise',
     subtext: 'Cruise through downtown Fort Lauderdale with a touch of local history',
     link: '/new-river-cruise/',
-    image: '/Night_Intracoastal2.jpg',
+    image: '/new-river-tile.jpg',
     bullets: [
       'Historic downtown & New River landmarks',
       'Waterfront homes, yachts & hidden canals',
@@ -150,7 +150,7 @@ const popularCruises = [
     title: 'Northbound Sandbar & Scenic Cruise',
     subtext: 'Swim, float, and relax at a Fort Lauderdale sandbar',
     link: '/north-bound-scenic-cruise/',
-    image: '/Sandbar.png',
+    image: '/northbound-sandbar-tile.jpg',
     bullets: [
       'Popular Fort Lauderdale sandbar stop',
       'Swimming, floating & relaxing',
@@ -186,6 +186,7 @@ export default function Home() {
       />
       <Navigation />
       <Hero />
+      <GuestReviews />
 
       {/* About Our Fort Lauderdale Tiki Cruises */}
       <section className="py-12 sm:py-16 md:py-20 px-4 bg-white">
@@ -252,7 +253,7 @@ export default function Home() {
                     <p className="text-ocean/70 mb-4 text-sm sm:text-base">{cruise.subtext}</p>
                     <ul className="space-y-2 mb-6 flex-1">
                       {cruise.bullets.map((bullet, bi) => (
-                        <li key={bi} className="flex items-start gap-2 text-ocean/80 text-sm sm:text-base">
+                        <li key={bi} className="flex items-start gap-2 text-black sm:text-ocean/80 text-sm sm:text-base">
                           <Check className="w-4 h-4 text-coral flex-shrink-0 mt-1" />
                           <span>{bullet}</span>
                         </li>
@@ -287,7 +288,6 @@ export default function Home() {
         <Gallery />
       </ScrollReveal>
       <Features />
-      <GuestReviews />
       <ScrollReveal>
         <SquareBooking />
       </ScrollReveal>

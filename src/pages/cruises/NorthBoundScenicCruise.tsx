@@ -183,7 +183,7 @@ export default function NorthBoundScenicCruise() {
           name: 'New River Historic Cruise',
           path: '/new-river-cruise/',
           description: 'A relaxed, scenic cruise through the heart of Fort Lauderdale along the New River.',
-          image: '/Night_Intracoastal2.jpg',
+          image: '/new-river-tile.jpg',
         },
         {
           name: 'Las Olas & Intracoastal Party Cruise',

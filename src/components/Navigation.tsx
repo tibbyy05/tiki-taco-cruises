@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Phone } from 'lucide-react';
 
 const cruisesSubmenu = [
   { to: '/cruise-destinations/', label: 'All Cruise Destinations', highlight: true },
@@ -246,13 +246,25 @@ export default function Navigation() {
             </button>
           </div>
 
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center ${navTextColor}`}
-            aria-label="Toggle mobile menu"
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="lg:hidden flex items-center gap-2.5">
+            <a
+              href="tel:+19547644344" suppressHydrationWarning
+              className={`inline-flex items-center gap-2 text-sm font-semibold whitespace-nowrap min-h-[44px] ${navTextColor}`}
+              data-gtm-id="call-to-book"
+            >
+              <span className="w-8 h-8 rounded-full border border-current flex items-center justify-center flex-shrink-0">
+                <Phone className="w-4 h-4" />
+              </span>
+              (954) 764-4344
+            </a>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`min-h-[44px] min-w-[44px] flex items-center justify-center ${navTextColor}`}
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 

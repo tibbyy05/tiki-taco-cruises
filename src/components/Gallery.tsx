@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, ArrowRight, Play } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
 import { staticGalleryImages } from '../data/galleryImages';
 import { supabase, CLIENT_ID } from '../lib/supabase';
@@ -88,21 +88,29 @@ export default function Gallery() {
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Mobile: horizontal swipe carousel (scroll-snap); sm+: grid */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 -mx-4 px-4 pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:overflow-visible sm:mx-0 sm:px-0 sm:pb-0">
           {galleryImages.map((image, index) => (
             <div
               key={image.id}
-              className="relative aspect-[4/3] overflow-hidden rounded-xl cursor-pointer group min-h-[200px] sm:min-h-0"
+              className="relative aspect-[4/3] overflow-hidden rounded-xl cursor-pointer group flex-none w-[85%] snap-center min-h-[200px] sm:w-auto sm:flex-auto sm:min-h-0"
               onClick={() => openLightbox(index)}
             >
               {image.mediaType === 'video' ? (
-                <video
-                  src={image.src}
-                  muted
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
+                <>
+                  <video
+                    src={image.src}
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                      <Play className="w-7 h-7 text-white fill-white ml-1" aria-hidden="true" />
+                    </span>
+                  </div>
+                </>
               ) : (
                 <img
                   src={image.src}

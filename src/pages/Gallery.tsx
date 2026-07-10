@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Play } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
@@ -164,12 +165,19 @@ const Gallery: React.FC = () => {
                         onClick={() => setLightboxIndex(index)}
                       >
                         {isVideo ? (
-                          <video
-                            src={image.image_url}
-                            muted
-                            playsInline
-                            preload={shouldPreload ? 'auto' : 'metadata'}
-                          />
+                          <>
+                            <video
+                              src={image.image_url}
+                              muted
+                              playsInline
+                              preload={shouldPreload ? 'auto' : 'metadata'}
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <span className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                                <Play className="w-7 h-7 text-white fill-white ml-1" aria-hidden="true" />
+                              </span>
+                            </div>
+                          </>
                         ) : (
                           <img
                             src={image.image_url}

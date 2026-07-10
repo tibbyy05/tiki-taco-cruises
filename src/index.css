@@ -56,6 +56,16 @@
 }
 
 @layer utilities {
+  /* Hide scrollbars on swipe carousels while keeping them scrollable */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   @keyframes fade-in-up {
     from {
       opacity: 0;

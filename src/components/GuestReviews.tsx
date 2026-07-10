@@ -111,6 +111,14 @@ export default function GuestReviews() {
       <div className="max-w-4xl mx-auto px-4">
         <ScrollReveal>
           <div className="text-center mb-8 sm:mb-10">
+            <div className="flex items-center justify-center gap-1 sm:gap-1.5 mb-3" aria-hidden="true">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} className="w-8 h-8 sm:w-10 sm:h-10 fill-[#FFC94A] text-[#FFC94A] drop-shadow-sm" />
+              ))}
+            </div>
+            <p className="text-lg sm:text-xl font-bold text-ocean mb-2">
+              5.0 Stars · 88 Google Reviews
+            </p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3 sm:mb-4">
               What Guests Say About Our Tiki Cruises
             </h2>

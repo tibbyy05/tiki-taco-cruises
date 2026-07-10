@@ -204,7 +204,7 @@ export default function NewRiverCruise() {
           name: 'Northbound Sandbar & Scenic Cruise',
           path: '/north-bound-scenic-cruise/',
           description: 'Head north along the Intracoastal for a mix of sightseeing and sandbar fun.',
-          image: '/Sandbar.png',
+          image: '/northbound-sandbar-tile.jpg',
         },
         {
           name: 'Las Olas & Intracoastal Party Cruise',

@@ -252,18 +252,23 @@ export default function AdminAnalytics() {
           )}
 
           {state === 'not-configured' && (
-            <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-8 max-w-3xl">
-              <h2 className="text-2xl font-bold text-navy mb-3">One-time setup needed</h2>
-              <p className="text-gray-700 mb-4">
-                <span className="font-semibold">Quick option (no Google):</span> run{' '}
-                <code className="bg-sand px-1 rounded">supabase/migrations/20260709_tiki_page_views.sql</code>{' '}
-                in the Supabase SQL editor to turn on built-in page-view tracking — stats appear here
-                as visitors browse the site.
+            <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-6 sm:p-8 max-w-3xl text-center">
+              <div className="text-5xl mb-4" aria-hidden="true">📊</div>
+              <h2 className="text-3xl font-bold text-navy mb-3">Analytics Coming Soon</h2>
+              <p className="text-gray-700 max-w-md mx-auto">
+                Traffic stats — visitors, page views, call clicks, and where they come from —
+                will appear here once tracking is connected. The site is already collecting
+                data with Google Analytics in the meantime.
               </p>
-              <p className="text-gray-700 mb-4">
-                For richer data (the site already collects it with Google Analytics), connect a
-                Google service account (about 5 minutes):
-              </p>
+            </div>
+          )}
+
+          {/* Setup reference for developers (hidden from the owner view above):
+              quick option is running supabase/migrations/20260709_tiki_page_views.sql
+              in the Supabase SQL editor (built-in tracking); richer option is the
+              GA4 service-account env vars described below. */}
+          {false && (
+            <div className="hidden">
               <ol className="list-decimal list-inside space-y-2 text-gray-700 text-sm leading-relaxed">
                 <li>
                   In <span className="font-semibold">Google Cloud Console</span>, create (or pick) a

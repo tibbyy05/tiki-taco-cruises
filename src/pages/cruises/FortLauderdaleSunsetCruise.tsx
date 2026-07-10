@@ -291,13 +291,13 @@ export default function FortLauderdaleSunsetCruise() {
                 name: 'New River Historic Cruise',
                 path: '/new-river-cruise/',
                 description: 'A 4-hour scenic cruise through downtown Fort Lauderdale along the New River.',
-                image: '/Night_Intracoastal2.jpg',
+                image: '/new-river-tile.jpg',
               },
               {
                 name: 'Northbound Sandbar & Scenic Cruise',
                 path: '/north-bound-scenic-cruise/',
                 description: 'Head north along the Intracoastal for sightseeing and sandbar fun.',
-                image: '/Sandbar.png',
+                image: '/northbound-sandbar-tile.jpg',
               },
             ].map((route, index) => (
               <div
