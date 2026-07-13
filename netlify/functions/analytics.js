@@ -92,10 +92,25 @@ export const handler = async (event) => {
       return { statusCode: 401, headers, body: JSON.stringify({ error: 'unauthorized' }) };
     }
 
-    const days = ['7', '28', '90'].includes(event.queryStringParameters?.days)
-      ? event.queryStringParameters.days
+    // Supported windows. Each defines the current range, the equal-length
+    // preceding range (for period-over-period deltas), and the trend
+    // granularity: hourly bars for single-day views, daily otherwise.
+    const RANGES = {
+      today: { cur: ['today', 'today'], prev: ['yesterday', 'yesterday'], trendDim: 'dateHour' },
+      yesterday: { cur: ['yesterday', 'yesterday'], prev: ['2daysAgo', '2daysAgo'], trendDim: 'dateHour' },
+      7: { cur: ['7daysAgo', 'today'], prev: ['15daysAgo', '8daysAgo'], trendDim: 'date' },
+      28: { cur: ['28daysAgo', 'today'], prev: ['57daysAgo', '29daysAgo'], trendDim: 'date' },
+      90: { cur: ['90daysAgo', 'today'], prev: ['181daysAgo', '91daysAgo'], trendDim: 'date' }
+    };
+    const rangeKey = Object.prototype.hasOwnProperty.call(RANGES, event.queryStringParameters?.range)
+      ? event.queryStringParameters.range
       : '28';
-    const dateRanges = [{ startDate: `${days}daysAgo`, endDate: 'today' }];
+    const R = RANGES[rangeKey];
+    const dateRanges = [{ startDate: R.cur[0], endDate: R.cur[1] }];
+    const comparisonRanges = [
+      { startDate: R.cur[0], endDate: R.cur[1] },
+      { startDate: R.prev[0], endDate: R.prev[1] }
+    ];
 
     const accessToken = await getGoogleAccessToken(saEmail, saKey);
 
@@ -107,7 +122,7 @@ export const handler = async (event) => {
         body: JSON.stringify({
           requests: [
             {
-              dateRanges,
+              dateRanges: comparisonRanges,
               metrics: [
                 { name: 'activeUsers' },
                 { name: 'sessions' },
@@ -117,10 +132,10 @@ export const handler = async (event) => {
             },
             {
               dateRanges,
-              dimensions: [{ name: 'date' }],
+              dimensions: [{ name: R.trendDim }],
               metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
-              orderBys: [{ dimension: { dimensionName: 'date' } }],
-              limit: 100
+              orderBys: [{ dimension: { dimensionName: R.trendDim } }],
+              limit: 200
             },
             {
               dateRanges,
@@ -157,17 +172,27 @@ export const handler = async (event) => {
     const { reports = [] } = await res.json();
     const [totals, trend, sources, pages, devices] = reports;
 
-    const totalsRow = totals?.rows?.[0];
+    // With two dateRanges GA adds an implicit dateRange dimension:
+    // date_range_0 = current window, date_range_1 = previous window.
+    const totalRows = totals?.rows ?? [];
+    const rowFor = (rangeName) =>
+      totalRows.find((r) => r.dimensionValues?.[0]?.value === rangeName) ?? (totalRows.length === 1 ? totalRows[0] : undefined);
+    const currentRow = rowFor('date_range_0');
+    const previousRow = rowFor('date_range_1');
+    const parseTotals = (row) => ({
+      users: metricRow(row, 0),
+      sessions: metricRow(row, 1),
+      pageViews: metricRow(row, 2),
+      avgSessionSeconds: Math.round(metricRow(row, 3))
+    });
+
     const body = {
-      days: Number(days),
-      totals: {
-        users: metricRow(totalsRow, 0),
-        sessions: metricRow(totalsRow, 1),
-        pageViews: metricRow(totalsRow, 2),
-        avgSessionSeconds: Math.round(metricRow(totalsRow, 3))
-      },
+      range: rangeKey,
+      granularity: R.trendDim === 'dateHour' ? 'hour' : 'day',
+      totals: parseTotals(currentRow),
+      prevTotals: previousRow ? parseTotals(previousRow) : null,
       trend: (trend?.rows ?? []).map((r) => ({
-        date: r.dimensionValues[0].value, // YYYYMMDD
+        date: r.dimensionValues[0].value, // YYYYMMDD or YYYYMMDDHH
         users: metricRow(r, 0),
         pageViews: metricRow(r, 1)
       })),

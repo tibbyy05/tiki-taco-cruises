@@ -1,21 +1,23 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone } from 'lucide-react';
+import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 
+interface Totals {
+  users: number;
+  sessions: number;
+  pageViews: number;
+  avgSessionSeconds: number;
+}
+
 interface AnalyticsData {
-  days: number;
-  totals: {
-    users: number;
-    sessions: number;
-    pageViews: number;
-    avgSessionSeconds: number;
-    callClicks?: number;
-    bookClicks?: number;
-  };
+  range: string;
+  granularity?: 'hour' | 'day';
+  totals: Totals;
+  prevTotals?: Totals | null;
   trend: Array<{ date: string; users: number; pageViews: number }>;
   sources: Array<{ source: string; sessions: number; users: number; calls?: number }>;
   pages: Array<{ path: string; pageViews: number; users: number; calls?: number }>;
@@ -31,15 +33,14 @@ interface SelfHostedSummary {
   devices: Array<{ device: string; visitors: number }>;
 }
 
-const fromSelfHosted = (raw: SelfHostedSummary, days: number): AnalyticsData => ({
-  days,
+const fromSelfHosted = (raw: SelfHostedSummary, range: string): AnalyticsData => ({
+  range,
+  granularity: 'day',
   totals: {
     users: raw.totals.visitors,
     sessions: raw.totals.visitors,
     pageViews: raw.totals.pageViews,
     avgSessionSeconds: 0,
-    callClicks: raw.totals.callClicks,
-    bookClicks: raw.totals.bookClicks,
   },
   trend: raw.trend.map((t) => ({ date: t.date, users: t.visitors, pageViews: t.views })),
   sources: raw.sources.map((s) => ({ source: s.source, sessions: s.views, users: s.visitors, calls: s.calls })),
@@ -50,10 +51,21 @@ const fromSelfHosted = (raw: SelfHostedSummary, days: number): AnalyticsData => 
 type LoadState = 'loading' | 'ready' | 'not-configured' | 'error';
 
 const RANGE_OPTIONS = [
-  { days: '7', label: 'Last 7 days' },
-  { days: '28', label: 'Last 28 days' },
-  { days: '90', label: 'Last 90 days' },
+  { key: 'today', label: 'Today' },
+  { key: 'yesterday', label: 'Yesterday' },
+  { key: '7', label: '7 days' },
+  { key: '28', label: '28 days' },
+  { key: '90', label: '90 days' },
 ];
+
+// Days window used for the self-hosted call tracking RPC per range.
+const RANGE_TO_RPC_DAYS: Record<string, number> = {
+  today: 1,
+  yesterday: 2,
+  '7': 7,
+  '28': 28,
+  '90': 90,
+};
 
 const formatDuration = (seconds: number) => {
   const m = Math.floor(seconds / 60);
@@ -61,8 +73,18 @@ const formatDuration = (seconds: number) => {
   return m > 0 ? `${m}m ${s}s` : `${s}s`;
 };
 
-const formatTrendDate = (yyyymmdd: string) =>
-  `${yyyymmdd.slice(4, 6)}/${yyyymmdd.slice(6, 8)}`;
+const prettyPath = (path: string) => (path === '/' ? 'Home Page' : path);
+
+const formatTrendLabel = (value: string, granularity: 'hour' | 'day') => {
+  if (granularity === 'hour') {
+    const h = Number(value.slice(8, 10));
+    if (Number.isNaN(h)) return value;
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}${ampm}`;
+  }
+  return `${Number(value.slice(4, 6))}/${Number(value.slice(6, 8))}`;
+};
 
 const DEVICE_ICONS: Record<string, typeof Monitor> = {
   desktop: Monitor,
@@ -70,23 +92,59 @@ const DEVICE_ICONS: Record<string, typeof Monitor> = {
   tablet: Tablet,
 };
 
-function TrendChart({ trend }: { trend: AnalyticsData['trend'] }) {
+function Delta({ current, previous, suffix }: { current: number; previous: number | undefined; suffix?: string }) {
+  if (previous === undefined || previous <= 0) return null;
+  const pct = Math.round(((current - previous) / previous) * 100);
+  if (pct === 0) {
+    return <span className="text-xs font-semibold text-gray-400 ml-2">±0%</span>;
+  }
+  const up = pct > 0;
+  return (
+    <span className={`text-xs font-bold ml-2 ${up ? 'text-green-600' : 'text-red-500'}`}>
+      {up ? '▲' : '▼'} {Math.abs(pct)}%{suffix ?? ''}
+    </span>
+  );
+}
+
+function TrendChart({ trend, granularity }: { trend: AnalyticsData['trend']; granularity: 'hour' | 'day' }) {
   if (trend.length === 0) {
     return <p className="text-sm text-gray-500 py-10 text-center">No traffic recorded yet in this period.</p>;
   }
   const w = 800;
-  const h = 220;
-  const pad = { top: 12, right: 8, bottom: 26, left: 8 };
+  const h = 260;
+  const pad = { top: 24, right: 8, bottom: 28, left: 34 };
+  const plotH = h - pad.top - pad.bottom;
   const max = Math.max(...trend.map((d) => d.pageViews), 1);
+  // Round the axis ceiling to a friendly number
+  const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(max))) / 2);
+  const axisMax = Math.ceil(max / step) * step;
   const barW = (w - pad.left - pad.right) / trend.length;
-  const labelEvery = Math.max(1, Math.ceil(trend.length / 10));
+  const xLabelEvery = Math.max(1, Math.ceil(trend.length / 12));
+  const showAllValues = trend.length <= 16;
+  const maxIndex = trend.reduce((mi, d, i) => (d.pageViews > trend[mi].pageViews ? i : mi), 0);
+  const gridLines = [0.25, 0.5, 0.75, 1];
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Daily page views">
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Page views over time">
+      {/* Y-axis gridlines + labels */}
+      {gridLines.map((f) => {
+        const y = pad.top + plotH * (1 - f);
+        return (
+          <g key={f}>
+            <line x1={pad.left} x2={w - pad.right} y1={y} y2={y} stroke="#0a192f" strokeOpacity="0.08" strokeDasharray="4 4" />
+            <text x={pad.left - 6} y={y + 4} textAnchor="end" fontSize="10" className="fill-navy/50">
+              {Math.round(axisMax * f).toLocaleString()}
+            </text>
+          </g>
+        );
+      })}
+      <line x1={pad.left} x2={w - pad.right} y1={pad.top + plotH} y2={pad.top + plotH} stroke="#0a192f" strokeOpacity="0.2" />
+
       {trend.map((d, i) => {
-        const barH = Math.max(2, ((h - pad.top - pad.bottom) * d.pageViews) / max);
+        const barH = Math.max(2, (plotH * d.pageViews) / axisMax);
         const x = pad.left + i * barW;
-        const y = h - pad.bottom - barH;
+        const y = pad.top + plotH - barH;
+        const showValue = d.pageViews > 0 && (showAllValues || i === maxIndex);
         return (
           <g key={d.date}>
             <rect
@@ -97,17 +155,16 @@ function TrendChart({ trend }: { trend: AnalyticsData['trend'] }) {
               rx={Math.min(4, barW * 0.2)}
               className="fill-teal hover:fill-coral transition-colors"
             >
-              <title>{`${formatTrendDate(d.date)} — ${d.pageViews} page views, ${d.users} visitors`}</title>
+              <title>{`${formatTrendLabel(d.date, granularity)} — ${d.pageViews} page views, ${d.users} visitors`}</title>
             </rect>
-            {i % labelEvery === 0 && (
-              <text
-                x={x + barW / 2}
-                y={h - 8}
-                textAnchor="middle"
-                className="fill-navy/60"
-                fontSize="11"
-              >
-                {formatTrendDate(d.date)}
+            {showValue && (
+              <text x={x + barW / 2} y={y - 5} textAnchor="middle" fontSize="10" fontWeight="700" className="fill-navy">
+                {d.pageViews.toLocaleString()}
+              </text>
+            )}
+            {i % xLabelEvery === 0 && (
+              <text x={x + barW / 2} y={h - 8} textAnchor="middle" fontSize="10" className="fill-navy/60">
+                {formatTrendLabel(d.date, granularity)}
               </text>
             )}
           </g>
@@ -130,50 +187,67 @@ function ShareBar({ value, max }: { value: number; max: number }) {
 
 export default function AdminAnalytics() {
   const { user, session } = useAuth();
-  const [days, setDays] = useState('28');
+  const [range, setRange] = useState('28');
   const [state, setState] = useState<LoadState>('loading');
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
+  const [selfCalls, setSelfCalls] = useState<SelfHostedSummary | null>(null);
 
-  // Self-hosted page-view tracking (tiki_page_views) — used when the GA
-  // connection isn't configured yet.
-  const loadSelfHosted = useCallback(async () => {
-    const { data: raw, error } = await supabase.rpc('tiki_analytics_summary', {
-      days: Number(days),
-    });
-    if (error || !raw) {
-      setState('not-configured');
-      return;
-    }
-    setData(fromSelfHosted(raw as SelfHostedSummary, Number(days)));
-    setDataSource('self');
-    setState('ready');
-  }, [days]);
+  // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
+  // the call-click layer; standalone it's the full fallback dashboard.
+  const fetchSelfSummary = useCallback(async (days: number): Promise<SelfHostedSummary | null> => {
+    const { data: raw, error } = await supabase.rpc('tiki_analytics_summary', { days });
+    return error || !raw ? null : (raw as SelfHostedSummary);
+  }, []);
 
   const load = useCallback(async () => {
     if (!session?.access_token) return;
     setState('loading');
+
+    const rpcDays = RANGE_TO_RPC_DAYS[range] ?? 28;
+    const selfPromise = fetchSelfSummary(rpcDays);
+
     try {
-      const res = await fetch(`/.netlify/functions/analytics?days=${days}`, {
+      const res = await fetch(`/.netlify/functions/analytics?range=${range}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      if (res.status === 501) {
-        await loadSelfHosted();
+      if (res.ok) {
+        const body = (await res.json()) as AnalyticsData;
+        setData(body);
+        setDataSource('ga');
+        setSelfCalls(await selfPromise);
+        setState('ready');
         return;
       }
-      if (!res.ok) {
+      if (res.status !== 501) {
         setState('error');
         return;
       }
-      const body = await res.json();
-      setData(body);
-      setDataSource('ga');
-      setState('ready');
     } catch {
-      // Local dev has no Netlify functions — fall back to self-hosted stats.
-      await loadSelfHosted();
+      // Local dev has no Netlify functions — fall through to self-hosted.
     }
-  }, [days, session?.access_token, loadSelfHosted]);
+
+    // Fallback: self-hosted only, with a doubled window for deltas.
+    const current = await selfPromise;
+    if (!current) {
+      setState('not-configured');
+      return;
+    }
+    const doubled = await fetchSelfSummary(rpcDays * 2);
+    const shaped = fromSelfHosted(current, range);
+    if (doubled) {
+      shaped.prevTotals = {
+        users: Math.max(0, doubled.totals.visitors - current.totals.visitors),
+        sessions: Math.max(0, doubled.totals.visitors - current.totals.visitors),
+        pageViews: Math.max(0, doubled.totals.pageViews - current.totals.pageViews),
+        avgSessionSeconds: 0,
+      };
+    }
+    setData(shaped);
+    setSelfCalls(current);
+    setDataSource('self');
+    setState('ready');
+  }, [range, session?.access_token, fetchSelfSummary]);
 
   useEffect(() => {
     load();
@@ -183,32 +257,31 @@ export default function AdminAnalytics() {
     return <Navigate to="/admin" replace />;
   }
 
-  const statCards = data
-    ? dataSource === 'ga'
-      ? [
-          { icon: Users, label: 'Visitors', value: data.totals.users.toLocaleString() },
-          { icon: MousePointerClick, label: 'Sessions', value: data.totals.sessions.toLocaleString() },
-          { icon: Eye, label: 'Page Views', value: data.totals.pageViews.toLocaleString() },
-          { icon: Timer, label: 'Avg. Visit', value: formatDuration(data.totals.avgSessionSeconds) },
-        ]
-      : [
-          { icon: Users, label: 'Visitors', value: data.totals.users.toLocaleString() },
-          { icon: Eye, label: 'Page Views', value: data.totals.pageViews.toLocaleString() },
-          { icon: Phone, label: 'Call Clicks', value: (data.totals.callClicks ?? 0).toLocaleString() },
-          {
-            icon: MousePointerClick,
-            label: 'Call Rate',
-            value:
-              data.totals.users > 0
-                ? `${(((data.totals.callClicks ?? 0) / data.totals.users) * 100).toFixed(1)}%`
-                : '—',
-          },
-        ]
-    : [];
+  const callClicks = selfCalls?.totals.callClicks;
+  const callRate =
+    data && callClicks !== undefined && data.totals.users > 0
+      ? `${((callClicks / data.totals.users) * 100).toFixed(1)}%`
+      : null;
+
+  const callsByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.calls]));
+  const callSources = (selfCalls?.sources ?? []).filter((s) => s.calls > 0);
 
   const maxSourceSessions = Math.max(...(data?.sources.map((s) => s.sessions) ?? [0]), 1);
   const maxPageViews = Math.max(...(data?.pages.map((p) => p.pageViews) ?? [0]), 1);
   const totalDeviceUsers = (data?.devices ?? []).reduce((sum, d) => sum + d.users, 0);
+
+  // Content scoreboard: pages ranked by what they produce.
+  const scoreboard = (data?.pages ?? [])
+    .map((p) => {
+      const calls = p.calls ?? callsByPath.get(p.path) ?? (selfCalls ? 0 : undefined);
+      return {
+        ...p,
+        calls,
+        callRate: calls !== undefined && p.users > 0 ? (calls / p.users) * 100 : undefined,
+      };
+    })
+    .sort((a, b) => (b.calls ?? 0) - (a.calls ?? 0) || b.pageViews - a.pageViews);
+  const bestCallRate = Math.max(...scoreboard.map((r) => (r.calls ? r.callRate ?? 0 : 0)), 0);
 
   return (
     <>
@@ -222,13 +295,13 @@ export default function AdminAnalytics() {
           <AdminNav
             title="Analytics"
             actions={
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {RANGE_OPTIONS.map((opt) => (
                   <button
-                    key={opt.days}
-                    onClick={() => setDays(opt.days)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
-                      days === opt.days
+                    key={opt.key}
+                    onClick={() => setRange(opt.key)}
+                    className={`px-3.5 py-2 rounded-full text-sm font-semibold transition-colors ${
+                      range === opt.key
                         ? 'bg-coral text-white'
                         : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
                     }`}
@@ -263,66 +336,48 @@ export default function AdminAnalytics() {
             </div>
           )}
 
-          {/* Setup reference for developers (hidden from the owner view above):
-              quick option is running supabase/migrations/20260709_tiki_page_views.sql
-              in the Supabase SQL editor (built-in tracking); richer option is the
-              GA4 service-account env vars described below. */}
-          {false && (
-            <div className="hidden">
-              <ol className="list-decimal list-inside space-y-2 text-gray-700 text-sm leading-relaxed">
-                <li>
-                  In <span className="font-semibold">Google Cloud Console</span>, create (or pick) a
-                  project and enable the <span className="font-semibold">Google Analytics Data API</span>.
-                </li>
-                <li>
-                  Create a <span className="font-semibold">service account</span>, then create a JSON
-                  key for it.
-                </li>
-                <li>
-                  In <span className="font-semibold">Google Analytics → Admin → Property access
-                  management</span>, add the service account email with <span className="font-semibold">Viewer</span> role.
-                </li>
-                <li>
-                  In <span className="font-semibold">Netlify → Site settings → Environment
-                  variables</span>, add: <code className="bg-sand px-1 rounded">GA4_PROPERTY_ID</code>,{' '}
-                  <code className="bg-sand px-1 rounded">GA_SA_EMAIL</code>, and{' '}
-                  <code className="bg-sand px-1 rounded">GA_SA_PRIVATE_KEY</code> (from the JSON key),
-                  then redeploy.
-                </li>
-              </ol>
-              <p className="text-gray-500 text-sm mt-4">
-                Until then, data is viewable in{' '}
-                <a
-                  href="https://analytics.google.com/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-teal hover:text-coral underline"
-                >
-                  Google Analytics
-                </a>
-                .
-              </p>
-            </div>
-          )}
-
           {state === 'ready' && data && (
             <div className="space-y-6">
-              {/* Stat cards */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                {statCards.map((card) => (
-                  <div key={card.label} className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5">
-                    <div className="flex items-center gap-2 text-navy/60 text-sm font-semibold mb-2">
-                      <card.icon className="w-4 h-4" /> {card.label}
-                    </div>
-                    <div className="text-3xl font-bold text-navy price-text">{card.value}</div>
-                  </div>
-                ))}
+              {/* Stat cards with period-over-period deltas */}
+              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+                <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()}>
+                  <Delta current={data.totals.users} previous={data.prevTotals?.users} />
+                </StatCard>
+                <StatCard icon={MousePointerClick} label="Sessions" value={data.totals.sessions.toLocaleString()}>
+                  <Delta current={data.totals.sessions} previous={data.prevTotals?.sessions} />
+                </StatCard>
+                <StatCard icon={Eye} label="Page Views" value={data.totals.pageViews.toLocaleString()}>
+                  <Delta current={data.totals.pageViews} previous={data.prevTotals?.pageViews} />
+                </StatCard>
+                <StatCard
+                  icon={Timer}
+                  label="Avg. Visit"
+                  value={dataSource === 'ga' ? formatDuration(data.totals.avgSessionSeconds) : '—'}
+                >
+                  {dataSource === 'ga' && (
+                    <Delta current={data.totals.avgSessionSeconds} previous={data.prevTotals?.avgSessionSeconds} />
+                  )}
+                </StatCard>
+                <StatCard
+                  icon={Phone}
+                  label="Call Clicks"
+                  value={callClicks !== undefined ? callClicks.toLocaleString() : '—'}
+                  note={callClicks === undefined ? 'setup pending' : undefined}
+                />
+                <StatCard
+                  icon={Phone}
+                  label="Call Rate"
+                  value={callRate ?? '—'}
+                  note={callClicks === undefined ? 'setup pending' : undefined}
+                />
               </div>
 
-              {/* Daily trend */}
+              {/* Trend */}
               <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                <h2 className="text-lg font-bold text-navy mb-4">Daily Page Views</h2>
-                <TrendChart trend={data.trend} />
+                <h2 className="text-lg font-bold text-navy mb-4">
+                  {data.granularity === 'hour' ? 'Page Views by Hour' : 'Daily Page Views'}
+                </h2>
+                <TrendChart trend={data.trend} granularity={data.granularity ?? 'day'} />
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -342,16 +397,23 @@ export default function AdminAnalytics() {
                           <div className="w-14 text-right text-sm font-semibold text-navy">
                             {s.sessions.toLocaleString()}
                           </div>
-                          {typeof s.calls === 'number' && (
-                            <div
-                              className={`w-16 flex-shrink-0 text-right text-xs font-semibold inline-flex items-center justify-end gap-1 ${s.calls > 0 ? 'text-coral' : 'text-gray-400'}`}
-                              title="Call to Book clicks"
-                            >
-                              <Phone className="w-3 h-3" /> {s.calls}
-                            </div>
-                          )}
                         </div>
                       ))}
+                    </div>
+                  )}
+                  {callSources.length > 0 && (
+                    <div className="mt-5 pt-4 border-t border-navy/10">
+                      <h3 className="text-sm font-bold text-navy mb-2 inline-flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-coral" /> Call clicks by source
+                      </h3>
+                      <div className="space-y-1.5">
+                        {callSources.map((s) => (
+                          <div key={s.source} className="flex justify-between text-sm">
+                            <span className="text-gray-700 truncate">{s.source}</span>
+                            <span className="font-semibold text-coral">{s.calls}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -366,24 +428,62 @@ export default function AdminAnalytics() {
                       {data.pages.map((p) => (
                         <div key={p.path} className="flex items-center gap-3">
                           <div className="w-40 sm:w-48 flex-shrink-0 text-sm text-gray-700 truncate" title={p.path}>
-                            {p.path}
+                            {prettyPath(p.path)}
                           </div>
                           <ShareBar value={p.pageViews} max={maxPageViews} />
                           <div className="w-14 text-right text-sm font-semibold text-navy">
                             {p.pageViews.toLocaleString()}
                           </div>
-                          {typeof p.calls === 'number' && (
-                            <div
-                              className={`w-16 flex-shrink-0 text-right text-xs font-semibold inline-flex items-center justify-end gap-1 ${p.calls > 0 ? 'text-coral' : 'text-gray-400'}`}
-                              title="Call to Book clicks"
-                            >
-                              <Phone className="w-3 h-3" /> {p.calls}
-                            </div>
-                          )}
                         </div>
                       ))}
                     </div>
                   )}
+                </div>
+              </div>
+
+              {/* Content scoreboard */}
+              <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                <h2 className="text-lg font-bold text-navy mb-1">What’s Working</h2>
+                <p className="text-sm text-gray-500 mb-4">
+                  Pages ranked by the calls they produce{selfCalls ? '' : ' — call tracking pending database setup'}.
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm min-w-[560px]">
+                    <thead>
+                      <tr className="text-left text-navy/60 border-b border-navy/10">
+                        <th className="py-2 pr-3 font-semibold">Page</th>
+                        <th className="py-2 px-3 font-semibold text-right">Visitors</th>
+                        <th className="py-2 px-3 font-semibold text-right">Views</th>
+                        <th className="py-2 px-3 font-semibold text-right">Call Clicks</th>
+                        <th className="py-2 pl-3 font-semibold text-right">Call Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {scoreboard.map((row) => {
+                        const isTop = !!row.calls && row.callRate === bestCallRate && bestCallRate > 0;
+                        const isDud = selfCalls !== null && row.calls === 0 && row.pageViews >= maxPageViews * 0.4;
+                        return (
+                          <tr key={row.path} className="border-b border-navy/5 last:border-0">
+                            <td className="py-2.5 pr-3 text-gray-700">
+                              <span className="inline-flex items-center gap-1.5">
+                                {prettyPath(row.path)}
+                                {isTop && <Trophy className="w-3.5 h-3.5 text-amber-500" aria-label="Best call rate" />}
+                                {isDud && <AlertTriangle className="w-3.5 h-3.5 text-amber-400" aria-label="High traffic, no calls yet" />}
+                              </span>
+                            </td>
+                            <td className="py-2.5 px-3 text-right font-medium text-navy">{row.users.toLocaleString()}</td>
+                            <td className="py-2.5 px-3 text-right text-navy/70">{row.pageViews.toLocaleString()}</td>
+                            <td className={`py-2.5 px-3 text-right font-semibold ${row.calls ? 'text-coral' : 'text-gray-400'}`}>
+                              {row.calls !== undefined ? row.calls : '—'}
+                            </td>
+                            <td className="py-2.5 pl-3 text-right text-navy/70">
+                              {row.callRate !== undefined ? `${row.callRate.toFixed(1)}%` : '—'}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
@@ -409,13 +509,40 @@ export default function AdminAnalytics() {
 
               <p className="text-xs text-gray-500">
                 {dataSource === 'ga'
-                  ? 'Source: Google Analytics 4 · Data may lag real-time activity by 24–48 hours.'
-                  : 'Source: built-in site tracking (collecting since Jul 2026) · Connect Google Analytics for richer data — see setup in the docs card when disconnected.'}
+                  ? 'Traffic: Google Analytics 4 (may lag real-time by 24–48h) · Call clicks: built-in site tracking · Change % compares the previous period of equal length.'
+                  : 'Source: built-in site tracking · Change % compares the previous period of equal length.'}
               </p>
             </div>
           )}
         </div>
       </div>
     </>
+  );
+}
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  note,
+  children,
+}: {
+  icon: typeof Users;
+  label: string;
+  value: string;
+  note?: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-4">
+      <div className="flex items-center gap-1.5 text-navy/60 text-xs font-semibold mb-1.5 uppercase tracking-wide">
+        <Icon className="w-3.5 h-3.5" /> {label}
+      </div>
+      <div className="text-2xl font-bold text-navy price-text inline-flex items-baseline">
+        {value}
+        {children}
+      </div>
+      {note && <div className="text-[0.65rem] text-gray-400 mt-0.5">{note}</div>}
+    </div>
   );
 }
