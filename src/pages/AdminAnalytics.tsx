@@ -23,6 +23,18 @@ interface AnalyticsData {
   pages: Array<{ path: string; pageViews: number; users: number; calls?: number }>;
   devices: Array<{ device: string; users: number }>;
   locations?: Array<{ country: string; region: string; city: string; users: number }>;
+  visitorDetail?: Array<{ country: string; region: string; city: string; source: string; users: number }>;
+}
+
+// One row per visit session from the tiki_recent_sessions RPC.
+interface SessionRow {
+  session_id: string;
+  started_at: string;
+  entry_path: string | null;
+  source: string;
+  device: string;
+  views: number;
+  calls: number;
 }
 
 // "Fort Lauderdale, Florida" for US visitors; country elsewhere.
@@ -204,6 +216,7 @@ export default function AdminAnalytics() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
   const [selfCalls, setSelfCalls] = useState<SelfHostedSummary | null>(null);
+  const [sessionLog, setSessionLog] = useState<SessionRow[] | null>(null);
 
   // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
   // the call-click layer; standalone it's the full fallback dashboard.
@@ -218,6 +231,15 @@ export default function AdminAnalytics() {
 
     const rpcDays = RANGE_TO_RPC_DAYS[range] ?? 28;
     const selfPromise = fetchSelfSummary(rpcDays);
+
+    // Per-session visitor log for single-day views.
+    if (range === 'today' || range === 'yesterday') {
+      supabase
+        .rpc('tiki_recent_sessions', { day_offset: range === 'today' ? 0 : 1 })
+        .then(({ data: log, error }) => setSessionLog(error || !log ? null : (log as SessionRow[])));
+    } else {
+      setSessionLog(null);
+    }
 
     try {
       const res = await fetch(`/.netlify/functions/analytics?range=${range}`, {
@@ -391,6 +413,84 @@ export default function AdminAnalytics() {
                 </h2>
                 <TrendChart trend={data.trend} granularity={data.granularity ?? 'day'} />
               </div>
+
+              {/* Visitor log — single-day views only */}
+              {(range === 'today' || range === 'yesterday') && (
+                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                  <h2 className="text-lg font-bold text-navy mb-1">
+                    Visitor Log — {range === 'today' ? 'Today' : 'Yesterday'}
+                  </h2>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Every visit, newest first (built-in tracking · collecting since Jul 13, 2026).
+                  </p>
+                  {!sessionLog || sessionLog.length === 0 ? (
+                    <p className="text-sm text-gray-500">No visits recorded {range === 'today' ? 'yet today' : 'that day'}.</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm min-w-[560px]">
+                        <thead>
+                          <tr className="text-left text-navy/60 border-b border-navy/10">
+                            <th className="py-2 pr-3 font-semibold">Time</th>
+                            <th className="py-2 px-3 font-semibold">Landed On</th>
+                            <th className="py-2 px-3 font-semibold">Came From</th>
+                            <th className="py-2 px-3 font-semibold">Device</th>
+                            <th className="py-2 px-3 font-semibold text-right">Pages</th>
+                            <th className="py-2 pl-3 font-semibold text-right">Calls</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sessionLog.map((s) => (
+                            <tr key={s.session_id} className="border-b border-navy/5 last:border-0">
+                              <td className="py-2 pr-3 text-navy/70 whitespace-nowrap">
+                                {new Date(s.started_at).toLocaleTimeString('en-US', {
+                                  hour: 'numeric',
+                                  minute: '2-digit',
+                                  timeZone: 'America/New_York',
+                                })}
+                              </td>
+                              <td className="py-2 px-3 text-gray-700">{prettyPath(s.entry_path ?? '—')}</td>
+                              <td className="py-2 px-3 text-gray-700">{s.source}</td>
+                              <td className="py-2 px-3 text-navy/70 capitalize">{s.device}</td>
+                              <td className="py-2 px-3 text-right text-navy/70">{s.views}</td>
+                              <td className={`py-2 pl-3 text-right font-semibold ${s.calls > 0 ? 'text-coral' : 'text-gray-400'}`}>
+                                {s.calls > 0 ? `☎ ${s.calls}` : '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Who visited × how they found us (GA) */}
+              {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (
+                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                  <h2 className="text-lg font-bold text-navy mb-1">Visitors × How They Found Us</h2>
+                  <p className="text-sm text-gray-500 mb-4">Location and traffic source combined (Google Analytics).</p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm min-w-[480px]">
+                      <thead>
+                        <tr className="text-left text-navy/60 border-b border-navy/10">
+                          <th className="py-2 pr-3 font-semibold">Location</th>
+                          <th className="py-2 px-3 font-semibold">Came From</th>
+                          <th className="py-2 pl-3 font-semibold text-right">Visitors</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.visitorDetail!.map((v, i) => (
+                          <tr key={i} className="border-b border-navy/5 last:border-0">
+                            <td className="py-2 pr-3 text-gray-700">{formatLocation(v)}</td>
+                            <td className="py-2 px-3 text-gray-700">{v.source}</td>
+                            <td className="py-2 pl-3 text-right font-semibold text-navy">{v.users.toLocaleString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Traffic sources */}

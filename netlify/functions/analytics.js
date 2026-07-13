@@ -163,21 +163,30 @@ export const handler = async (event) => {
       }
     );
 
-    // batchRunReports caps at 5 requests — locations runs as its own call.
-    const locRes = await fetch(
-      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
-      {
+    // batchRunReports caps at 5 requests — these two run as standalone calls.
+    const runReport = (body) =>
+      fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          dateRanges,
-          dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
-          metrics: [{ name: 'activeUsers' }],
-          orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
-          limit: 12
-        })
-      }
-    );
+        body: JSON.stringify(body)
+      });
+    const [locRes, detailRes] = await Promise.all([
+      runReport({
+        dateRanges,
+        dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 12
+      }),
+      // Who visited × how they found us
+      runReport({
+        dateRanges,
+        dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }, { name: 'sessionSourceMedium' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+        limit: 15
+      })
+    ]);
 
     if (!res.ok) {
       const detail = await res.text();
@@ -188,6 +197,7 @@ export const handler = async (event) => {
     const { reports = [] } = await res.json();
     const [totals, trend, sources, pages, devices] = reports;
     const locations = locRes.ok ? await locRes.json() : { rows: [] };
+    const detail = detailRes.ok ? await detailRes.json() : { rows: [] };
 
     // With two dateRanges GA adds an implicit dateRange dimension:
     // date_range_0 = current window, date_range_1 = previous window.
@@ -231,6 +241,13 @@ export const handler = async (event) => {
         country: r.dimensionValues[0].value,
         region: r.dimensionValues[1].value,
         city: r.dimensionValues[2].value,
+        users: metricRow(r, 0)
+      })),
+      visitorDetail: (detail?.rows ?? []).map((r) => ({
+        country: r.dimensionValues[0].value,
+        region: r.dimensionValues[1].value,
+        city: r.dimensionValues[2].value,
+        source: r.dimensionValues[3].value,
         users: metricRow(r, 0)
       }))
     };
