@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle } from 'lucide-react';
+import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
@@ -22,7 +22,19 @@ interface AnalyticsData {
   sources: Array<{ source: string; sessions: number; users: number; calls?: number }>;
   pages: Array<{ path: string; pageViews: number; users: number; calls?: number }>;
   devices: Array<{ device: string; users: number }>;
+  locations?: Array<{ country: string; region: string; city: string; users: number }>;
 }
+
+// "Fort Lauderdale, Florida" for US visitors; country elsewhere.
+const formatLocation = (l: { country: string; region: string; city: string }) => {
+  const city = l.city && l.city !== '(not set)' ? l.city : '';
+  const region = l.region && l.region !== '(not set)' ? l.region : '';
+  if (l.country === 'United States') {
+    if (city && region) return `${city}, ${region}`;
+    return region || city || 'United States (unknown city)';
+  }
+  return city ? `${city}, ${l.country}` : l.country || 'Unknown';
+};
 
 // Shape returned by the tiki_analytics_summary RPC (self-hosted tracking).
 interface SelfHostedSummary {
@@ -487,23 +499,57 @@ export default function AdminAnalytics() {
                 </div>
               </div>
 
-              {/* Devices */}
-              <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                <h2 className="text-lg font-bold text-navy mb-4">Devices</h2>
-                <div className="flex flex-wrap gap-4">
-                  {data.devices.map((d) => {
-                    const Icon = DEVICE_ICONS[d.device] ?? Monitor;
-                    const pct = totalDeviceUsers > 0 ? Math.round((d.users / totalDeviceUsers) * 100) : 0;
-                    return (
-                      <div key={d.device} className="flex items-center gap-3 bg-sand/50 rounded-xl px-4 py-3">
-                        <Icon className="w-5 h-5 text-teal" />
-                        <span className="capitalize text-navy font-semibold">{d.device}</span>
-                        <span className="text-gray-600 text-sm">
-                          {d.users.toLocaleString()} ({pct}%)
-                        </span>
-                      </div>
-                    );
-                  })}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Visitor locations */}
+                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                  <h2 className="text-lg font-bold text-navy mb-4 inline-flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-coral" /> Visitor Locations
+                  </h2>
+                  {!data.locations || data.locations.length === 0 ? (
+                    <p className="text-sm text-gray-500">
+                      {dataSource === 'ga' ? 'No location data in this period.' : 'Location data comes from Google Analytics.'}
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {data.locations.map((l, i) => {
+                        const maxLoc = data.locations![0].users || 1;
+                        return (
+                          <div key={i} className="flex items-center gap-3">
+                            <div
+                              className="w-44 sm:w-52 flex-shrink-0 text-sm text-gray-700 truncate"
+                              title={`${l.city}, ${l.region}, ${l.country}`}
+                            >
+                              {formatLocation(l)}
+                            </div>
+                            <ShareBar value={l.users} max={maxLoc} />
+                            <div className="w-12 text-right text-sm font-semibold text-navy">
+                              {l.users.toLocaleString()}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Devices */}
+                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                  <h2 className="text-lg font-bold text-navy mb-4">Devices</h2>
+                  <div className="flex flex-wrap gap-4">
+                    {data.devices.map((d) => {
+                      const Icon = DEVICE_ICONS[d.device] ?? Monitor;
+                      const pct = totalDeviceUsers > 0 ? Math.round((d.users / totalDeviceUsers) * 100) : 0;
+                      return (
+                        <div key={d.device} className="flex items-center gap-3 bg-sand/50 rounded-xl px-4 py-3 self-start">
+                          <Icon className="w-5 h-5 text-teal" />
+                          <span className="capitalize text-navy font-semibold">{d.device}</span>
+                          <span className="text-gray-600 text-sm">
+                            {d.users.toLocaleString()} ({pct}%)
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 

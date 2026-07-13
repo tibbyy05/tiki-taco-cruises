@@ -157,6 +157,13 @@ export const handler = async (event) => {
               metrics: [{ name: 'activeUsers' }],
               orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
               limit: 5
+            },
+            {
+              dateRanges,
+              dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
+              metrics: [{ name: 'activeUsers' }],
+              orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+              limit: 12
             }
           ]
         })
@@ -170,7 +177,7 @@ export const handler = async (event) => {
     }
 
     const { reports = [] } = await res.json();
-    const [totals, trend, sources, pages, devices] = reports;
+    const [totals, trend, sources, pages, devices, locations] = reports;
 
     // With two dateRanges GA adds an implicit dateRange dimension:
     // date_range_0 = current window, date_range_1 = previous window.
@@ -208,6 +215,12 @@ export const handler = async (event) => {
       })),
       devices: (devices?.rows ?? []).map((r) => ({
         device: r.dimensionValues[0].value,
+        users: metricRow(r, 0)
+      })),
+      locations: (locations?.rows ?? []).map((r) => ({
+        country: r.dimensionValues[0].value,
+        region: r.dimensionValues[1].value,
+        city: r.dimensionValues[2].value,
         users: metricRow(r, 0)
       }))
     };
