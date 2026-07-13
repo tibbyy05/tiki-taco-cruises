@@ -63,11 +63,13 @@ export function trackPageView(path: string): void {
 }
 
 // Wired to a delegated click listener in Layout — covers every element
-// tagged data-gtm-id="call-to-book" / "book-now", current and future.
+// tagged with these data-gtm-id values, current and future.
+const BOOKING_GTM_IDS = new Set(['book-now', 'open-booking-calendar', 'booking-calendar']);
+
 export function trackCtaClick(gtmId: string): void {
   if (gtmId === 'call-to-book') {
     logEvent('call_click', window.location.pathname);
-  } else if (gtmId === 'book-now') {
+  } else if (BOOKING_GTM_IDS.has(gtmId)) {
     logEvent('book_click', window.location.pathname);
   }
 }

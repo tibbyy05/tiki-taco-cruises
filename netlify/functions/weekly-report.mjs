@@ -97,8 +97,12 @@ export const handler = async () => {
       if (supaRes.ok) {
         const summary = await supaRes.json();
         const calls = summary?.totals?.callClicks;
+        const books = summary?.totals?.bookClicks;
         if (typeof calls === 'number') {
           callLine = `<li><strong>${calls}</strong> Call to Book clicks</li>`;
+        }
+        if (typeof books === 'number') {
+          callLine += `<li><strong>${books}</strong> booking calendar opens</li>`;
         }
       }
     } catch { /* call tracking optional */ }

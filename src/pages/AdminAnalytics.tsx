@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin } from 'lucide-react';
+import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin, CalendarCheck } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
@@ -373,7 +373,7 @@ export default function AdminAnalytics() {
           {state === 'ready' && data && (
             <div className="space-y-6">
               {/* Stat cards with period-over-period deltas */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
                 <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()}>
                   <Delta current={data.totals.users} previous={data.prevTotals?.users} />
                 </StatCard>
@@ -403,6 +403,12 @@ export default function AdminAnalytics() {
                   label="Call Rate"
                   value={callRate ?? '—'}
                   note={callClicks === undefined ? 'setup pending' : undefined}
+                />
+                <StatCard
+                  icon={CalendarCheck}
+                  label="Booking Opens"
+                  value={selfCalls ? selfCalls.totals.bookClicks.toLocaleString() : '—'}
+                  note={selfCalls ? 'calendar opened' : 'setup pending'}
                 />
               </div>
 
