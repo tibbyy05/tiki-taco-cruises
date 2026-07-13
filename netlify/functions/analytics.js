@@ -157,15 +157,24 @@ export const handler = async (event) => {
               metrics: [{ name: 'activeUsers' }],
               orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
               limit: 5
-            },
-            {
-              dateRanges,
-              dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
-              metrics: [{ name: 'activeUsers' }],
-              orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
-              limit: 12
             }
           ]
+        })
+      }
+    );
+
+    // batchRunReports caps at 5 requests — locations runs as its own call.
+    const locRes = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dateRanges,
+          dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
+          metrics: [{ name: 'activeUsers' }],
+          orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
+          limit: 12
         })
       }
     );
@@ -177,7 +186,8 @@ export const handler = async (event) => {
     }
 
     const { reports = [] } = await res.json();
-    const [totals, trend, sources, pages, devices, locations] = reports;
+    const [totals, trend, sources, pages, devices] = reports;
+    const locations = locRes.ok ? await locRes.json() : { rows: [] };
 
     // With two dateRanges GA adds an implicit dateRange dimension:
     // date_range_0 = current window, date_range_1 = previous window.
