@@ -55,6 +55,10 @@ const SOURCE_LABELS: Record<string, string> = {
   'google / gbp': 'Google Business Profile',
   'tagassistant.google.com': 'Google Tag Assistant',
   'tagassistant.google.com / referral': 'Google Tag Assistant',
+  'chatgpt.com / ai-assistant': 'ChatGPT',
+  'chatgpt.com / referral': 'ChatGPT',
+  'chatgpt.com': 'ChatGPT',
+  'perplexity.ai / referral': 'Perplexity AI',
   '(not set)': 'Unknown',
 };
 
@@ -302,9 +306,18 @@ export default function AdminAnalytics() {
     }
 
     try {
-      const res = await fetch(`/.netlify/functions/analytics?range=${range}`, {
+      let res = await fetch(`/.netlify/functions/analytics?range=${range}`, {
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
+      if (res.status === 401) {
+        // Access token may have expired in the background — refresh and retry once.
+        const { data: fresh } = await supabase.auth.refreshSession();
+        if (fresh.session?.access_token) {
+          res = await fetch(`/.netlify/functions/analytics?range=${range}`, {
+            headers: { Authorization: `Bearer ${fresh.session.access_token}` },
+          });
+        }
+      }
       if (res.ok) {
         const body = (await res.json()) as AnalyticsData;
         setData(body);
@@ -361,7 +374,25 @@ export default function AdminAnalytics() {
   const booksByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.books ?? 0]));
   const callSources = (selfCalls?.sources ?? []).filter((s) => s.calls > 0);
 
-  const maxSourceSessions = Math.max(...(data?.sources.map((s) => s.sessions) ?? [0]), 1);
+  // Merge source rows whose display label is identical (e.g. "(not set)" and
+  // "(data not available)" both read as "Unknown").
+  const mergedSources = (() => {
+    const map = new Map<string, { source: string; label: string; sessions: number; users: number; raws: string[] }>();
+    (data?.sources ?? []).forEach((s) => {
+      const label = prettySource(s.source);
+      const entry = map.get(label);
+      if (entry) {
+        entry.sessions += s.sessions;
+        entry.users += s.users;
+        entry.raws.push(s.source);
+      } else {
+        map.set(label, { source: s.source, label, sessions: s.sessions, users: s.users, raws: [s.source] });
+      }
+    });
+    return [...map.values()].sort((a, b) => b.sessions - a.sessions);
+  })();
+
+  const maxSourceSessions = Math.max(...mergedSources.map((s) => s.sessions), 1);
   const maxPageViews = Math.max(...(data?.pages.map((p) => p.pageViews) ?? [0]), 1);
   const totalDeviceUsers = (data?.devices ?? []).reduce((sum, d) => sum + d.users, 0);
 
@@ -432,8 +463,8 @@ export default function AdminAnalytics() {
 
           {state === 'ready' && data && (
             <div className="space-y-6">
-              {/* Stat cards with period-over-period deltas */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
+              {/* Stat cards with period-over-period deltas — 2 x 4 grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()}>
                   <Delta current={data.totals.users} previous={data.prevTotals?.users} />
                 </StatCard>
@@ -456,19 +487,19 @@ export default function AdminAnalytics() {
                   icon={Phone}
                   label="Call Clicks"
                   value={callClicks !== undefined ? callClicks.toLocaleString() : '—'}
-                  note={callClicks === undefined ? 'setup pending' : undefined}
+                  note={callClicks === undefined ? 'setup pending' : 'tracking since Jul 13, 2026'}
                 />
                 <StatCard
                   icon={Phone}
                   label="Call Rate"
                   value={callRate ?? '—'}
-                  note={callClicks === undefined ? 'setup pending' : undefined}
+                  note={callClicks === undefined ? 'setup pending' : 'call clicks ÷ visitors · since Jul 13, 2026'}
                 />
                 <StatCard
                   icon={CalendarCheck}
                   label="Booking Opens"
                   value={selfCalls ? selfCalls.totals.bookClicks.toLocaleString() : '—'}
-                  note={selfCalls ? 'calendar opened' : 'setup pending'}
+                  note={selfCalls ? 'calendar opened · since Jul 13, 2026' : 'setup pending'}
                 />
               </div>
 
@@ -544,7 +575,7 @@ export default function AdminAnalytics() {
 
               {/* Who visited × how they found us (GA) */}
               {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (() => {
-                const filtered = data.visitorDetail!.filter((v) => {
+                const matching = data.visitorDetail!.filter((v) => {
                   const bySource =
                     detailFilter === 'all' ? true
                     : detailFilter === 'paid' ? isPaidSource(v.source)
@@ -554,6 +585,16 @@ export default function AdminAnalytics() {
                   const byLoc = detailLoc === 'all' ? true : detailLoc === 'fl' ? isFl : !isFl;
                   return bySource && byLoc;
                 });
+                // Merge rows sharing the same displayed location + source label
+                // (multiple raw "unknown" values would otherwise repeat).
+                const mergedMap = new Map<string, (typeof matching)[number]>();
+                matching.forEach((v) => {
+                  const key = `${formatLocation(v)}|${prettySource(v.source)}`;
+                  const existing = mergedMap.get(key);
+                  if (existing) existing.users += v.users;
+                  else mergedMap.set(key, { ...v });
+                });
+                const filtered = [...mergedMap.values()];
                 const sortVal = (v: (typeof filtered)[number]) =>
                   detailSort.key === 'location' ? formatLocation(v)
                   : detailSort.key === 'source' ? prettySource(v.source)
@@ -744,14 +785,14 @@ export default function AdminAnalytics() {
                 {/* Traffic sources */}
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
                   <h2 className="text-lg font-bold text-navy mb-4">Traffic Sources</h2>
-                  {data.sources.length === 0 ? (
+                  {mergedSources.length === 0 ? (
                     <p className="text-sm text-gray-500">No sessions in this period.</p>
                   ) : (
                     <div className="space-y-3">
-                      {data.sources.map((s) => (
-                        <div key={s.source} className="flex items-center gap-3">
-                          <div className="w-40 sm:w-48 flex-shrink-0 text-sm text-gray-700 truncate" title={s.source}>
-                            {prettySource(s.source)}
+                      {mergedSources.map((s) => (
+                        <div key={s.label} className="flex items-center gap-3">
+                          <div className="w-40 sm:w-48 flex-shrink-0 text-sm text-gray-700 truncate" title={s.raws.join(', ')}>
+                            {s.label}
                           </div>
                           <ShareBar value={s.sessions} max={maxSourceSessions} />
                           <div className="w-14 text-right text-sm font-semibold text-navy">
@@ -932,15 +973,15 @@ function StatCard({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-4">
-      <div className="flex items-center gap-1.5 text-navy/60 text-xs font-semibold mb-1.5 uppercase tracking-wide">
-        <Icon className="w-3.5 h-3.5" /> {label}
+    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+      <div className="flex items-center gap-2 text-navy/60 text-sm font-semibold mb-2 uppercase tracking-wide">
+        <Icon className="w-4 h-4" /> {label}
       </div>
-      <div className="text-2xl font-bold text-navy price-text inline-flex items-baseline">
+      <div className="text-3xl font-bold text-navy price-text inline-flex items-baseline">
         {value}
         {children}
       </div>
-      {note && <div className="text-[0.65rem] text-gray-400 mt-0.5">{note}</div>}
+      {note && <div className="text-xs text-gray-400 mt-1">{note}</div>}
     </div>
   );
 }
