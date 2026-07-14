@@ -99,12 +99,12 @@ export const handler = async (event) => {
       today: { cur: ['today', 'today'], prev: ['yesterday', 'yesterday'], trendDim: 'dateHour' },
       yesterday: { cur: ['yesterday', 'yesterday'], prev: ['2daysAgo', '2daysAgo'], trendDim: 'dateHour' },
       7: { cur: ['7daysAgo', 'today'], prev: ['15daysAgo', '8daysAgo'], trendDim: 'date' },
-      28: { cur: ['28daysAgo', 'today'], prev: ['57daysAgo', '29daysAgo'], trendDim: 'date' },
+      30: { cur: ['30daysAgo', 'today'], prev: ['61daysAgo', '31daysAgo'], trendDim: 'date' },
       90: { cur: ['90daysAgo', 'today'], prev: ['181daysAgo', '91daysAgo'], trendDim: 'date' }
     };
     const rangeKey = Object.prototype.hasOwnProperty.call(RANGES, event.queryStringParameters?.range)
       ? event.queryStringParameters.range
-      : '28';
+      : '30';
     const R = RANGES[rangeKey];
     const dateRanges = [{ startDate: R.cur[0], endDate: R.cur[1] }];
     const comparisonRanges = [

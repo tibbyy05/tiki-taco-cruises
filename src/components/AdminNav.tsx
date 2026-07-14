@@ -10,7 +10,7 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
   const { signOut } = useAuth();
 
   const tabClass = ({ isActive }: { isActive: boolean }) =>
-    `px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+    `px-6 py-3 rounded-full text-base font-semibold transition-colors min-h-[48px] inline-flex items-center ${
       isActive
         ? 'bg-navy text-white'
         : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'

@@ -118,9 +118,9 @@ type LoadState = 'loading' | 'ready' | 'not-configured' | 'error';
 const RANGE_OPTIONS = [
   { key: 'today', label: 'Today' },
   { key: 'yesterday', label: 'Yesterday' },
-  { key: '7', label: '7 days' },
-  { key: '28', label: '28 days' },
-  { key: '90', label: '90 days' },
+  { key: '7', label: 'Last 7 Days' },
+  { key: '30', label: 'Last 30 Days' },
+  { key: '90', label: 'Last 90 Days' },
 ];
 
 // Days window used for the self-hosted call tracking RPC per range.
@@ -128,7 +128,7 @@ const RANGE_TO_RPC_DAYS: Record<string, number> = {
   today: 1,
   yesterday: 2,
   '7': 7,
-  '28': 28,
+  '30': 30,
   '90': 90,
 };
 
@@ -262,13 +262,14 @@ function ShareBar({ value, max }: { value: number; max: number }) {
 
 export default function AdminAnalytics() {
   const { user, session } = useAuth();
-  const [range, setRange] = useState('28');
+  const [range, setRange] = useState('30');
   const [state, setState] = useState<LoadState>('loading');
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
   const [selfCalls, setSelfCalls] = useState<SelfHostedSummary | null>(null);
   const [sessionLog, setSessionLog] = useState<SessionRow[] | null>(null);
   const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other' | 'hilton'>('all');
+  const [detailLoc, setDetailLoc] = useState<'all' | 'fl' | 'nonfl'>('all');
   const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
   const [trendLabels, setTrendLabels] = useState(false);
   const [detailExpanded, setDetailExpanded] = useState(false);
@@ -391,21 +392,18 @@ export default function AdminAnalytics() {
           <AdminNav
             title="Analytics"
             actions={
-              <div className="flex flex-wrap items-center gap-2">
+              <select
+                value={range}
+                onChange={(e) => setRange(e.target.value)}
+                aria-label="Date range"
+                className="px-5 py-3 rounded-full text-base font-semibold text-navy bg-white border border-navy/20 hover:border-coral focus:outline-none focus:ring-2 focus:ring-teal cursor-pointer min-h-[48px]"
+              >
                 {RANGE_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.key}
-                    onClick={() => setRange(opt.key)}
-                    className={`px-3.5 py-2 rounded-full text-sm font-semibold transition-colors ${
-                      range === opt.key
-                        ? 'bg-coral text-white'
-                        : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
-                    }`}
-                  >
+                  <option key={opt.key} value={opt.key}>
                     {opt.label}
-                  </button>
+                  </option>
                 ))}
-              </div>
+              </select>
             }
           />
 
@@ -546,12 +544,16 @@ export default function AdminAnalytics() {
 
               {/* Who visited × how they found us (GA) */}
               {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (() => {
-                const filtered = data.visitorDetail!.filter((v) =>
-                  detailFilter === 'all' ? true
-                  : detailFilter === 'paid' ? isPaidSource(v.source)
-                  : detailFilter === 'hilton' ? /hilton/i.test(v.source)
-                  : !isPaidSource(v.source)
-                );
+                const filtered = data.visitorDetail!.filter((v) => {
+                  const bySource =
+                    detailFilter === 'all' ? true
+                    : detailFilter === 'paid' ? isPaidSource(v.source)
+                    : detailFilter === 'hilton' ? /hilton/i.test(v.source)
+                    : !isPaidSource(v.source);
+                  const isFl = v.region === 'Florida';
+                  const byLoc = detailLoc === 'all' ? true : detailLoc === 'fl' ? isFl : !isFl;
+                  return bySource && byLoc;
+                });
                 const sortVal = (v: (typeof filtered)[number]) =>
                   detailSort.key === 'location' ? formatLocation(v)
                   : detailSort.key === 'source' ? prettySource(v.source)
@@ -621,11 +623,32 @@ export default function AdminAnalytics() {
                         ))}
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mt-2 mb-4">
+                    <div className="flex flex-wrap gap-2 mt-2 mb-2">
                       {filterBtn('all', 'All')}
                       {filterBtn('paid', 'Paid Ads')}
                       {filterBtn('other', 'Organic & Direct')}
                       {filterBtn('hilton', 'Hilton Referral')}
+                    </div>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {(
+                        [
+                          ['all', 'All Locations'],
+                          ['fl', 'Florida'],
+                          ['nonfl', 'Outside Florida'],
+                        ] as const
+                      ).map(([key, label]) => (
+                        <button
+                          key={key}
+                          onClick={() => setDetailLoc(key)}
+                          className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors min-h-[44px] ${
+                            detailLoc === key
+                              ? 'bg-teal text-white'
+                              : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
                     </div>
 
                     {rows.length === 0 ? (
