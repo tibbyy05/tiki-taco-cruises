@@ -184,7 +184,7 @@ export default function FortLauderdaleSunsetCruise() {
           </div>
           <div className="text-center">
             <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $200/hour</div>
+              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $200/hour (2 hour minimum)</div>
               <div className="text-ocean/70 text-sm sm:text-base">2-hour private cruise</div>
             </div>
           </div>

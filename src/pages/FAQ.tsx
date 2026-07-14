@@ -123,7 +123,7 @@ const faqSchema = {
           "name": "What does a 2-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "2-hour morning and sunset cruises start at $200 per hour."
+            "text": "2-hour morning and sunset cruises start at $200 per hour (2-hour minimum)."
           }
         },
         {
@@ -223,7 +223,7 @@ const faqs = [
   },
   {
     question: 'What does a 2-hour cruise cost?',
-    answer: '2-hour morning and sunset cruises start at $200 per hour.',
+    answer: '2-hour morning and sunset cruises start at $200 per hour (2-hour minimum).',
   },
   {
     question: 'What are the start times?',

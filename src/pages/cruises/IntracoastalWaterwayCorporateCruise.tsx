@@ -88,7 +88,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
       }}
       pricing={{
         duration: '4 Hours',
-        price: 'Starting at $200/hour',
+        price: 'Starting at $200/hour (2 hour minimum)',
         basePassengers: 'Up to 12 Passengers',
         additionalGuestPrice: '$60',
         startTimes: ['10:00 AM', '2:00 PM'],

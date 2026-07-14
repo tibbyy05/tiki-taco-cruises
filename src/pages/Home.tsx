@@ -144,7 +144,7 @@ const popularCruises = [
       'Waterfront homes, yachts & hidden canals',
       'Calm, scenic cruising route',
       'Max capacity: 18 people',
-      'Starting at $200/hour',
+      'Starting at $200/hour (2 hour minimum)',
     ],
   },
   {
@@ -157,7 +157,7 @@ const popularCruises = [
       'Swimming, floating & relaxing',
       'Scenic Intracoastal views',
       'Max capacity: 18 people',
-      'Starting at $200/hour',
+      'Starting at $200/hour (2 hour minimum)',
     ],
   },
   {
@@ -170,7 +170,7 @@ const popularCruises = [
       'Panoramic skyline & waterfront views',
       'Perfect for groups & celebrations',
       'Max capacity: 18 people',
-      'Starting at $200/hour',
+      'Starting at $200/hour (2 hour minimum)',
     ],
   },
 ];
