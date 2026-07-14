@@ -178,14 +178,14 @@ export const handler = async (event) => {
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 12
       }),
-      // Who visited × how they found us — generous limit so the dashboard's
-      // paid/organic filters cover the full tail, not just the top rows.
+      // Who visited × how they found us — 1000 covers every combination this
+      // site produces (GA allows up to 100k), so filters/expand see it all.
       runReport({
         dateRanges,
         dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }, { name: 'sessionSourceMedium' }],
         metrics: [{ name: 'activeUsers' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
-        limit: 50
+        limit: 1000
       })
     ]);
 

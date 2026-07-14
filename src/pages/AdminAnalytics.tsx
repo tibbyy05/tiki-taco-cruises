@@ -41,6 +41,43 @@ interface SessionRow {
 // organic search, direct, referrals, and GBP posts.
 const isPaidSource = (source: string) => /cpc|ppc|paid|ads/i.test(source);
 
+// Translate raw analytics jargon ("google / cpc", "(direct) / (none)") into
+// owner-friendly labels. Unknown sources get title-cased with their medium.
+const SOURCE_LABELS: Record<string, string> = {
+  'google / cpc': 'Google Ads',
+  'google / organic': 'Google Search',
+  'bing / organic': 'Bing Search',
+  'yahoo / organic': 'Yahoo Search',
+  'duckduckgo / organic': 'DuckDuckGo Search',
+  '(direct) / (none)': 'Direct Visit',
+  'direct': 'Direct Visit',
+  'gbp / post': 'Google Business Profile',
+  'google / gbp': 'Google Business Profile',
+  'tagassistant.google.com': 'Google Tag Assistant',
+  'tagassistant.google.com / referral': 'Google Tag Assistant',
+  '(not set)': 'Unknown',
+};
+
+// Domains keep their dots lowercase ("Hilton.com"); plain words title-case.
+const titleCase = (s: string) =>
+  s.includes('.')
+    ? s.charAt(0).toUpperCase() + s.slice(1)
+    : s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+
+const prettySource = (raw: string) => {
+  const key = raw.toLowerCase().trim();
+  if (SOURCE_LABELS[key]) return SOURCE_LABELS[key];
+  if (key.includes('not available') || key.includes('not set')) return 'Unknown';
+  const parts = key.split('/').map((p) => p.trim());
+  if (parts.length === 2) {
+    const [src, medium] = parts;
+    const srcLabel = SOURCE_LABELS[src] ?? titleCase(src);
+    const mediumLabel = medium === 'referral' ? 'Referral' : medium === 'organic' ? 'Search' : medium === '(none)' ? '' : titleCase(medium);
+    return `${srcLabel}${mediumLabel ? ' ' + mediumLabel : ''}`;
+  }
+  return titleCase(key);
+};
+
 // "Fort Lauderdale, Florida" for US visitors; country elsewhere.
 const formatLocation = (l: { country: string; region: string; city: string }) => {
   const city = l.city && l.city !== '(not set)' ? l.city : '';
@@ -56,8 +93,8 @@ const formatLocation = (l: { country: string; region: string; city: string }) =>
 interface SelfHostedSummary {
   totals: { pageViews: number; visitors: number; callClicks: number; bookClicks: number };
   trend: Array<{ date: string; views: number; visitors: number }>;
-  pages: Array<{ path: string; views: number; visitors: number; calls: number }>;
-  sources: Array<{ source: string; views: number; visitors: number; calls: number }>;
+  pages: Array<{ path: string; views: number; visitors: number; calls: number; books?: number }>;
+  sources: Array<{ source: string; views: number; visitors: number; calls: number; books?: number }>;
   devices: Array<{ device: string; visitors: number }>;
 }
 
@@ -134,7 +171,15 @@ function Delta({ current, previous, suffix }: { current: number; previous: numbe
   );
 }
 
-function TrendChart({ trend, granularity }: { trend: AnalyticsData['trend']; granularity: 'hour' | 'day' }) {
+function TrendChart({
+  trend,
+  granularity,
+  showLabels,
+}: {
+  trend: AnalyticsData['trend'];
+  granularity: 'hour' | 'day';
+  showLabels: boolean;
+}) {
   if (trend.length === 0) {
     return <p className="text-sm text-gray-500 py-10 text-center">No traffic recorded yet in this period.</p>;
   }
@@ -148,7 +193,9 @@ function TrendChart({ trend, granularity }: { trend: AnalyticsData['trend']; gra
   const axisMax = Math.ceil(max / step) * step;
   const barW = (w - pad.left - pad.right) / trend.length;
   const xLabelEvery = Math.max(1, Math.ceil(trend.length / 12));
-  const showAllValues = trend.length <= 16;
+  // Labels on: every bar (thinned when bars are too narrow to fit numbers).
+  // Labels off: peak bar only.
+  const valueEvery = showLabels ? (trend.length <= 31 ? 1 : Math.ceil(trend.length / 28)) : Infinity;
   const maxIndex = trend.reduce((mi, d, i) => (d.pageViews > trend[mi].pageViews ? i : mi), 0);
   const gridLines = [0.25, 0.5, 0.75, 1];
 
@@ -172,7 +219,7 @@ function TrendChart({ trend, granularity }: { trend: AnalyticsData['trend']; gra
         const barH = Math.max(2, (plotH * d.pageViews) / axisMax);
         const x = pad.left + i * barW;
         const y = pad.top + plotH - barH;
-        const showValue = d.pageViews > 0 && (showAllValues || i === maxIndex);
+        const showValue = d.pageViews > 0 && (i === maxIndex || (Number.isFinite(valueEvery) && i % valueEvery === 0));
         return (
           <g key={d.date}>
             <rect
@@ -221,8 +268,14 @@ export default function AdminAnalytics() {
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
   const [selfCalls, setSelfCalls] = useState<SelfHostedSummary | null>(null);
   const [sessionLog, setSessionLog] = useState<SessionRow[] | null>(null);
-  const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other'>('all');
+  const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other' | 'hilton'>('all');
   const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
+  const [trendLabels, setTrendLabels] = useState(false);
+  const [detailExpanded, setDetailExpanded] = useState(false);
+  const [detailSort, setDetailSort] = useState<{ key: 'location' | 'source' | 'type' | 'users'; dir: 1 | -1 }>({
+    key: 'users',
+    dir: -1,
+  });
 
   // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
   // the call-click layer; standalone it's the full fallback dashboard.
@@ -304,6 +357,7 @@ export default function AdminAnalytics() {
       : null;
 
   const callsByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.calls]));
+  const booksByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.books ?? 0]));
   const callSources = (selfCalls?.sources ?? []).filter((s) => s.calls > 0);
 
   const maxSourceSessions = Math.max(...(data?.sources.map((s) => s.sessions) ?? [0]), 1);
@@ -314,13 +368,15 @@ export default function AdminAnalytics() {
   const scoreboard = (data?.pages ?? [])
     .map((p) => {
       const calls = p.calls ?? callsByPath.get(p.path) ?? (selfCalls ? 0 : undefined);
+      const books = booksByPath.get(p.path) ?? (selfCalls ? 0 : undefined);
       return {
         ...p,
         calls,
+        books,
         callRate: calls !== undefined && p.users > 0 ? (calls / p.users) * 100 : undefined,
       };
     })
-    .sort((a, b) => (b.calls ?? 0) - (a.calls ?? 0) || b.pageViews - a.pageViews);
+    .sort((a, b) => ((b.calls ?? 0) + (b.books ?? 0)) - ((a.calls ?? 0) + (a.books ?? 0)) || b.pageViews - a.pageViews);
   const bestCallRate = Math.max(...scoreboard.map((r) => (r.calls ? r.callRate ?? 0 : 0)), 0);
 
   return (
@@ -420,10 +476,22 @@ export default function AdminAnalytics() {
 
               {/* Trend */}
               <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                <h2 className="text-lg font-bold text-navy mb-4">
-                  {data.granularity === 'hour' ? 'Page Views by Hour' : 'Daily Page Views'}
-                </h2>
-                <TrendChart trend={data.trend} granularity={data.granularity ?? 'day'} />
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <h2 className="text-lg font-bold text-navy">
+                    {data.granularity === 'hour' ? 'Page Views by Hour' : 'Daily Page Views'}
+                  </h2>
+                  <button
+                    onClick={() => setTrendLabels((v) => !v)}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                      trendLabels
+                        ? 'bg-navy text-white'
+                        : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
+                    }`}
+                  >
+                    Data Labels {trendLabels ? 'On' : 'Off'}
+                  </button>
+                </div>
+                <TrendChart trend={data.trend} granularity={data.granularity ?? 'day'} showLabels={trendLabels} />
               </div>
 
               {/* Visitor log — single-day views only */}
@@ -461,7 +529,7 @@ export default function AdminAnalytics() {
                                 })}
                               </td>
                               <td className="py-2 px-3 text-gray-700">{prettyPath(s.entry_path ?? '—')}</td>
-                              <td className="py-2 px-3 text-gray-700">{s.source}</td>
+                              <td className="py-2 px-3 text-gray-700" title={s.source}>{prettySource(s.source)}</td>
                               <td className="py-2 px-3 text-navy/70 capitalize">{s.device}</td>
                               <td className="py-2 px-3 text-right text-navy/70">{s.views}</td>
                               <td className={`py-2 pl-3 text-right font-semibold ${s.calls > 0 ? 'text-coral' : 'text-gray-400'}`}>
@@ -478,10 +546,28 @@ export default function AdminAnalytics() {
 
               {/* Who visited × how they found us (GA) */}
               {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (() => {
-                const rows = data.visitorDetail!.filter((v) =>
-                  detailFilter === 'all' ? true : detailFilter === 'paid' ? isPaidSource(v.source) : !isPaidSource(v.source)
+                const filtered = data.visitorDetail!.filter((v) =>
+                  detailFilter === 'all' ? true
+                  : detailFilter === 'paid' ? isPaidSource(v.source)
+                  : detailFilter === 'hilton' ? /hilton/i.test(v.source)
+                  : !isPaidSource(v.source)
                 );
+                const sortVal = (v: (typeof filtered)[number]) =>
+                  detailSort.key === 'location' ? formatLocation(v)
+                  : detailSort.key === 'source' ? prettySource(v.source)
+                  : detailSort.key === 'type' ? (isPaidSource(v.source) ? 'paid' : 'organic')
+                  : v.users;
+                const rows = [...filtered].sort((a, b) => {
+                  const av = sortVal(a); const bv = sortVal(b);
+                  const cmp = typeof av === 'number' ? (av as number) - (bv as number) : String(av).localeCompare(String(bv));
+                  return cmp * detailSort.dir;
+                });
                 const filteredTotal = rows.reduce((sum, v) => sum + v.users, 0);
+                const visibleRows = detailExpanded ? rows : rows.slice(0, 25);
+                const sortBy = (key: typeof detailSort.key) =>
+                  setDetailSort((s) => (s.key === key ? { key, dir: s.dir === 1 ? -1 : 1 } : { key, dir: key === 'users' ? -1 : 1 }));
+                const arrow = (key: typeof detailSort.key) =>
+                  detailSort.key === key ? (detailSort.dir === 1 ? ' ▲' : ' ▼') : '';
 
                 // Aggregate per location for the chart (paid/other split).
                 const byLocation = new Map<string, { paid: number; other: number }>();
@@ -502,7 +588,7 @@ export default function AdminAnalytics() {
                   <button
                     key={key}
                     onClick={() => setDetailFilter(key)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-colors min-h-[44px] ${
                       detailFilter === key
                         ? 'bg-navy text-white'
                         : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
@@ -539,6 +625,7 @@ export default function AdminAnalytics() {
                       {filterBtn('all', 'All')}
                       {filterBtn('paid', 'Paid Ads')}
                       {filterBtn('other', 'Organic & Direct')}
+                      {filterBtn('hilton', 'Hilton Referral')}
                     </div>
 
                     {rows.length === 0 ? (
@@ -548,17 +635,25 @@ export default function AdminAnalytics() {
                         <table className="w-full text-sm min-w-[520px]">
                           <thead>
                             <tr className="text-left text-navy/60 border-b border-navy/10">
-                              <th className="py-2 pr-3 font-semibold">Location</th>
-                              <th className="py-2 px-3 font-semibold">Came From</th>
-                              <th className="py-2 px-3 font-semibold">Type</th>
-                              <th className="py-2 pl-3 font-semibold text-right">Visitors</th>
+                              <th className="py-2 pr-3 font-semibold">
+                                <button onClick={() => sortBy('location')} className="hover:text-coral">Location{arrow('location')}</button>
+                              </th>
+                              <th className="py-2 px-3 font-semibold">
+                                <button onClick={() => sortBy('source')} className="hover:text-coral">Came From{arrow('source')}</button>
+                              </th>
+                              <th className="py-2 px-3 font-semibold">
+                                <button onClick={() => sortBy('type')} className="hover:text-coral">Type{arrow('type')}</button>
+                              </th>
+                              <th className="py-2 pl-3 font-semibold text-right">
+                                <button onClick={() => sortBy('users')} className="hover:text-coral">Visitors{arrow('users')}</button>
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
-                            {rows.map((v, i) => (
+                            {visibleRows.map((v, i) => (
                               <tr key={i} className="border-b border-navy/5 last:border-0">
                                 <td className="py-2 pr-3 text-gray-700">{formatLocation(v)}</td>
-                                <td className="py-2 px-3 text-gray-700">{v.source}</td>
+                                <td className="py-2 px-3 text-gray-700" title={v.source}>{prettySource(v.source)}</td>
                                 <td className="py-2 px-3">
                                   <span
                                     className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${
@@ -573,6 +668,14 @@ export default function AdminAnalytics() {
                             ))}
                           </tbody>
                         </table>
+                        {rows.length > 25 && (
+                          <button
+                            onClick={() => setDetailExpanded((v) => !v)}
+                            className="mt-3 w-full text-center text-sm font-semibold text-teal hover:text-coral transition-colors py-2"
+                          >
+                            {detailExpanded ? 'Show top 25' : `View all ${rows.length} rows`}
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-2.5">
@@ -625,7 +728,7 @@ export default function AdminAnalytics() {
                       {data.sources.map((s) => (
                         <div key={s.source} className="flex items-center gap-3">
                           <div className="w-40 sm:w-48 flex-shrink-0 text-sm text-gray-700 truncate" title={s.source}>
-                            {s.source}
+                            {prettySource(s.source)}
                           </div>
                           <ShareBar value={s.sessions} max={maxSourceSessions} />
                           <div className="w-14 text-right text-sm font-semibold text-navy">
@@ -643,7 +746,7 @@ export default function AdminAnalytics() {
                       <div className="space-y-1.5">
                         {callSources.map((s) => (
                           <div key={s.source} className="flex justify-between text-sm">
-                            <span className="text-gray-700 truncate">{s.source}</span>
+                            <span className="text-gray-700 truncate" title={s.source}>{prettySource(s.source)}</span>
                             <span className="font-semibold text-coral">{s.calls}</span>
                           </div>
                         ))}
@@ -689,6 +792,7 @@ export default function AdminAnalytics() {
                         <th className="py-2 px-3 font-semibold text-right">Visitors</th>
                         <th className="py-2 px-3 font-semibold text-right">Views</th>
                         <th className="py-2 px-3 font-semibold text-right">Call Clicks</th>
+                        <th className="py-2 px-3 font-semibold text-right">Booking Opens</th>
                         <th className="py-2 pl-3 font-semibold text-right">Call Rate</th>
                       </tr>
                     </thead>
@@ -709,6 +813,9 @@ export default function AdminAnalytics() {
                             <td className="py-2.5 px-3 text-right text-navy/70">{row.pageViews.toLocaleString()}</td>
                             <td className={`py-2.5 px-3 text-right font-semibold ${row.calls ? 'text-coral' : 'text-gray-400'}`}>
                               {row.calls !== undefined ? row.calls : '—'}
+                            </td>
+                            <td className={`py-2.5 px-3 text-right font-semibold ${row.books ? 'text-teal' : 'text-gray-400'}`}>
+                              {row.books !== undefined ? row.books : '—'}
                             </td>
                             <td className="py-2.5 pl-3 text-right text-navy/70">
                               {row.callRate !== undefined ? `${row.callRate.toFixed(1)}%` : '—'}
