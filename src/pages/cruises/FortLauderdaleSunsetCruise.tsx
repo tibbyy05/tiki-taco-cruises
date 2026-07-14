@@ -18,7 +18,7 @@ const jsonLd = {
       "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$60-$1140",
+      "priceRange": "$200-$800",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -77,20 +77,20 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#offer",
         "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
-        "price": "60",
+        "price": "200",
         "priceCurrency": "USD",
         "itemOffered": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" },
         "eligibleQuantity": {
           "@type": "QuantitativeValue",
           "minValue": 6,
-          "unitText": "PERSON"
+          "unitText": "HOUR"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "60",
+          "price": "200",
           "priceCurrency": "USD",
           "unitText": "PERSON",
-          "description": "Price per person for a 2-hour morning or sunset cruise. Six-person minimum."
+          "description": "Hourly rate for a 2-hour morning or sunset cruise."
         }
       }
     }
@@ -184,8 +184,8 @@ export default function FortLauderdaleSunsetCruise() {
           </div>
           <div className="text-center">
             <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">$60 per person</div>
-              <div className="text-ocean/70 text-sm sm:text-base">6-person minimum</div>
+              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $200/hour</div>
+              <div className="text-ocean/70 text-sm sm:text-base">2-hour private cruise</div>
             </div>
           </div>
         </div>

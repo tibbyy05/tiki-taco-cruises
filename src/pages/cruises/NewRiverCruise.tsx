@@ -11,7 +11,7 @@ const jsonLd = {
       "telephone": "+1-954-764-4344",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$60-$1140",
+      "priceRange": "$200-$800",
       "email": "tikitacocruises@gmail.com",
       "address": {
         "@type": "PostalAddress",
@@ -76,12 +76,12 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/new-river-cruise/#offer",
         "url": "https://tikitacocruises.com/new-river-cruise/",
-        "price": "1140",
+        "price": "800",
         "priceCurrency": "USD",
         "itemOffered": { "@id": "https://tikitacocruises.com/new-river-cruise/#service" },
         "priceSpecification": [
-          { "@type": "PriceSpecification", "price": "1140", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
-          { "@type": "UnitPriceSpecification", "price": "285", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
+          { "@type": "PriceSpecification", "price": "800", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
+          { "@type": "UnitPriceSpecification", "price": "200", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
           { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
         ]
       }
@@ -105,7 +105,7 @@ export default function NewRiverCruise() {
       }}
       pricing={{
         duration: '4 Hours',
-        price: '$285/hour',
+        price: 'Starting at $200/hour',
         basePassengers: 'Up to 12 Passengers',
         additionalGuestPrice: '$60',
         startTimes: ['10:00 AM', '2:00 PM'],

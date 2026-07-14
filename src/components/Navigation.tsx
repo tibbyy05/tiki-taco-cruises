@@ -155,7 +155,7 @@ export default function Navigation() {
             <use href="#us-row6" y="484.6" />
           </g>
         </svg>
-        Celebrate 250 Years of Freedom — July Special: $250/hour for up to 15 guests ·{' '}
+        Celebrate 250 Years of Freedom — July Special: $200/hour for up to 15 guests ·{' '}
         <a href="tel:+19547644344" suppressHydrationWarning className="underline underline-offset-2 hover:text-white/80 transition-colors" data-gtm-id="call-to-book">
           <span className="cr-number" suppressHydrationWarning>Call (954) 764-4344</span>
         </a>

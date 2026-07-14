@@ -5,7 +5,7 @@
  *   <CruisePage
  *     seo={{ title: "...", description: "..." }}
  *     hero={{ title: "...", subtitle: "...", backgroundImage: "/img.jpg" }}
- *     pricing={{ duration: "4 Hours", price: "$1,140", basePassengers: "Up to 12 Passengers", startTimes: ["10:00 AM", "2:00 PM"] }}
+ *     pricing={{ duration: "4 Hours", price: "Starting at $200/hour", basePassengers: "Up to 12 Passengers", startTimes: ["10:00 AM", "2:00 PM"] }}
  *     whatToExpect={{ heading: "What to Expect", bullets: ["..."] }}
  *     sections={[{ heading: "...", subtext: "..." }]}
  *     gallery={{ heading: "Gallery", images: [{ src: "...", alt: "..." }] }}

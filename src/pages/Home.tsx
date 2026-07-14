@@ -27,7 +27,7 @@ const localBusinessSchema = {
       ],
       "telephone": "+1-954-764-4344",
       "email": "tikitacocruises@gmail.com",
-      "priceRange": "$60-$1140",
+      "priceRange": "$200-$800",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
       "address": {
         "@type": "PostalAddress",
@@ -144,7 +144,7 @@ const popularCruises = [
       'Waterfront homes, yachts & hidden canals',
       'Calm, scenic cruising route',
       'Max capacity: 18 people',
-      'Price starting at $285/hour',
+      'Starting at $200/hour',
     ],
   },
   {
@@ -157,7 +157,7 @@ const popularCruises = [
       'Swimming, floating & relaxing',
       'Scenic Intracoastal views',
       'Max capacity: 18 people',
-      'Price starting at $285/hour',
+      'Starting at $200/hour',
     ],
   },
   {
@@ -170,7 +170,7 @@ const popularCruises = [
       'Panoramic skyline & waterfront views',
       'Perfect for groups & celebrations',
       'Max capacity: 18 people',
-      'Price starting at $285/hour',
+      'Starting at $200/hour',
     ],
   },
 ];

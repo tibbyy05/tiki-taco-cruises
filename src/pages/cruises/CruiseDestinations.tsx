@@ -19,7 +19,7 @@ interface CruiseCard {
 const FOUR_HOUR_PRICING = {
   duration: '4 Hours',
   capacity: 'Up to 18 Guests',
-  price: '$285/hour for up to 12 guests · +$60 per extra guest',
+  price: 'Starting at $200/hour for up to 12 guests · +$60 per extra guest',
 };
 
 const featuredCruises: CruiseCard[] = [
@@ -239,7 +239,7 @@ export default function CruiseDestinations() {
                   {[
                     'Morning Cruise: 8:00 AM – 10:00 AM',
                     'Sunset Cruise: 6:00 PM – 8:00 PM',
-                    '$60 per person (6-person minimum)',
+                    'Starting at $200/hour',
                     'Great for smaller groups or tighter schedules',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
