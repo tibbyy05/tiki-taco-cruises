@@ -1,12 +1,27 @@
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
+function PasswordReveal({ shown, onToggle }: { shown: boolean; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={shown ? 'Hide password' : 'Show password'}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-navy/50 hover:text-navy p-1"
+    >
+      {shown ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+    </button>
+  );
+}
+
 export default function AdminAccount() {
   const { user } = useAuth();
+  const [showPasswords, setShowPasswords] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -88,48 +103,57 @@ export default function AdminAccount() {
                 <label className="block text-sm font-semibold text-navy mb-2" htmlFor="current-password">
                   Current Password
                 </label>
-                <input
-                  id="current-password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal"
-                />
+                <div className="relative">
+                  <input
+                    id="current-password"
+                    type={showPasswords ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    value={currentPassword}
+                    onChange={(event) => setCurrentPassword(event.target.value)}
+                    className="w-full rounded-lg border border-navy/20 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal"
+                  />
+                  <PasswordReveal shown={showPasswords} onToggle={() => setShowPasswords((v) => !v)} />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-navy mb-2" htmlFor="new-password">
                   New Password
                 </label>
-                <input
-                  id="new-password"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  minLength={8}
-                  value={newPassword}
-                  onChange={(event) => setNewPassword(event.target.value)}
-                  className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal"
-                  placeholder="At least 8 characters"
-                />
+                <div className="relative">
+                  <input
+                    id="new-password"
+                    type={showPasswords ? 'text' : 'password'}
+                    required
+                    autoComplete="new-password"
+                    minLength={8}
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    className="w-full rounded-lg border border-navy/20 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal"
+                    placeholder="At least 8 characters"
+                  />
+                  <PasswordReveal shown={showPasswords} onToggle={() => setShowPasswords((v) => !v)} />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-semibold text-navy mb-2" htmlFor="confirm-password">
                   Confirm New Password
                 </label>
-                <input
-                  id="confirm-password"
-                  type="password"
-                  required
-                  autoComplete="new-password"
-                  minLength={8}
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal"
-                />
+                <div className="relative">
+                  <input
+                    id="confirm-password"
+                    type={showPasswords ? 'text' : 'password'}
+                    required
+                    autoComplete="new-password"
+                    minLength={8}
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    className="w-full rounded-lg border border-navy/20 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal"
+                  />
+                  <PasswordReveal shown={showPasswords} onToggle={() => setShowPasswords((v) => !v)} />
+                </div>
               </div>
 
               {errorMessage && (

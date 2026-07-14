@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { isAdminEmail } from '../lib/adminAllowlist';
@@ -8,6 +9,7 @@ export default function AdminLogin() {
   const { user, signIn, signOut } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -66,15 +68,25 @@ export default function AdminLogin() {
               <label className="block text-sm font-semibold text-navy mb-2" htmlFor="admin-password">
                 Password
               </label>
-              <input
-                id="admin-password"
-                type="password"
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                className="w-full rounded-lg border border-navy/20 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal"
-                placeholder="Enter your password"
-              />
+              <div className="relative">
+                <input
+                  id="admin-password"
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="w-full rounded-lg border border-navy/20 px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-teal"
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-navy/50 hover:text-navy p-1"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
             </div>
 
             {errorMessage && (

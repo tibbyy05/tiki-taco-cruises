@@ -37,6 +37,10 @@ interface SessionRow {
   calls: number;
 }
 
+// Paid traffic = ad clicks (cpc/ppc/paid mediums); everything else is
+// organic search, direct, referrals, and GBP posts.
+const isPaidSource = (source: string) => /cpc|ppc|paid|ads/i.test(source);
+
 // "Fort Lauderdale, Florida" for US visitors; country elsewhere.
 const formatLocation = (l: { country: string; region: string; city: string }) => {
   const city = l.city && l.city !== '(not set)' ? l.city : '';
@@ -217,6 +221,8 @@ export default function AdminAnalytics() {
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
   const [selfCalls, setSelfCalls] = useState<SelfHostedSummary | null>(null);
   const [sessionLog, setSessionLog] = useState<SessionRow[] | null>(null);
+  const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other'>('all');
+  const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
 
   // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
   // the call-click layer; standalone it's the full fallback dashboard.
@@ -471,32 +477,142 @@ export default function AdminAnalytics() {
               )}
 
               {/* Who visited × how they found us (GA) */}
-              {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (
-                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-navy mb-1">Visitors × How They Found Us</h2>
-                  <p className="text-sm text-gray-500 mb-4">Location and traffic source combined (Google Analytics).</p>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm min-w-[480px]">
-                      <thead>
-                        <tr className="text-left text-navy/60 border-b border-navy/10">
-                          <th className="py-2 pr-3 font-semibold">Location</th>
-                          <th className="py-2 px-3 font-semibold">Came From</th>
-                          <th className="py-2 pl-3 font-semibold text-right">Visitors</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.visitorDetail!.map((v, i) => (
-                          <tr key={i} className="border-b border-navy/5 last:border-0">
-                            <td className="py-2 pr-3 text-gray-700">{formatLocation(v)}</td>
-                            <td className="py-2 px-3 text-gray-700">{v.source}</td>
-                            <td className="py-2 pl-3 text-right font-semibold text-navy">{v.users.toLocaleString()}</td>
-                          </tr>
+              {dataSource === 'ga' && (data.visitorDetail?.length ?? 0) > 0 && (() => {
+                const rows = data.visitorDetail!.filter((v) =>
+                  detailFilter === 'all' ? true : detailFilter === 'paid' ? isPaidSource(v.source) : !isPaidSource(v.source)
+                );
+                const filteredTotal = rows.reduce((sum, v) => sum + v.users, 0);
+
+                // Aggregate per location for the chart (paid/other split).
+                const byLocation = new Map<string, { paid: number; other: number }>();
+                rows.forEach((v) => {
+                  const key = formatLocation(v);
+                  const entry = byLocation.get(key) ?? { paid: 0, other: 0 };
+                  if (isPaidSource(v.source)) entry.paid += v.users;
+                  else entry.other += v.users;
+                  byLocation.set(key, entry);
+                });
+                const chartRows = [...byLocation.entries()]
+                  .map(([label, x]) => ({ label, ...x, total: x.paid + x.other }))
+                  .sort((a, b) => b.total - a.total)
+                  .slice(0, 12);
+                const chartMax = Math.max(...chartRows.map((r) => r.total), 1);
+
+                const filterBtn = (key: typeof detailFilter, label: string) => (
+                  <button
+                    key={key}
+                    onClick={() => setDetailFilter(key)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                      detailFilter === key
+                        ? 'bg-navy text-white'
+                        : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+
+                return (
+                  <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                    <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
+                      <div>
+                        <h2 className="text-lg font-bold text-navy">Visitors × How They Found Us</h2>
+                        <p className="text-sm text-gray-500">
+                          {filteredTotal.toLocaleString()} visitors shown · Google Analytics
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 bg-sand/60 rounded-full p-1">
+                        {(['list', 'chart'] as const).map((v) => (
+                          <button
+                            key={v}
+                            onClick={() => setDetailView(v)}
+                            className={`px-3 py-1 rounded-full text-xs font-semibold capitalize transition-colors ${
+                              detailView === v ? 'bg-white text-navy shadow' : 'text-navy/60'
+                            }`}
+                          >
+                            {v === 'chart' ? 'Bar Graph' : 'List'}
+                          </button>
                         ))}
-                      </tbody>
-                    </table>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2 mb-4">
+                      {filterBtn('all', 'All')}
+                      {filterBtn('paid', 'Paid Ads')}
+                      {filterBtn('other', 'Organic & Direct')}
+                    </div>
+
+                    {rows.length === 0 ? (
+                      <p className="text-sm text-gray-500">No visitors match this filter in the selected period.</p>
+                    ) : detailView === 'list' ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm min-w-[520px]">
+                          <thead>
+                            <tr className="text-left text-navy/60 border-b border-navy/10">
+                              <th className="py-2 pr-3 font-semibold">Location</th>
+                              <th className="py-2 px-3 font-semibold">Came From</th>
+                              <th className="py-2 px-3 font-semibold">Type</th>
+                              <th className="py-2 pl-3 font-semibold text-right">Visitors</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {rows.map((v, i) => (
+                              <tr key={i} className="border-b border-navy/5 last:border-0">
+                                <td className="py-2 pr-3 text-gray-700">{formatLocation(v)}</td>
+                                <td className="py-2 px-3 text-gray-700">{v.source}</td>
+                                <td className="py-2 px-3">
+                                  <span
+                                    className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${
+                                      isPaidSource(v.source) ? 'bg-coral/15 text-coral' : 'bg-teal/15 text-teal'
+                                    }`}
+                                  >
+                                    {isPaidSource(v.source) ? 'PAID' : 'ORGANIC'}
+                                  </span>
+                                </td>
+                                <td className="py-2 pl-3 text-right font-semibold text-navy">{v.users.toLocaleString()}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="space-y-2.5">
+                        {chartRows.map((r) => (
+                          <div key={r.label} className="flex items-center gap-3">
+                            <div className="w-40 sm:w-48 flex-shrink-0 text-sm text-gray-700 truncate" title={r.label}>
+                              {r.label}
+                            </div>
+                            <div className="flex-1 flex h-5 rounded-md overflow-hidden bg-navy/5">
+                              {r.paid > 0 && (
+                                <div
+                                  className="bg-coral h-full"
+                                  style={{ width: `${(r.paid / chartMax) * 100}%` }}
+                                  title={`Paid: ${r.paid}`}
+                                />
+                              )}
+                              {r.other > 0 && (
+                                <div
+                                  className="bg-teal h-full"
+                                  style={{ width: `${(r.other / chartMax) * 100}%` }}
+                                  title={`Organic & direct: ${r.other}`}
+                                />
+                              )}
+                            </div>
+                            <div className="w-10 text-right text-sm font-bold text-navy">{r.total.toLocaleString()}</div>
+                          </div>
+                        ))}
+                        <div className="flex items-center gap-4 pt-2 text-xs text-gray-500">
+                          <span className="inline-flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-sm bg-coral inline-block" /> Paid ads
+                          </span>
+                          <span className="inline-flex items-center gap-1.5">
+                            <span className="w-3 h-3 rounded-sm bg-teal inline-block" /> Organic &amp; direct
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Traffic sources */}
