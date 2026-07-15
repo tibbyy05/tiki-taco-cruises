@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin, CalendarCheck } from 'lucide-react';
+import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin, CalendarCheck, Search } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
@@ -26,6 +26,31 @@ interface AnalyticsData {
   visitorDetail?: Array<{ country: string; region: string; city: string; source: string; users: number }>;
 }
 
+// Shape returned by the search-rankings Netlify function (Google Search Console).
+interface RankingQueryRow {
+  query: string;
+  clicks: number;
+  impressions: number;
+  ctr: number;
+  position: number;
+  prevPosition: number | null;
+}
+
+interface RankingPageRow {
+  page: string;
+  clicks: number;
+  impressions: number;
+  position: number;
+}
+
+interface RankingsData {
+  days: number;
+  startDate: string;
+  endDate: string;
+  queries: RankingQueryRow[];
+  pages: RankingPageRow[];
+}
+
 // One row per visit session from the tiki_recent_sessions RPC.
 interface SessionRow {
   session_id: string;
@@ -40,6 +65,20 @@ interface SessionRow {
 // Paid traffic = ad clicks (cpc/ppc/paid mediums); everything else is
 // organic search, direct, referrals, and GBP posts.
 const isPaidSource = (source: string) => /cpc|ppc|paid|ads/i.test(source);
+
+// Owner-friendly names for the visitor-detail total, per active filter.
+const FILTER_TOTAL_LABELS = {
+  all: 'All Visitors',
+  paid: 'Paid Visitors (Ads)',
+  other: 'Organic & Direct Visitors',
+  hilton: 'Hilton Referral Visitors',
+} as const;
+
+const LOC_TOTAL_LABELS = {
+  all: '',
+  fl: ' · Florida',
+  nonfl: ' · Outside Florida',
+} as const;
 
 // Translate raw analytics jargon ("google / cpc", "(direct) / (none)") into
 // owner-friendly labels. Unknown sources get title-cased with their medium.
@@ -264,6 +303,251 @@ function ShareBar({ value, max }: { value: number; max: number }) {
   );
 }
 
+// "#3.2" plus which Google results page that lands on (1–10 = page 1).
+function RankCell({ position }: { position: number }) {
+  const serpPage = Math.max(1, Math.ceil(position / 10));
+  const chip =
+    serpPage === 1 ? 'bg-teal/15 text-teal' : serpPage === 2 ? 'bg-amber-100 text-amber-600' : 'bg-navy/10 text-navy/50';
+  return (
+    <span className="inline-flex items-center gap-2 whitespace-nowrap">
+      <span className="font-bold text-navy">#{position}</span>
+      <span className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${chip}`}>Page {serpPage}</span>
+    </span>
+  );
+}
+
+const fmtRankDate = (iso: string) =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+type RankSortKey = 'query' | 'position' | 'change' | 'impressions' | 'clicks';
+
+function SearchRankings({ range }: { range: string }) {
+  const { session } = useAuth();
+  const [state, setState] = useState<'loading' | 'ready' | 'not-configured' | 'error' | 'hidden'>('loading');
+  const [data, setData] = useState<RankingsData | null>(null);
+  const [view, setView] = useState<'queries' | 'pages'>('queries');
+  const [filter, setFilter] = useState('');
+  const [expanded, setExpanded] = useState(false);
+  const [sort, setSort] = useState<{ key: RankSortKey; dir: 1 | -1 }>({ key: 'impressions', dir: -1 });
+
+  useEffect(() => {
+    if (!session?.access_token) return;
+    let cancelled = false;
+    (async () => {
+      setState('loading');
+      try {
+        const get = (token: string) =>
+          fetch(`/.netlify/functions/search-rankings?range=${range}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        let res = await get(session.access_token);
+        if (res.status === 401) {
+          // Access token may have expired in the background — refresh and retry once.
+          const { data: fresh } = await supabase.auth.refreshSession();
+          if (fresh.session?.access_token) res = await get(fresh.session.access_token);
+        }
+        if (cancelled) return;
+        if (res.status === 501) return setState('not-configured');
+        if (!res.ok) return setState('error');
+        const body = (await res.json()) as RankingsData;
+        if (!cancelled) {
+          setData(body);
+          setState('ready');
+        }
+      } catch {
+        // Local dev has no Netlify functions (fetch returns the SPA shell) — hide the card.
+        if (!cancelled) setState('hidden');
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [range, session?.access_token]);
+
+  if (state === 'hidden') return null;
+
+  const card = (children: React.ReactNode) => (
+    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">{children}</div>
+  );
+  const header = (
+    <div>
+      <h2 className="text-lg font-bold text-navy inline-flex items-center gap-2">
+        <Search className="w-4 h-4 text-coral" /> Where You Rank on Google
+      </h2>
+      <p className="text-sm text-gray-500 mt-0.5">
+        Your average spot in Google results for each search phrase — #1–10 is page 1.
+        {data ? ` ${fmtRankDate(data.startDate)} – ${fmtRankDate(data.endDate)} · ` : ' '}
+        Google Search Console (runs ~2 days behind).
+      </p>
+    </div>
+  );
+
+  if (state === 'loading') return card(<>{header}<p className="text-sm text-gray-500 mt-4">Loading search rankings…</p></>);
+  if (state === 'error')
+    return card(<>{header}<p className="text-sm text-coral mt-4">Couldn’t load ranking data — try refreshing.</p></>);
+  if (state === 'not-configured')
+    return card(
+      <>
+        {header}
+        <p className="text-sm text-gray-600 mt-4">
+          One-time setup needed: in Google Search Console → Settings → Users and permissions, add the
+          analytics service account email (the same one Google Analytics uses) with Restricted access.
+          Rankings will appear here automatically after that.
+        </p>
+      </>
+    );
+  if (!data) return null;
+
+  const needle = filter.trim().toLowerCase();
+  const sortBy = (key: RankSortKey) =>
+    setSort((s) =>
+      s.key === key
+        ? { key, dir: s.dir === 1 ? -1 : 1 }
+        : { key, dir: key === 'query' || key === 'position' ? 1 : -1 }
+    );
+  const arrow = (key: RankSortKey) => (sort.key === key ? (sort.dir === 1 ? ' ▲' : ' ▼') : '');
+  const th = (key: RankSortKey, label: string, align = 'text-right') => (
+    <th className={`py-2 px-3 font-semibold ${align}`}>
+      <button onClick={() => sortBy(key)} className="hover:text-coral">{label}{arrow(key)}</button>
+    </th>
+  );
+
+  const queryRows = data.queries
+    .filter((r) => !needle || r.query.includes(needle))
+    .sort((a, b) => {
+      const val = (r: RankingQueryRow) =>
+        sort.key === 'query' ? r.query
+        : sort.key === 'position' ? r.position
+        : sort.key === 'change' ? (r.prevPosition != null ? r.prevPosition - r.position : -Infinity)
+        : sort.key === 'impressions' ? r.impressions
+        : r.clicks;
+      const av = val(a); const bv = val(b);
+      const cmp = typeof av === 'number' ? (av as number) - (bv as number) : String(av).localeCompare(String(bv));
+      return cmp * sort.dir;
+    });
+  const pageRows = data.pages
+    .filter((r) => !needle || r.page.toLowerCase().includes(needle))
+    .sort((a, b) => b.impressions - a.impressions);
+
+  const rowCount = view === 'queries' ? queryRows.length : pageRows.length;
+  const visibleQueries = expanded ? queryRows : queryRows.slice(0, 25);
+  const visiblePages = expanded ? pageRows : pageRows.slice(0, 25);
+
+  return card(
+    <>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        {header}
+        <div className="flex items-center gap-1 bg-sand/60 rounded-full p-1">
+          {(['queries', 'pages'] as const).map((v) => (
+            <button
+              key={v}
+              onClick={() => { setView(v); setExpanded(false); }}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                view === v ? 'bg-white text-navy shadow' : 'text-navy/60'
+              }`}
+            >
+              {v === 'queries' ? 'Search Terms' : 'By Page'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mb-4 max-w-md">
+        <Search className="w-4 h-4 text-navy/40 absolute left-3 top-1/2 -translate-y-1/2" />
+        <input
+          type="search"
+          value={filter}
+          onChange={(e) => { setFilter(e.target.value); setExpanded(false); }}
+          placeholder="Search a phrase, e.g. fort lauderdale pontoon"
+          className="w-full pl-9 pr-4 py-2.5 rounded-full text-sm text-navy bg-sand/40 border border-navy/15 focus:outline-none focus:ring-2 focus:ring-teal placeholder:text-navy/40"
+        />
+      </div>
+
+      {rowCount === 0 ? (
+        <p className="text-sm text-gray-500">
+          {needle
+            ? `Nothing matched “${filter.trim()}” — Google hasn’t shown the site for that phrase in this period.`
+            : 'No Google Search data recorded for this period yet.'}
+        </p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[560px]">
+            <thead>
+              <tr className="text-left text-navy/60 border-b border-navy/10">
+                {view === 'queries' ? (
+                  <>
+                    {th('query', 'Search Phrase', 'text-left pr-3 pl-0')}
+                    {th('position', 'Google Rank', 'text-left')}
+                    {th('change', 'Change')}
+                    {th('impressions', 'Times Shown')}
+                    {th('clicks', 'Clicks')}
+                  </>
+                ) : (
+                  <>
+                    <th className="py-2 pr-3 font-semibold">Page</th>
+                    <th className="py-2 px-3 font-semibold text-left">Google Rank</th>
+                    <th className="py-2 px-3 font-semibold text-right">Times Shown</th>
+                    <th className="py-2 pl-3 font-semibold text-right">Clicks</th>
+                  </>
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {view === 'queries'
+                ? visibleQueries.map((r) => {
+                    const delta = r.prevPosition != null ? Math.round((r.prevPosition - r.position) * 10) / 10 : null;
+                    return (
+                      <tr key={r.query} className="border-b border-navy/5 last:border-0">
+                        <td className="py-2.5 pr-3 text-gray-700">{r.query}</td>
+                        <td className="py-2.5 px-3"><RankCell position={r.position} /></td>
+                        <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                          {delta === null ? (
+                            <span className="text-xs font-semibold text-gray-400">new</span>
+                          ) : delta === 0 ? (
+                            <span className="text-xs font-semibold text-gray-400">±0</span>
+                          ) : (
+                            <span className={`text-xs font-bold ${delta > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                              {delta > 0 ? '▲' : '▼'} {Math.abs(delta)}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-2.5 px-3 text-right text-navy/70">{r.impressions.toLocaleString()}</td>
+                        <td className={`py-2.5 pl-3 text-right font-semibold ${r.clicks > 0 ? 'text-coral' : 'text-gray-400'}`}>
+                          {r.clicks > 0 ? r.clicks.toLocaleString() : '—'}
+                        </td>
+                      </tr>
+                    );
+                  })
+                : visiblePages.map((r) => (
+                    <tr key={r.page} className="border-b border-navy/5 last:border-0">
+                      <td className="py-2.5 pr-3 text-gray-700">{prettyPath(r.page)}</td>
+                      <td className="py-2.5 px-3"><RankCell position={r.position} /></td>
+                      <td className="py-2.5 px-3 text-right text-navy/70">{r.impressions.toLocaleString()}</td>
+                      <td className={`py-2.5 pl-3 text-right font-semibold ${r.clicks > 0 ? 'text-coral' : 'text-gray-400'}`}>
+                        {r.clicks > 0 ? r.clicks.toLocaleString() : '—'}
+                      </td>
+                    </tr>
+                  ))}
+            </tbody>
+          </table>
+          {rowCount > 25 && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="mt-3 w-full text-center text-sm font-semibold text-teal hover:text-coral transition-colors py-2"
+            >
+              {expanded ? 'Show top 25' : `View all ${rowCount} ${view === 'queries' ? 'phrases' : 'pages'}`}
+            </button>
+          )}
+        </div>
+      )}
+      <p className="text-xs text-gray-400 mt-3">
+        Rank is the average position across everyone who searched · “Times Shown” = impressions in Google results ·
+        Change compares the previous period of equal length.
+      </p>
+    </>
+  );
+}
+
 export default function AdminAnalytics() {
   const { user, session } = useAuth();
   const [range, setRange] = useState('30');
@@ -275,7 +559,7 @@ export default function AdminAnalytics() {
   const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other' | 'hilton'>('all');
   const [detailLoc, setDetailLoc] = useState<'all' | 'fl' | 'nonfl'>('all');
   const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
-  const [trendLabels, setTrendLabels] = useState(false);
+  const [trendLabels, setTrendLabels] = useState(true);
   const [detailExpanded, setDetailExpanded] = useState(false);
   const [detailSort, setDetailSort] = useState<{ key: 'location' | 'source' | 'type' | 'users'; dir: 1 | -1 }>({
     key: 'users',
@@ -646,9 +930,12 @@ export default function AdminAnalytics() {
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
                       <div>
                         <h2 className="text-lg font-bold text-navy">Visitors × How They Found Us</h2>
-                        <p className="text-sm text-gray-500">
-                          {filteredTotal.toLocaleString()} visitors shown · Google Analytics
+                        <p className="text-sm font-semibold text-navy mt-0.5">
+                          {FILTER_TOTAL_LABELS[detailFilter]}
+                          {LOC_TOTAL_LABELS[detailLoc]} — Total:{' '}
+                          <span className="text-coral font-bold">{filteredTotal.toLocaleString()}</span>
                         </p>
+                        <p className="text-xs text-gray-500">Google Analytics</p>
                       </div>
                       <div className="flex items-center gap-1 bg-sand/60 rounded-full p-1">
                         {(['list', 'chart'] as const).map((v) => (
@@ -780,6 +1067,9 @@ export default function AdminAnalytics() {
                   </div>
                 );
               })()}
+
+              {/* Google search rankings (Search Console) */}
+              <SearchRankings range={range} />
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Traffic sources */}
