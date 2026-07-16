@@ -64,6 +64,22 @@ async function getGoogleAccessToken(email, privateKey) {
   return data.access_token;
 }
 
+// The GSC property may be a domain property (sc-domain:...) or a URL-prefix
+// property (https://...) depending on how it was verified — ask Google which
+// ones this service account can actually read instead of assuming.
+async function resolveSiteUrl(accessToken, preferred) {
+  const res = await fetch('https://searchconsole.googleapis.com/webmasters/v3/sites', {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  });
+  if (!res.ok) return preferred;
+  const data = await res.json();
+  const usable = (data.siteEntry ?? []).filter((s) => s.permissionLevel !== 'siteUnverifiedUser');
+  if (usable.some((s) => s.siteUrl === preferred)) return preferred;
+  const match = usable.find((s) => s.siteUrl.includes('tikitacocruises.com'));
+  if (!match) console.error('GSC sites accessible to service account:', JSON.stringify(data.siteEntry ?? []));
+  return match ? match.siteUrl : preferred;
+}
+
 // Search data has no hourly granularity and lags ~2 days, so single-day
 // ranges fall back to a 7-day window (the UI shows the actual dates).
 const RANGE_TO_DAYS = { today: 7, yesterday: 7, 7: 7, 30: 30, 90: 90 };
@@ -108,9 +124,10 @@ export const handler = async (event) => {
     prevStart.setDate(prevEnd.getDate() - (days - 1));
 
     const accessToken = await getGoogleAccessToken(saEmail, saKey);
+    const resolvedSiteUrl = await resolveSiteUrl(accessToken, siteUrl);
     const query = (body) =>
       fetch(
-        `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
+        `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodeURIComponent(resolvedSiteUrl)}/searchAnalytics/query`,
         {
           method: 'POST',
           headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
