@@ -112,6 +112,10 @@ export const routes: RouteRecord[] = [
       { path: 'intracoastal-waterway-corporate-cruise', lazy: lazyPage(() => import('./pages/cruises/IntracoastalWaterwayCorporateCruise')) },
       { path: 'fort-lauderdale-sunset-cruise', lazy: lazyPage(() => import('./pages/cruises/FortLauderdaleSunsetCruise')) },
       { path: 'pontoon-boat-rental-fort-lauderdale', lazy: lazyPage(() => import('./pages/PontoonBoatRental')) },
+      // Prerendered to dist/404/index.html, then copied to dist/404.html
+      // (scripts/copy-404.mjs) so Netlify serves unknown URLs with a real
+      // 404 status instead of the soft-404 SPA fallback.
+      { path: '404', lazy: lazyPage(() => import('./pages/NotFound')) },
       { path: '*', lazy: lazyPage(() => import('./pages/NotFound')) },
     ],
   },

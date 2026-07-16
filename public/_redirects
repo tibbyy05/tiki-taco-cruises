@@ -36,5 +36,10 @@
 /images/blog/*     https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/tiki-blog-images/:splat  200
 /images/site/*     https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/:splat           200
 
-# --- SPA fallback (must be last) ---
-/*    /index.html   200
+# --- Admin SPA fallback (client-only routes, never prerendered) ---
+/admin      /index.html   200
+/admin/*    /index.html   200
+
+# No catch-all on purpose: URLs with no static file and no rule above fall
+# through to dist/404.html, which Netlify serves with a real 404 status.
+# (A "/* /index.html 200" catch-all here would soft-404 every bogus URL.)
