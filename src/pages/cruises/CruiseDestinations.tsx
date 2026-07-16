@@ -260,6 +260,55 @@ export default function CruiseDestinations() {
           </div>
         </section>
 
+        {/* Pontoon Boat Rental */}
+        <section className="py-12 sm:py-16 md:py-20 px-4 bg-white">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+              <div className="order-1 md:order-2">
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/5] md:aspect-auto md:h-full md:max-h-[560px]">
+                  <img
+                    src="/hero-slide-1.jpg"
+                    alt="Private pontoon boat rental at the dock in Fort Lauderdale"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              </div>
+              <div className="order-2 md:order-1">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3">
+                  Pontoon Boat Rental
+                </h2>
+                <h3 className="text-xl sm:text-2xl text-ocean/80 mb-5 font-medium">
+                  Rent the boat by the hour and make it your day
+                </h3>
+                <p className="text-ocean/70 text-lg mb-6">
+                  Prefer to build your own trip? Rent our private tiki-style pontoon with a licensed captain and go where your group wants — sandbars, the New River, or the Intracoastal.
+                </p>
+                <ul className="space-y-3 mb-8">
+                  {[
+                    'Up to 18 guests · always private',
+                    'Captain & fuel included — no license needed',
+                    'BYOB with cooler & ice on board',
+                    'Starting at $200/hour (2 hour minimum)',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <Check className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
+                      <span className="text-ocean/80 text-base">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  to="/pontoon-boat-rental-fort-lauderdale/"
+                  className="bg-coral hover:bg-coral/90 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 hover:scale-105 inline-flex items-center gap-2 min-h-[44px]"
+                  data-gtm-id="learn-more"
+                >
+                  Learn More <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Section divider */}
         <div className="px-4 bg-white">
           <div className="flex items-center justify-center gap-4 max-w-md mx-auto py-2 sm:py-4">

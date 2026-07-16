@@ -111,6 +111,7 @@ export const routes: RouteRecord[] = [
       { path: 'las-olas-boat-tour', lazy: lazyPage(() => import('./pages/cruises/LasOlasBoatTour')) },
       { path: 'intracoastal-waterway-corporate-cruise', lazy: lazyPage(() => import('./pages/cruises/IntracoastalWaterwayCorporateCruise')) },
       { path: 'fort-lauderdale-sunset-cruise', lazy: lazyPage(() => import('./pages/cruises/FortLauderdaleSunsetCruise')) },
+      { path: 'pontoon-boat-rental-fort-lauderdale', lazy: lazyPage(() => import('./pages/PontoonBoatRental')) },
       { path: '*', lazy: lazyPage(() => import('./pages/NotFound')) },
     ],
   },

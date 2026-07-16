@@ -9,6 +9,7 @@ const cruisesSubmenu = [
   { to: '/las-olas-boat-tour/', label: 'Las Olas & Intracoastal Party Cruise' },
   { to: '/intracoastal-waterway-corporate-cruise/', label: 'Corporate & Private Event Cruise' },
   { to: '/fort-lauderdale-sunset-cruise/', label: '2-Hour Morning & Sunset Cruises' },
+  { to: '/pontoon-boat-rental-fort-lauderdale/', label: 'Pontoon Boat Rental' },
 ];
 
 export default function Navigation() {

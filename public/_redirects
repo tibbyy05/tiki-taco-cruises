@@ -22,6 +22,7 @@
 /las-olas-boat-tour                      /las-olas-boat-tour/                        301
 /intracoastal-waterway-corporate-cruise  /intracoastal-waterway-corporate-cruise/    301
 /fort-lauderdale-sunset-cruise           /fort-lauderdale-sunset-cruise/             301
+/pontoon-boat-rental-fort-lauderdale     /pontoon-boat-rental-fort-lauderdale/       301
 
 # Blog post slug canonicalization lives in netlify/edge-functions/blog-trailing-slash.js.
 # It can NOT be a rule here: redirect matching ignores trailing slashes, so any

@@ -23,6 +23,7 @@ const staticRoutes = [
   { path: '/las-olas-boat-tour/', changefreq: 'monthly', priority: '0.8' },
   { path: '/intracoastal-waterway-corporate-cruise/', changefreq: 'monthly', priority: '0.8' },
   { path: '/fort-lauderdale-sunset-cruise/', changefreq: 'monthly', priority: '0.8' },
+  { path: '/pontoon-boat-rental-fort-lauderdale/', changefreq: 'monthly', priority: '0.9' },
   { path: '/gallery/', changefreq: 'monthly', priority: '0.6' },
   { path: '/faq/', changefreq: 'monthly', priority: '0.7' },
   { path: '/contact-us/', changefreq: 'monthly', priority: '0.7' },
