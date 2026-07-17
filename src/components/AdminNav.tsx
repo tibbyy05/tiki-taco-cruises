@@ -21,14 +21,14 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
       <div>
         <h1 className="text-3xl sm:text-4xl font-bold text-navy">{title}</h1>
         <div className="flex flex-wrap items-center gap-2 mt-3">
+          <NavLink to="/admin/analytics" className={tabClass}>
+            Analytics
+          </NavLink>
           <NavLink to="/admin/gallery" className={tabClass}>
             Gallery
           </NavLink>
           <NavLink to="/admin/blog" className={tabClass}>
             Blog
-          </NavLink>
-          <NavLink to="/admin/analytics" className={tabClass}>
-            Analytics
           </NavLink>
           <NavLink to="/admin/account" className={tabClass}>
             Account

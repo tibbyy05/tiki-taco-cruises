@@ -14,7 +14,7 @@ export default function AdminLogin() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (user && isAdminEmail(user.email)) {
-    return <Navigate to="/admin/gallery" replace />;
+    return <Navigate to="/admin/analytics" replace />;
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -45,7 +45,7 @@ export default function AdminLogin() {
         <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-navy/10">
           <h1 className="text-3xl font-bold text-navy text-center mb-2">Admin Login</h1>
           <p className="text-gray-700 text-center mb-6">
-            Sign in to manage the gallery
+            Sign in to manage your website
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">

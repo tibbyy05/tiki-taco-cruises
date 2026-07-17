@@ -60,11 +60,20 @@ interface SessionRow {
   device: string;
   views: number;
   calls: number;
+  books?: number;
 }
 
 // Paid traffic = ad clicks (cpc/ppc/paid mediums); everything else is
 // organic search, direct, referrals, and GBP posts.
 const isPaidSource = (source: string) => /cpc|ppc|paid|ads/i.test(source);
+
+// Built-in tracking stores only utm_source: ad URLs arrive tagged as plain
+// "google" while organic Google clicks arrive as the referrer "google.com"
+// (cross-checked against GA's google/cpc counts). Handles both vocabularies.
+const isPaidVisit = (source: string) => {
+  const s = source.toLowerCase().trim();
+  return s === 'google' || isPaidSource(s);
+};
 
 // Owner-friendly names for the visitor-detail total, per active filter.
 const FILTER_TOTAL_LABELS = {
@@ -83,6 +92,17 @@ const LOC_TOTAL_LABELS = {
 // Translate raw analytics jargon ("google / cpc", "(direct) / (none)") into
 // owner-friendly labels. Unknown sources get title-cased with their medium.
 const SOURCE_LABELS: Record<string, string> = {
+  // Built-in tracking vocabulary (utm_source or referrer domain).
+  'google': 'Google Ads',
+  'google.com': 'Google Search',
+  'bing.com': 'Bing Search',
+  'yahoo.com': 'Yahoo Search',
+  'duckduckgo.com': 'DuckDuckGo Search',
+  'facebook.com': 'Facebook',
+  'm.facebook.com': 'Facebook',
+  'instagram.com': 'Instagram',
+  'l.instagram.com': 'Instagram',
+  // Google Analytics vocabulary (source / medium).
   'google / cpc': 'Google Ads',
   'google / organic': 'Google Search',
   'bing / organic': 'Bing Search',
@@ -114,7 +134,9 @@ const prettySource = (raw: string) => {
   const parts = key.split('/').map((p) => p.trim());
   if (parts.length === 2) {
     const [src, medium] = parts;
-    const srcLabel = SOURCE_LABELS[src] ?? titleCase(src);
+    // Bare "google" means ad-tagged only in built-in tracking — inside a
+    // GA "source / medium" pair it's just the search engine.
+    const srcLabel = src === 'google' ? 'Google' : SOURCE_LABELS[src] ?? titleCase(src);
     const mediumLabel = medium === 'referral' ? 'Referral' : medium === 'organic' ? 'Search' : medium === '(none)' ? '' : titleCase(medium);
     return `${srcLabel}${mediumLabel ? ' ' + mediumLabel : ''}`;
   }
@@ -561,7 +583,7 @@ export default function AdminAnalytics() {
   const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
   const [trendLabels, setTrendLabels] = useState(true);
   const [detailExpanded, setDetailExpanded] = useState(false);
-  const [detailSort, setDetailSort] = useState<{ key: 'location' | 'source' | 'type' | 'users'; dir: 1 | -1 }>({
+  const [detailSort, setDetailSort] = useState<{ key: 'location' | 'paid' | 'users'; dir: 1 | -1 }>({
     key: 'users',
     dir: -1,
   });
@@ -676,6 +698,42 @@ export default function AdminAnalytics() {
     return [...map.values()].sort((a, b) => b.sessions - a.sessions);
   })();
 
+  // Plain-English recap. Single-day views read from the live per-session log
+  // (complete, immune to GA's same-day processing lag); longer ranges use the
+  // report totals. Paid = ad-tagged visits (see isPaidVisit).
+  const daySessions = range === 'today' || range === 'yesterday' ? sessionLog : null;
+  const summary = (() => {
+    if (!data) return null;
+    if (daySessions) {
+      const callers = daySessions.filter((s) => s.calls > 0);
+      const bookers = daySessions.filter((s) => (s.books ?? 0) > 0);
+      return {
+        visitors: daySessions.length,
+        paid: daySessions.filter((s) => isPaidVisit(s.source)).length,
+        callers: callers.map((s) => ({
+          source: prettySource(s.source),
+          paid: isPaidVisit(s.source),
+          time: new Date(s.started_at).toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            timeZone: 'America/New_York',
+          }),
+        })),
+        books: bookers.length,
+      };
+    }
+    return {
+      visitors: data.totals.users,
+      paid: data.sources.filter((s) => isPaidVisit(s.source)).reduce((n, s) => n + s.users, 0),
+      callers: null,
+      books: selfCalls?.totals.bookClicks,
+    };
+  })();
+  const periodLabel =
+    range === 'today' ? 'so far today'
+    : range === 'yesterday' ? 'yesterday'
+    : `in the last ${range} days`;
+
   const maxSourceSessions = Math.max(...mergedSources.map((s) => s.sessions), 1);
   const maxPageViews = Math.max(...(data?.pages.map((p) => p.pageViews) ?? [0]), 1);
   const totalDeviceUsers = (data?.devices ?? []).reduce((sum, d) => sum + d.users, 0);
@@ -747,21 +805,73 @@ export default function AdminAnalytics() {
 
           {state === 'ready' && data && (
             <div className="space-y-6">
+              {/* Plain-English recap for the site owner */}
+              {summary && (
+                <div className="bg-navy rounded-2xl shadow-lg p-5 sm:p-6 text-white">
+                  <h2 className="text-lg font-bold mb-3">The Short Version</h2>
+                  <ul className="space-y-2 text-base leading-relaxed">
+                    <li>
+                      <span className="font-bold text-coral">{summary.visitors.toLocaleString()}</span>{' '}
+                      {summary.visitors === 1 ? 'person' : 'people'} visited the website {periodLabel}.
+                    </li>
+                    <li>
+                      <span className="font-bold text-coral">{summary.paid.toLocaleString()}</span> came from
+                      your <span className="font-semibold">Google Ads</span> ·{' '}
+                      <span className="font-bold text-teal">{Math.max(0, summary.visitors - summary.paid).toLocaleString()}</span>{' '}
+                      found you on their own (Google search, other websites, or typing the address).
+                    </li>
+                    {summary.callers !== null ? (
+                      summary.callers.length === 0 ? (
+                        <li>Nobody has tapped “Call to Book” {range === 'today' ? 'yet today' : 'that day'}.</li>
+                      ) : (
+                        <li>
+                          <span className="font-bold text-coral">{summary.callers.length}</span>{' '}
+                          {summary.callers.length === 1 ? 'person' : 'people'} tapped{' '}
+                          <span className="font-semibold">“Call to Book”</span> —{' '}
+                          {summary.callers
+                            .map((c) => `from ${c.source}${c.paid ? ' (your ad)' : ''} at ${c.time}`)
+                            .join(', ')}
+                          .
+                        </li>
+                      )
+                    ) : (
+                      callClicks !== undefined && (
+                        <li>
+                          <span className="font-bold text-coral">{callClicks.toLocaleString()}</span>{' '}
+                          {callClicks === 1 ? 'person' : 'people'} tapped “Call to Book”
+                          {callSources.length > 0 && (
+                            <> — mostly from {callSources.map((s) => prettySource(s.source)).join(', ')}</>
+                          )}
+                          .
+                        </li>
+                      )
+                    )}
+                    {summary.books !== undefined && (
+                      <li>
+                        <span className="font-bold text-teal">{summary.books.toLocaleString()}</span>{' '}
+                        {summary.books === 1 ? 'person' : 'people'} opened the booking calendar.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+
               {/* Stat cards with period-over-period deltas — 2 x 4 grid */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-                <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()}>
+                <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()} note="different people who came to the site">
                   <Delta current={data.totals.users} previous={data.prevTotals?.users} />
                 </StatCard>
-                <StatCard icon={MousePointerClick} label="Sessions" value={data.totals.sessions.toLocaleString()}>
+                <StatCard icon={MousePointerClick} label="Visits" value={data.totals.sessions.toLocaleString()} note="higher than Visitors when people come back">
                   <Delta current={data.totals.sessions} previous={data.prevTotals?.sessions} />
                 </StatCard>
-                <StatCard icon={Eye} label="Page Views" value={data.totals.pageViews.toLocaleString()}>
+                <StatCard icon={Eye} label="Pages Viewed" value={data.totals.pageViews.toLocaleString()} note="total pages people opened">
                   <Delta current={data.totals.pageViews} previous={data.prevTotals?.pageViews} />
                 </StatCard>
                 <StatCard
                   icon={Timer}
-                  label="Avg. Visit"
+                  label="Time on Site"
                   value={dataSource === 'ga' ? formatDuration(data.totals.avgSessionSeconds) : '—'}
+                  note="average length of a visit"
                 >
                   {dataSource === 'ga' && (
                     <Delta current={data.totals.avgSessionSeconds} previous={data.prevTotals?.avgSessionSeconds} />
@@ -769,21 +879,26 @@ export default function AdminAnalytics() {
                 </StatCard>
                 <StatCard
                   icon={Phone}
-                  label="Call Clicks"
+                  label="Phone Calls"
                   value={callClicks !== undefined ? callClicks.toLocaleString() : '—'}
-                  note={callClicks === undefined ? 'setup pending' : 'tracking since Jul 13, 2026'}
+                  note={
+                    callClicks === undefined ? 'setup pending'
+                    : callClicks > 0 && callSources.length > 0
+                      ? `from ${callSources.map((s) => `${prettySource(s.source)} (${s.calls})`).join(', ')}`
+                      : 'taps on “Call to Book”'
+                  }
                 />
                 <StatCard
                   icon={Phone}
                   label="Call Rate"
                   value={callRate ?? '—'}
-                  note={callClicks === undefined ? 'setup pending' : 'call clicks ÷ visitors · since Jul 13, 2026'}
+                  note={callClicks === undefined ? 'setup pending' : 'share of visitors who tapped “Call to Book”'}
                 />
                 <StatCard
                   icon={CalendarCheck}
                   label="Booking Opens"
                   value={selfCalls ? selfCalls.totals.bookClicks.toLocaleString() : '—'}
-                  note={selfCalls ? 'calendar opened · since Jul 13, 2026' : 'setup pending'}
+                  note={selfCalls ? 'people who opened the booking calendar' : 'setup pending'}
                 />
               </div>
 
@@ -814,7 +929,8 @@ export default function AdminAnalytics() {
                     Visitor Log — {range === 'today' ? 'Today' : 'Yesterday'}
                   </h2>
                   <p className="text-sm text-gray-500 mb-4">
-                    Every visit, newest first (built-in tracking · collecting since Jul 13, 2026).
+                    Every visit, newest first — live and complete. <span className="font-semibold text-coral">PAID</span> = came
+                    from your ads. Rows in pink called you.
                   </p>
                   {!sessionLog || sessionLog.length === 0 ? (
                     <p className="text-sm text-gray-500">No visits recorded {range === 'today' ? 'yet today' : 'that day'}.</p>
@@ -828,12 +944,15 @@ export default function AdminAnalytics() {
                             <th className="py-2 px-3 font-semibold">Came From</th>
                             <th className="py-2 px-3 font-semibold">Device</th>
                             <th className="py-2 px-3 font-semibold text-right">Pages</th>
-                            <th className="py-2 pl-3 font-semibold text-right">Calls</th>
+                            <th className="py-2 pl-3 font-semibold">Activity</th>
                           </tr>
                         </thead>
                         <tbody>
                           {sessionLog.map((s) => (
-                            <tr key={s.session_id} className="border-b border-navy/5 last:border-0">
+                            <tr
+                              key={s.session_id}
+                              className={`border-b border-navy/5 last:border-0 ${s.calls > 0 ? 'bg-coral/5' : ''}`}
+                            >
                               <td className="py-2 pr-3 text-navy/70 whitespace-nowrap">
                                 {new Date(s.started_at).toLocaleTimeString('en-US', {
                                   hour: 'numeric',
@@ -842,11 +961,24 @@ export default function AdminAnalytics() {
                                 })}
                               </td>
                               <td className="py-2 px-3 text-gray-700">{prettyPath(s.entry_path ?? '—')}</td>
-                              <td className="py-2 px-3 text-gray-700" title={s.source}>{prettySource(s.source)}</td>
+                              <td className="py-2 px-3 text-gray-700 whitespace-nowrap" title={s.source}>
+                                {prettySource(s.source)}
+                                {isPaidVisit(s.source) && (
+                                  <span className="ml-1.5 text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-coral/15 text-coral align-middle">
+                                    PAID
+                                  </span>
+                                )}
+                              </td>
                               <td className="py-2 px-3 text-navy/70 capitalize">{s.device}</td>
                               <td className="py-2 px-3 text-right text-navy/70">{s.views}</td>
-                              <td className={`py-2 pl-3 text-right font-semibold ${s.calls > 0 ? 'text-coral' : 'text-gray-400'}`}>
-                                {s.calls > 0 ? `☎ ${s.calls}` : '—'}
+                              <td className="py-2 pl-3 whitespace-nowrap">
+                                {s.calls > 0 && (
+                                  <span className="text-xs font-bold text-coral mr-2">☎ Called{s.calls > 1 ? ` ×${s.calls}` : ''}</span>
+                                )}
+                                {(s.books ?? 0) > 0 && (
+                                  <span className="text-xs font-bold text-teal">📅 Opened booking</span>
+                                )}
+                                {s.calls === 0 && (s.books ?? 0) === 0 && <span className="text-gray-400">—</span>}
                               </td>
                             </tr>
                           ))}
@@ -869,44 +1001,64 @@ export default function AdminAnalytics() {
                   const byLoc = detailLoc === 'all' ? true : detailLoc === 'fl' ? isFl : !isFl;
                   return bySource && byLoc;
                 });
-                // Merge rows sharing the same displayed location + source label
-                // (multiple raw "unknown" values would otherwise repeat).
-                const mergedMap = new Map<string, (typeof matching)[number]>();
+                // One row per location — sources collapse into an in-row summary
+                // (the list used to be one row per city × source combination).
+                interface LocRow {
+                  label: string;
+                  users: number;
+                  paid: number;
+                  sources: Map<string, number>;
+                }
+                const byLoc = new Map<string, LocRow>();
                 matching.forEach((v) => {
-                  const key = `${formatLocation(v)}|${prettySource(v.source)}`;
-                  const existing = mergedMap.get(key);
-                  if (existing) existing.users += v.users;
-                  else mergedMap.set(key, { ...v });
+                  const label = formatLocation(v);
+                  const row = byLoc.get(label) ?? { label, users: 0, paid: 0, sources: new Map() };
+                  row.users += v.users;
+                  if (isPaidSource(v.source)) row.paid += v.users;
+                  const srcLabel = prettySource(v.source);
+                  row.sources.set(srcLabel, (row.sources.get(srcLabel) ?? 0) + v.users);
+                  byLoc.set(label, row);
                 });
-                const filtered = [...mergedMap.values()];
-                const sortVal = (v: (typeof filtered)[number]) =>
-                  detailSort.key === 'location' ? formatLocation(v)
-                  : detailSort.key === 'source' ? prettySource(v.source)
-                  : detailSort.key === 'type' ? (isPaidSource(v.source) ? 'paid' : 'organic')
-                  : v.users;
-                const rows = [...filtered].sort((a, b) => {
+                const summarizeSources = (r: LocRow) =>
+                  [...r.sources.entries()]
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([label, n]) => (n > 1 ? `${label} ×${n}` : label))
+                    .join(' · ');
+                const sortVal = (v: LocRow) =>
+                  detailSort.key === 'location' ? v.label : detailSort.key === 'paid' ? v.paid : v.users;
+                const rows = [...byLoc.values()].sort((a, b) => {
                   const av = sortVal(a); const bv = sortVal(b);
                   const cmp = typeof av === 'number' ? (av as number) - (bv as number) : String(av).localeCompare(String(bv));
                   return cmp * detailSort.dir;
                 });
                 const filteredTotal = rows.reduce((sum, v) => sum + v.users, 0);
-                const visibleRows = detailExpanded ? rows : rows.slice(0, 25);
+
+                // Lump one-visitor cities into a single trailing row once there
+                // are enough of them to clutter the list.
+                const singles = rows.filter((r) => r.users === 1);
+                let displayRows = rows;
+                let otherRow: LocRow | null = null;
+                if (singles.length > 3) {
+                  displayRows = rows.filter((r) => r.users > 1);
+                  otherRow = {
+                    label: `Other locations (${singles.length} cities, 1 visitor each)`,
+                    users: singles.length,
+                    paid: singles.reduce((n, r) => n + r.paid, 0),
+                    sources: singles.reduce((map, r) => {
+                      r.sources.forEach((n, label) => map.set(label, (map.get(label) ?? 0) + n));
+                      return map;
+                    }, new Map<string, number>()),
+                  };
+                }
+                const visibleRows = detailExpanded ? displayRows : displayRows.slice(0, 25);
                 const sortBy = (key: typeof detailSort.key) =>
-                  setDetailSort((s) => (s.key === key ? { key, dir: s.dir === 1 ? -1 : 1 } : { key, dir: key === 'users' ? -1 : 1 }));
+                  setDetailSort((s) => (s.key === key ? { key, dir: s.dir === 1 ? -1 : 1 } : { key, dir: key === 'location' ? 1 : -1 }));
                 const arrow = (key: typeof detailSort.key) =>
                   detailSort.key === key ? (detailSort.dir === 1 ? ' ▲' : ' ▼') : '';
 
-                // Aggregate per location for the chart (paid/other split).
-                const byLocation = new Map<string, { paid: number; other: number }>();
-                rows.forEach((v) => {
-                  const key = formatLocation(v);
-                  const entry = byLocation.get(key) ?? { paid: 0, other: 0 };
-                  if (isPaidSource(v.source)) entry.paid += v.users;
-                  else entry.other += v.users;
-                  byLocation.set(key, entry);
-                });
-                const chartRows = [...byLocation.entries()]
-                  .map(([label, x]) => ({ label, ...x, total: x.paid + x.other }))
+                // Chart: paid/other split per location, biggest first.
+                const chartRows = rows
+                  .map((r) => ({ label: r.label, paid: r.paid, other: r.users - r.paid, total: r.users }))
                   .sort((a, b) => b.total - a.total)
                   .slice(0, 12);
                 const chartMax = Math.max(...chartRows.map((r) => r.total), 1);
@@ -936,6 +1088,13 @@ export default function AdminAnalytics() {
                           <span className="text-coral font-bold">{filteredTotal.toLocaleString()}</span>
                         </p>
                         <p className="text-xs text-gray-500">Google Analytics</p>
+                        {range === 'today' && (
+                          <p className="text-xs text-amber-600 mt-1 max-w-md">
+                            Google takes a few hours to sort today’s visitors — many show as “Unknown” and
+                            paid counts look low until tomorrow. The Short Version and Visitor Log above are
+                            live and complete.
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-1 bg-sand/60 rounded-full p-1">
                         {(['list', 'chart'] as const).map((v) => (
@@ -989,11 +1148,9 @@ export default function AdminAnalytics() {
                               <th className="py-2 pr-3 font-semibold">
                                 <button onClick={() => sortBy('location')} className="hover:text-coral">Location{arrow('location')}</button>
                               </th>
-                              <th className="py-2 px-3 font-semibold">
-                                <button onClick={() => sortBy('source')} className="hover:text-coral">Came From{arrow('source')}</button>
-                              </th>
-                              <th className="py-2 px-3 font-semibold">
-                                <button onClick={() => sortBy('type')} className="hover:text-coral">Type{arrow('type')}</button>
+                              <th className="py-2 px-3 font-semibold">How They Found Us</th>
+                              <th className="py-2 px-3 font-semibold text-right">
+                                <button onClick={() => sortBy('paid')} className="hover:text-coral">From Ads{arrow('paid')}</button>
                               </th>
                               <th className="py-2 pl-3 font-semibold text-right">
                                 <button onClick={() => sortBy('users')} className="hover:text-coral">Visitors{arrow('users')}</button>
@@ -1001,30 +1158,46 @@ export default function AdminAnalytics() {
                             </tr>
                           </thead>
                           <tbody>
-                            {visibleRows.map((v, i) => (
-                              <tr key={i} className="border-b border-navy/5 last:border-0">
-                                <td className="py-2 pr-3 text-gray-700">{formatLocation(v)}</td>
-                                <td className="py-2 px-3 text-gray-700" title={v.source}>{prettySource(v.source)}</td>
-                                <td className="py-2 px-3">
-                                  <span
-                                    className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full ${
-                                      isPaidSource(v.source) ? 'bg-coral/15 text-coral' : 'bg-teal/15 text-teal'
-                                    }`}
-                                  >
-                                    {isPaidSource(v.source) ? 'PAID' : 'ORGANIC'}
-                                  </span>
+                            {visibleRows.map((v) => (
+                              <tr key={v.label} className="border-b border-navy/5 last:border-0">
+                                <td className="py-2 pr-3 text-gray-700 whitespace-nowrap">{v.label}</td>
+                                <td className="py-2 px-3 text-gray-600 text-xs sm:text-sm">{summarizeSources(v)}</td>
+                                <td className="py-2 px-3 text-right">
+                                  {v.paid > 0 ? (
+                                    <span className="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-coral/15 text-coral">
+                                      {v.paid.toLocaleString()} PAID
+                                    </span>
+                                  ) : (
+                                    <span className="text-gray-400">—</span>
+                                  )}
                                 </td>
                                 <td className="py-2 pl-3 text-right font-semibold text-navy">{v.users.toLocaleString()}</td>
                               </tr>
                             ))}
+                            {otherRow && (
+                              <tr className="border-b border-navy/5 last:border-0 text-navy/60">
+                                <td className="py-2 pr-3 italic whitespace-nowrap">{otherRow.label}</td>
+                                <td className="py-2 px-3 text-xs sm:text-sm">{summarizeSources(otherRow)}</td>
+                                <td className="py-2 px-3 text-right">
+                                  {otherRow.paid > 0 ? (
+                                    <span className="text-[0.7rem] font-bold px-2 py-0.5 rounded-full bg-coral/15 text-coral">
+                                      {otherRow.paid.toLocaleString()} PAID
+                                    </span>
+                                  ) : (
+                                    <span className="text-gray-400">—</span>
+                                  )}
+                                </td>
+                                <td className="py-2 pl-3 text-right font-semibold">{otherRow.users.toLocaleString()}</td>
+                              </tr>
+                            )}
                           </tbody>
                         </table>
-                        {rows.length > 25 && (
+                        {displayRows.length > 25 && (
                           <button
                             onClick={() => setDetailExpanded((v) => !v)}
                             className="mt-3 w-full text-center text-sm font-semibold text-teal hover:text-coral transition-colors py-2"
                           >
-                            {detailExpanded ? 'Show top 25' : `View all ${rows.length} rows`}
+                            {detailExpanded ? 'Show top 25' : `View all ${displayRows.length} rows`}
                           </button>
                         )}
                       </div>
@@ -1074,7 +1247,10 @@ export default function AdminAnalytics() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Traffic sources */}
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-navy mb-4">Traffic Sources</h2>
+                  <h2 className="text-lg font-bold text-navy mb-1">Where Visitors Come From</h2>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Ads, Google search, other websites, or typing the address (“Direct Visit”).
+                  </p>
                   {mergedSources.length === 0 ? (
                     <p className="text-sm text-gray-500">No sessions in this period.</p>
                   ) : (
@@ -1095,7 +1271,7 @@ export default function AdminAnalytics() {
                   {callSources.length > 0 && (
                     <div className="mt-5 pt-4 border-t border-navy/10">
                       <h3 className="text-sm font-bold text-navy mb-2 inline-flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5 text-coral" /> Call clicks by source
+                        <Phone className="w-3.5 h-3.5 text-coral" /> Phone calls by source
                       </h3>
                       <div className="space-y-1.5">
                         {callSources.map((s) => (
@@ -1111,7 +1287,8 @@ export default function AdminAnalytics() {
 
                 {/* Top pages */}
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-navy mb-4">Top Pages</h2>
+                  <h2 className="text-lg font-bold text-navy mb-1">Most-Viewed Pages</h2>
+                  <p className="text-sm text-gray-500 mb-4">Which pages people look at the most.</p>
                   {data.pages.length === 0 ? (
                     <p className="text-sm text-gray-500">No page views in this period.</p>
                   ) : (
@@ -1185,9 +1362,10 @@ export default function AdminAnalytics() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Visitor locations */}
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-navy mb-4 inline-flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-navy mb-1 inline-flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-coral" /> Visitor Locations
                   </h2>
+                  <p className="text-sm text-gray-500 mb-4">Where in the world visitors are browsing from.</p>
                   {!data.locations || data.locations.length === 0 ? (
                     <p className="text-sm text-gray-500">
                       {dataSource === 'ga' ? 'No location data in this period.' : 'Location data comes from Google Analytics.'}
@@ -1217,7 +1395,8 @@ export default function AdminAnalytics() {
 
                 {/* Devices */}
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <h2 className="text-lg font-bold text-navy mb-4">Devices</h2>
+                  <h2 className="text-lg font-bold text-navy mb-1">Devices</h2>
+                  <p className="text-sm text-gray-500 mb-4">Whether visitors browse on a phone, computer, or tablet.</p>
                   <div className="flex flex-wrap gap-4">
                     {data.devices.map((d) => {
                       const Icon = DEVICE_ICONS[d.device] ?? Monitor;
@@ -1238,8 +1417,8 @@ export default function AdminAnalytics() {
 
               <p className="text-xs text-gray-500">
                 {dataSource === 'ga'
-                  ? 'Traffic: Google Analytics 4 (may lag real-time by 24–48h) · Call clicks: built-in site tracking · Change % compares the previous period of equal length.'
-                  : 'Source: built-in site tracking · Change % compares the previous period of equal length.'}
+                  ? 'Traffic: Google Analytics 4 (may lag real-time by 24–48h) · Phone calls & bookings: built-in site tracking, collecting since Jul 13, 2026 · Change % compares the previous period of equal length.'
+                  : 'Source: built-in site tracking (since Jul 13, 2026) · Change % compares the previous period of equal length.'}
               </p>
             </div>
           )}
