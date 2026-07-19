@@ -82,7 +82,8 @@ async function resolveSiteUrl(accessToken, preferred) {
 
 // Search data has no hourly granularity and lags ~2 days, so single-day
 // ranges fall back to a 7-day window (the UI shows the actual dates).
-const RANGE_TO_DAYS = { today: 7, yesterday: 7, 7: 7, 30: 30, 90: 90 };
+// "all" is capped at 16 months — Search Console keeps no data older than that.
+const RANGE_TO_DAYS = { today: 7, yesterday: 7, 7: 7, 30: 30, 90: 90, all: 480 };
 
 const fmt = (d) => d.toISOString().slice(0, 10);
 const round1 = (n) => Math.round(n * 10) / 10;

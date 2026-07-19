@@ -295,8 +295,8 @@ export default function AdminGallery() {
         description="Gallery management for Tiki Taco Cruises."
         noindex={true}
       />
-      <div className="min-h-screen bg-sand px-4 py-10 sm:py-12">
-        <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-sand px-4 py-6 sm:py-10 lg:pl-72 lg:pr-8">
+        <div className="max-w-6xl mx-auto lg:mx-0 lg:max-w-[1400px]">
           <AdminNav
             title="Gallery Manager"
             actions={

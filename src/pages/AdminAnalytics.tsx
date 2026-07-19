@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Users, MousePointerClick, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin, CalendarCheck, Search } from 'lucide-react';
+import { Users, Target, Eye, Timer, Monitor, Smartphone, Tablet, Phone, Trophy, AlertTriangle, MapPin, CalendarCheck, Search, Maximize2, X } from 'lucide-react';
 import SEO from '../components/SEO';
 import AdminNav from '../components/AdminNav';
 import { useAuth } from '../context/AuthContext';
@@ -15,13 +15,14 @@ interface Totals {
 
 interface AnalyticsData {
   range: string;
-  granularity?: 'hour' | 'day';
+  granularity?: 'hour' | 'day' | 'month';
   totals: Totals;
   prevTotals?: Totals | null;
   trend: Array<{ date: string; users: number; pageViews: number }>;
   sources: Array<{ source: string; sessions: number; users: number; calls?: number }>;
   pages: Array<{ path: string; pageViews: number; users: number; calls?: number }>;
   devices: Array<{ device: string; users: number }>;
+  hours?: Array<{ hour: number; users: number }>;
   locations?: Array<{ country: string; region: string; city: string; users: number }>;
   visitorDetail?: Array<{ country: string; region: string; city: string; source: string; users: number }>;
 }
@@ -161,6 +162,7 @@ interface SelfHostedSummary {
   pages: Array<{ path: string; views: number; visitors: number; calls: number; books?: number }>;
   sources: Array<{ source: string; views: number; visitors: number; calls: number; books?: number }>;
   devices: Array<{ device: string; visitors: number }>;
+  hours?: Array<{ hour: number; visitors: number }>;
 }
 
 const fromSelfHosted = (raw: SelfHostedSummary, range: string): AnalyticsData => ({
@@ -176,6 +178,7 @@ const fromSelfHosted = (raw: SelfHostedSummary, range: string): AnalyticsData =>
   sources: raw.sources.map((s) => ({ source: s.source, sessions: s.views, users: s.visitors, calls: s.calls })),
   pages: raw.pages.map((p) => ({ path: p.path, pageViews: p.views, users: p.visitors, calls: p.calls })),
   devices: raw.devices.map((d) => ({ device: d.device, users: d.visitors })),
+  hours: raw.hours?.map((h) => ({ hour: h.hour, users: h.visitors })),
 });
 
 type LoadState = 'loading' | 'ready' | 'not-configured' | 'error';
@@ -186,7 +189,17 @@ const RANGE_OPTIONS = [
   { key: '7', label: 'Last 7 Days' },
   { key: '30', label: 'Last 30 Days' },
   { key: '90', label: 'Last 90 Days' },
+  { key: 'all', label: 'All Time' },
 ];
+
+// Expanded-chart modal windows (capped at 30 days).
+const EXPAND_RANGE_OPTIONS = RANGE_OPTIONS.filter((o) => ['today', 'yesterday', '7', '30'].includes(o.key));
+
+const CHART_MODES = [
+  { key: 'bar', label: 'Bars' },
+  { key: 'line', label: 'Line' },
+  { key: 'both', label: 'Both' },
+] as const;
 
 // Days window used for the self-hosted call tracking RPC per range.
 const RANGE_TO_RPC_DAYS: Record<string, number> = {
@@ -195,6 +208,7 @@ const RANGE_TO_RPC_DAYS: Record<string, number> = {
   '7': 7,
   '30': 30,
   '90': 90,
+  all: 3650,
 };
 
 const formatDuration = (seconds: number) => {
@@ -205,13 +219,39 @@ const formatDuration = (seconds: number) => {
 
 const prettyPath = (path: string) => (path === '/' ? 'Home Page' : path);
 
-const formatTrendLabel = (value: string, granularity: 'hour' | 'day') => {
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// GA and the self-hosted RPC both omit days with zero traffic, so a "last 30
+// days" trend can come back with fewer bars. Zero-fill to the full window
+// (dates are YYYYMMDD in America/New_York for both sources).
+const padTrendDays = (trend: AnalyticsData['trend'], days: number): AnalyticsData['trend'] => {
+  const byDate = new Map(trend.map((d) => [d.date, d]));
+  const out: AnalyticsData['trend'] = [];
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    out.push(byDate.get(key) ?? { date: key, users: 0, pageViews: 0 });
+  }
+  return out;
+};
+
+// Ranges whose daily trend should always span the full window.
+const RANGE_TREND_DAYS: Record<string, number> = { '7': 7, '30': 30, '90': 90 };
+
+const formatTrendLabel = (value: string, granularity: 'hour' | 'day' | 'month') => {
   if (granularity === 'hour') {
     const h = Number(value.slice(8, 10));
     if (Number.isNaN(h)) return value;
     const ampm = h >= 12 ? 'PM' : 'AM';
     const h12 = h % 12 === 0 ? 12 : h % 12;
     return `${h12}${ampm}`;
+  }
+  if (granularity === 'month') {
+    // YYYYMM from GA's yearMonth dimension
+    const m = Number(value.slice(4, 6));
+    return m >= 1 && m <= 12 ? `${MONTH_NAMES[m - 1]} ${value.slice(2, 4)}` : value;
   }
   return `${Number(value.slice(4, 6))}/${Number(value.slice(6, 8))}`;
 };
@@ -240,33 +280,150 @@ function TrendChart({
   trend,
   granularity,
   showLabels,
+  mode = 'bar',
+  large = false,
 }: {
   trend: AnalyticsData['trend'];
-  granularity: 'hour' | 'day';
+  granularity: 'hour' | 'day' | 'month';
   showLabels: boolean;
+  mode?: 'bar' | 'line' | 'both';
+  large?: boolean;
 }) {
   if (trend.length === 0) {
     return <p className="text-sm text-gray-500 py-10 text-center">No traffic recorded yet in this period.</p>;
   }
-  const w = 800;
-  const h = 260;
-  const pad = { top: 24, right: 8, bottom: 28, left: 34 };
+  // The large variant renders the same data on a bigger canvas with finer
+  // proportions (more x labels, relatively smaller text) for the modal.
+  const w = large ? 1400 : 800;
+  const h = large ? 520 : 260;
+  const fs = large ? 13 : 10;
+  const pad = large ? { top: 36, right: 12, bottom: 42, left: 56 } : { top: 24, right: 8, bottom: 28, left: 34 };
   const plotH = h - pad.top - pad.bottom;
-  const max = Math.max(...trend.map((d) => d.pageViews), 1);
+  const max = Math.max(...trend.map((d) => d.users), 1);
   // Round the axis ceiling to a friendly number
   const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(max))) / 2);
   const axisMax = Math.ceil(max / step) * step;
   const barW = (w - pad.left - pad.right) / trend.length;
-  const xLabelEvery = Math.max(1, Math.ceil(trend.length / 12));
+  const xLabelEvery = Math.max(1, Math.ceil(trend.length / (large ? 31 : 12)));
   // Labels on: every bar (thinned when bars are too narrow to fit numbers).
   // Labels off: peak bar only.
   const valueEvery = showLabels ? (trend.length <= 31 ? 1 : Math.ceil(trend.length / 28)) : Infinity;
-  const maxIndex = trend.reduce((mi, d, i) => (d.pageViews > trend[mi].pageViews ? i : mi), 0);
+  const maxIndex = trend.reduce((mi, d, i) => (d.users > trend[mi].users ? i : mi), 0);
   const gridLines = [0.25, 0.5, 0.75, 1];
 
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Page views over time">
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Visitors over time">
       {/* Y-axis gridlines + labels */}
+      {gridLines.map((f) => {
+        const y = pad.top + plotH * (1 - f);
+        return (
+          <g key={f}>
+            <line x1={pad.left} x2={w - pad.right} y1={y} y2={y} stroke="#0a192f" strokeOpacity="0.08" strokeDasharray="4 4" />
+            <text x={pad.left - 6} y={y + 4} textAnchor="end" fontSize={fs} className="fill-navy/50">
+              {Math.round(axisMax * f).toLocaleString()}
+            </text>
+          </g>
+        );
+      })}
+      <line x1={pad.left} x2={w - pad.right} y1={pad.top + plotH} y2={pad.top + plotH} stroke="#0a192f" strokeOpacity="0.2" />
+
+      {trend.map((d, i) => {
+        const barH = Math.max(2, (plotH * d.users) / axisMax);
+        const x = pad.left + i * barW;
+        const y = pad.top + plotH - barH;
+        const showValue = d.users > 0 && (i === maxIndex || (Number.isFinite(valueEvery) && i % valueEvery === 0));
+        return (
+          <g key={d.date}>
+            {mode !== 'line' && (
+              <rect
+                x={x + barW * 0.15}
+                y={y}
+                width={barW * 0.7}
+                height={barH}
+                rx={Math.min(4, barW * 0.2)}
+                className="fill-teal hover:fill-coral transition-colors"
+              >
+                <title>{`${formatTrendLabel(d.date, granularity)} — ${d.users} visitors, ${d.pageViews} page views`}</title>
+              </rect>
+            )}
+            {showValue && (
+              <text
+                x={x + barW / 2}
+                y={y - (mode === 'bar' ? 5 : 9) * (large ? 1.5 : 1)}
+                textAnchor="middle"
+                fontSize={fs}
+                fontWeight="700"
+                className="fill-navy"
+              >
+                {d.users.toLocaleString()}
+              </text>
+            )}
+            {i % xLabelEvery === 0 && (
+              <text x={x + barW / 2} y={h - 10} textAnchor="middle" fontSize={fs} className="fill-navy/60">
+                {formatTrendLabel(d.date, granularity)}
+              </text>
+            )}
+          </g>
+        );
+      })}
+
+      {/* Line overlay drawn after bars so it sits on top */}
+      {mode !== 'bar' && (
+        <>
+          <polyline
+            points={trend
+              .map((d, i) => `${pad.left + i * barW + barW / 2},${pad.top + plotH - Math.max(2, (plotH * d.users) / axisMax)}`)
+              .join(' ')}
+            fill="none"
+            stroke="#FF6B6B"
+            strokeWidth={large ? 3.5 : 2.5}
+            strokeLinejoin="round"
+            strokeLinecap="round"
+          />
+          {trend.map((d, i) => (
+            <circle
+              key={d.date}
+              cx={pad.left + i * barW + barW / 2}
+              cy={pad.top + plotH - Math.max(2, (plotH * d.users) / axisMax)}
+              r={large ? 5 : 3.5}
+              fill="#FF6B6B"
+              stroke="#fff"
+              strokeWidth={large ? 2 : 1.5}
+            >
+              <title>{`${formatTrendLabel(d.date, granularity)} — ${d.users} visitors, ${d.pageViews} page views`}</title>
+            </circle>
+          ))}
+        </>
+      )}
+    </svg>
+  );
+}
+
+// Visitors by hour of day (0-23, Eastern) aggregated over the selected range.
+// All 24 hours always render; the busiest hour is highlighted in coral.
+function BusyHoursChart({ hours }: { hours: Array<{ hour: number; users: number }> }) {
+  const byHour = new Map(hours.map((d) => [d.hour, d.users]));
+  const full = Array.from({ length: 24 }, (_, hour) => ({ hour, users: byHour.get(hour) ?? 0 }));
+  if (full.every((d) => d.users === 0)) {
+    return <p className="text-sm text-gray-500 py-10 text-center">No traffic recorded yet in this period.</p>;
+  }
+  const w = 800;
+  const h = 240;
+  const pad = { top: 24, right: 8, bottom: 28, left: 34 };
+  const plotH = h - pad.top - pad.bottom;
+  const max = Math.max(...full.map((d) => d.users), 1);
+  const step = Math.max(1, Math.pow(10, Math.floor(Math.log10(max))) / 2);
+  const axisMax = Math.ceil(max / step) * step;
+  const barW = (w - pad.left - pad.right) / 24;
+  const maxIndex = full.reduce((mi, d, i) => (d.users > full[mi].users ? i : mi), 0);
+  const gridLines = [0.25, 0.5, 0.75, 1];
+  const hourLabel = (hour: number) => {
+    const h12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${h12}${hour >= 12 ? 'PM' : 'AM'}`;
+  };
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-auto" role="img" aria-label="Visitors by hour of day">
       {gridLines.map((f) => {
         const y = pad.top + plotH * (1 - f);
         return (
@@ -280,33 +437,30 @@ function TrendChart({
       })}
       <line x1={pad.left} x2={w - pad.right} y1={pad.top + plotH} y2={pad.top + plotH} stroke="#0a192f" strokeOpacity="0.2" />
 
-      {trend.map((d, i) => {
-        const barH = Math.max(2, (plotH * d.pageViews) / axisMax);
+      {full.map((d, i) => {
+        const barH = Math.max(2, (plotH * d.users) / axisMax);
         const x = pad.left + i * barW;
         const y = pad.top + plotH - barH;
-        const showValue = d.pageViews > 0 && (i === maxIndex || (Number.isFinite(valueEvery) && i % valueEvery === 0));
         return (
-          <g key={d.date}>
+          <g key={d.hour}>
             <rect
               x={x + barW * 0.15}
               y={y}
               width={barW * 0.7}
               height={barH}
               rx={Math.min(4, barW * 0.2)}
-              className="fill-teal hover:fill-coral transition-colors"
+              className={`${i === maxIndex ? 'fill-coral' : 'fill-teal'} hover:fill-coral transition-colors`}
             >
-              <title>{`${formatTrendLabel(d.date, granularity)} — ${d.pageViews} page views, ${d.users} visitors`}</title>
+              <title>{`${hourLabel(d.hour)} — ${d.users} ${d.users === 1 ? 'visitor' : 'visitors'}`}</title>
             </rect>
-            {showValue && (
+            {d.users > 0 && (
               <text x={x + barW / 2} y={y - 5} textAnchor="middle" fontSize="10" fontWeight="700" className="fill-navy">
-                {d.pageViews.toLocaleString()}
+                {d.users.toLocaleString()}
               </text>
             )}
-            {i % xLabelEvery === 0 && (
-              <text x={x + barW / 2} y={h - 8} textAnchor="middle" fontSize="10" className="fill-navy/60">
-                {formatTrendLabel(d.date, granularity)}
-              </text>
-            )}
+            <text x={x + barW / 2} y={h - 8} textAnchor="middle" fontSize="9" className="fill-navy/60">
+              {hourLabel(d.hour)}
+            </text>
           </g>
         );
       })}
@@ -581,12 +735,20 @@ export default function AdminAnalytics() {
   const [detailFilter, setDetailFilter] = useState<'all' | 'paid' | 'other' | 'hilton'>('all');
   const [detailLoc, setDetailLoc] = useState<'all' | 'fl' | 'nonfl'>('all');
   const [detailView, setDetailView] = useState<'list' | 'chart'>('list');
-  const [trendLabels, setTrendLabels] = useState(true);
   const [detailExpanded, setDetailExpanded] = useState(false);
   const [detailSort, setDetailSort] = useState<{ key: 'location' | 'paid' | 'users'; dir: 1 | -1 }>({
     key: 'users',
     dir: -1,
   });
+
+  // Expanded chart modal: its own range (capped at 30 days) and chart style.
+  const [chartExpanded, setChartExpanded] = useState(false);
+  const [expandMode, setExpandMode] = useState<'bar' | 'line' | 'both'>('bar');
+  const [expandRange, setExpandRange] = useState('30');
+  const [expandTrend, setExpandTrend] = useState<{
+    trend: AnalyticsData['trend'];
+    granularity: 'hour' | 'day' | 'month';
+  } | null>(null);
 
   // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
   // the call-click layer; standalone it's the full fallback dashboard.
@@ -666,15 +828,69 @@ export default function AdminAnalytics() {
     load();
   }, [load]);
 
+  // Trend data for the expanded chart. Reuses the page's data when the modal
+  // range matches; otherwise fetches that window (GA first, self-hosted fallback).
+  useEffect(() => {
+    if (!chartExpanded) return;
+    // Zero-fill daily trends so e.g. "Last 30 Days" always shows 30 bars.
+    const shape = (trend: AnalyticsData['trend'], granularity: 'hour' | 'day' | 'month') => ({
+      trend: granularity === 'day' && RANGE_TREND_DAYS[expandRange] ? padTrendDays(trend, RANGE_TREND_DAYS[expandRange]) : trend,
+      granularity,
+    });
+    if (expandRange === range && data) {
+      setExpandTrend(shape(data.trend, data.granularity ?? 'day'));
+      return;
+    }
+    let cancelled = false;
+    setExpandTrend(null);
+    (async () => {
+      try {
+        const res = await fetch(`/.netlify/functions/analytics?range=${expandRange}`, {
+          headers: { Authorization: `Bearer ${session?.access_token ?? ''}` },
+        });
+        if (res.ok) {
+          const body = (await res.json()) as AnalyticsData;
+          if (!cancelled) setExpandTrend(shape(body.trend, body.granularity ?? 'day'));
+          return;
+        }
+      } catch {
+        // Local dev has no Netlify functions — fall through to self-hosted.
+      }
+      const raw = await fetchSelfSummary(RANGE_TO_RPC_DAYS[expandRange] ?? 30);
+      if (!cancelled) {
+        setExpandTrend(shape(raw ? fromSelfHosted(raw, expandRange).trend : [], 'day'));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [chartExpanded, expandRange, range, data, session?.access_token, fetchSelfSummary]);
+
+  // Close the expanded chart with Escape.
+  useEffect(() => {
+    if (!chartExpanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setChartExpanded(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [chartExpanded]);
+
   if (!user) {
     return <Navigate to="/admin" replace />;
   }
 
   const callClicks = selfCalls?.totals.callClicks;
+  const bookClicks = selfCalls?.totals.bookClicks;
   const callRate =
     data && callClicks !== undefined && data.totals.users > 0
       ? `${((callClicks / data.totals.users) * 100).toFixed(1)}%`
       : null;
+  const bookRate =
+    data && bookClicks !== undefined && data.totals.users > 0
+      ? `${((bookClicks / data.totals.users) * 100).toFixed(1)}%`
+      : null;
+  const totalLeads = selfCalls ? (callClicks ?? 0) + (bookClicks ?? 0) : undefined;
 
   const callsByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.calls]));
   const booksByPath = new Map((selfCalls?.pages ?? []).map((p) => [p.path, p.books ?? 0]));
@@ -697,42 +913,6 @@ export default function AdminAnalytics() {
     });
     return [...map.values()].sort((a, b) => b.sessions - a.sessions);
   })();
-
-  // Plain-English recap. Single-day views read from the live per-session log
-  // (complete, immune to GA's same-day processing lag); longer ranges use the
-  // report totals. Paid = ad-tagged visits (see isPaidVisit).
-  const daySessions = range === 'today' || range === 'yesterday' ? sessionLog : null;
-  const summary = (() => {
-    if (!data) return null;
-    if (daySessions) {
-      const callers = daySessions.filter((s) => s.calls > 0);
-      const bookers = daySessions.filter((s) => (s.books ?? 0) > 0);
-      return {
-        visitors: daySessions.length,
-        paid: daySessions.filter((s) => isPaidVisit(s.source)).length,
-        callers: callers.map((s) => ({
-          source: prettySource(s.source),
-          paid: isPaidVisit(s.source),
-          time: new Date(s.started_at).toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: '2-digit',
-            timeZone: 'America/New_York',
-          }),
-        })),
-        books: bookers.length,
-      };
-    }
-    return {
-      visitors: data.totals.users,
-      paid: data.sources.filter((s) => isPaidVisit(s.source)).reduce((n, s) => n + s.users, 0),
-      callers: null,
-      books: selfCalls?.totals.bookClicks,
-    };
-  })();
-  const periodLabel =
-    range === 'today' ? 'so far today'
-    : range === 'yesterday' ? 'yesterday'
-    : `in the last ${range} days`;
 
   const maxSourceSessions = Math.max(...mergedSources.map((s) => s.sessions), 1);
   const maxPageViews = Math.max(...(data?.pages.map((p) => p.pageViews) ?? [0]), 1);
@@ -760,8 +940,8 @@ export default function AdminAnalytics() {
         description="Traffic analytics for Tiki Taco Cruises."
         noindex={true}
       />
-      <div className="min-h-screen bg-sand px-4 py-10 sm:py-12">
-        <div className="max-w-6xl mx-auto">
+      <div className="min-h-screen bg-sand px-4 py-6 sm:py-10 lg:pl-72 lg:pr-8">
+        <div className="max-w-6xl mx-auto lg:mx-0 lg:max-w-[1400px]">
           <AdminNav
             title="Analytics"
             actions={
@@ -805,65 +985,17 @@ export default function AdminAnalytics() {
 
           {state === 'ready' && data && (
             <div className="space-y-6">
-              {/* Plain-English recap for the site owner */}
-              {summary && (
-                <div className="bg-navy rounded-2xl shadow-lg p-5 sm:p-6 text-white">
-                  <h2 className="text-lg font-bold mb-3">The Short Version</h2>
-                  <ul className="space-y-2 text-base leading-relaxed">
-                    <li>
-                      <span className="font-bold text-coral">{summary.visitors.toLocaleString()}</span>{' '}
-                      {summary.visitors === 1 ? 'person' : 'people'} visited the website {periodLabel}.
-                    </li>
-                    <li>
-                      <span className="font-bold text-coral">{summary.paid.toLocaleString()}</span> came from
-                      your <span className="font-semibold">Google Ads</span> ·{' '}
-                      <span className="font-bold text-teal">{Math.max(0, summary.visitors - summary.paid).toLocaleString()}</span>{' '}
-                      found you on their own (Google search, other websites, or typing the address).
-                    </li>
-                    {summary.callers !== null ? (
-                      summary.callers.length === 0 ? (
-                        <li>Nobody has tapped “Call to Book” {range === 'today' ? 'yet today' : 'that day'}.</li>
-                      ) : (
-                        <li>
-                          <span className="font-bold text-coral">{summary.callers.length}</span>{' '}
-                          {summary.callers.length === 1 ? 'person' : 'people'} tapped{' '}
-                          <span className="font-semibold">“Call to Book”</span> —{' '}
-                          {summary.callers
-                            .map((c) => `from ${c.source}${c.paid ? ' (your ad)' : ''} at ${c.time}`)
-                            .join(', ')}
-                          .
-                        </li>
-                      )
-                    ) : (
-                      callClicks !== undefined && (
-                        <li>
-                          <span className="font-bold text-coral">{callClicks.toLocaleString()}</span>{' '}
-                          {callClicks === 1 ? 'person' : 'people'} tapped “Call to Book”
-                          {callSources.length > 0 && (
-                            <> — mostly from {callSources.map((s) => prettySource(s.source)).join(', ')}</>
-                          )}
-                          .
-                        </li>
-                      )
-                    )}
-                    {summary.books !== undefined && (
-                      <li>
-                        <span className="font-bold text-teal">{summary.books.toLocaleString()}</span>{' '}
-                        {summary.books === 1 ? 'person' : 'people'} opened the booking calendar.
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              )}
-
-              {/* Stat cards with period-over-period deltas — 2 x 4 grid */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+              {/* Stat cards with period-over-period deltas */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 lg:gap-4">
                 <StatCard icon={Users} label="Visitors" value={data.totals.users.toLocaleString()} note="different people who came to the site">
                   <Delta current={data.totals.users} previous={data.prevTotals?.users} />
                 </StatCard>
-                <StatCard icon={MousePointerClick} label="Visits" value={data.totals.sessions.toLocaleString()} note="higher than Visitors when people come back">
-                  <Delta current={data.totals.sessions} previous={data.prevTotals?.sessions} />
-                </StatCard>
+                <StatCard
+                  icon={Target}
+                  label="Total Leads"
+                  value={totalLeads !== undefined ? totalLeads.toLocaleString() : '—'}
+                  note={totalLeads === undefined ? 'setup pending' : 'call taps + booking calendar opens'}
+                />
                 <StatCard icon={Eye} label="Pages Viewed" value={data.totals.pageViews.toLocaleString()} note="total pages people opened">
                   <Delta current={data.totals.pageViews} previous={data.prevTotals?.pageViews} />
                 </StatCard>
@@ -900,27 +1032,123 @@ export default function AdminAnalytics() {
                   value={selfCalls ? selfCalls.totals.bookClicks.toLocaleString() : '—'}
                   note={selfCalls ? 'people who opened the booking calendar' : 'setup pending'}
                 />
+                <StatCard
+                  icon={CalendarCheck}
+                  label="Booking Rate"
+                  value={bookRate ?? '—'}
+                  note={bookClicks === undefined ? 'setup pending' : 'share of visitors who opened the booking calendar'}
+                />
               </div>
 
               {/* Trend */}
               <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
                 <div className="flex items-center justify-between gap-3 mb-4">
                   <h2 className="text-lg font-bold text-navy">
-                    {data.granularity === 'hour' ? 'Page Views by Hour' : 'Daily Page Views'}
+                    {data.granularity === 'hour'
+                      ? 'Visitors by Hour'
+                      : data.granularity === 'month'
+                        ? 'Monthly Visitors'
+                        : 'Daily Visitors'}
                   </h2>
                   <button
-                    onClick={() => setTrendLabels((v) => !v)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
-                      trendLabels
-                        ? 'bg-navy text-white'
-                        : 'text-navy border border-navy/20 hover:border-coral hover:text-coral'
-                    }`}
+                    onClick={() => {
+                      setExpandRange(EXPAND_RANGE_OPTIONS.some((o) => o.key === range) ? range : '30');
+                      setChartExpanded(true);
+                    }}
+                    aria-label="Expand chart"
+                    className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-navy border border-navy/20 hover:border-coral hover:text-coral transition-colors"
                   >
-                    Data Labels {trendLabels ? 'On' : 'Off'}
+                    <Maximize2 className="w-4 h-4" />
+                    Expand
                   </button>
                 </div>
-                <TrendChart trend={data.trend} granularity={data.granularity ?? 'day'} showLabels={trendLabels} />
+                <TrendChart
+                  trend={
+                    (data.granularity ?? 'day') === 'day' && RANGE_TREND_DAYS[range]
+                      ? padTrendDays(data.trend, RANGE_TREND_DAYS[range])
+                      : data.trend
+                  }
+                  granularity={data.granularity ?? 'day'}
+                  showLabels
+                />
               </div>
+
+              {/* Busiest hours — visitors by hour of day over the selected range */}
+              {data.hours && (
+                <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
+                  <div className="flex items-baseline justify-between gap-3 mb-4">
+                    <h2 className="text-lg font-bold text-navy">Busiest Hours</h2>
+                    <span className="text-xs text-gray-500">visitors by hour of day (Eastern) · {RANGE_OPTIONS.find((o) => o.key === range)?.label}</span>
+                  </div>
+                  <BusyHoursChart hours={data.hours} />
+                </div>
+              )}
+
+              {/* Expanded chart modal */}
+              {chartExpanded && (
+                <div
+                  className="fixed inset-0 z-[100] bg-navy/60 flex items-center justify-center p-4"
+                  onClick={() => setChartExpanded(false)}
+                >
+                  <div
+                    className="bg-white rounded-2xl shadow-2xl w-full max-w-[1700px] p-5 sm:p-8"
+                    role="dialog"
+                    aria-label="Expanded visitors chart"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                      <h2 className="text-xl font-bold text-navy">Visitors</h2>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex items-center gap-1 bg-sand rounded-full p-1">
+                          {CHART_MODES.map((m) => (
+                            <button
+                              key={m.key}
+                              onClick={() => setExpandMode(m.key)}
+                              className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                                expandMode === m.key
+                                  ? 'bg-navy text-white'
+                                  : 'text-navy hover:text-coral'
+                              }`}
+                            >
+                              {m.label}
+                            </button>
+                          ))}
+                        </div>
+                        <select
+                          value={expandRange}
+                          onChange={(e) => setExpandRange(e.target.value)}
+                          aria-label="Chart date range"
+                          className="px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-navy/20 hover:border-coral focus:outline-none focus:ring-2 focus:ring-teal cursor-pointer"
+                        >
+                          {EXPAND_RANGE_OPTIONS.map((opt) => (
+                            <option key={opt.key} value={opt.key}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => setChartExpanded(false)}
+                          aria-label="Close expanded chart"
+                          className="p-2 rounded-full text-navy hover:text-coral transition-colors"
+                        >
+                          <X className="w-6 h-6" />
+                        </button>
+                      </div>
+                    </div>
+                    {expandTrend ? (
+                      <TrendChart
+                        trend={expandTrend.trend}
+                        granularity={expandTrend.granularity}
+                        showLabels
+                        mode={expandMode}
+                        large
+                      />
+                    ) : (
+                      <p className="text-center text-navy py-24">Loading chart…</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Visitor log — single-day views only */}
               {(range === 'today' || range === 'yesterday') && (
@@ -1091,7 +1319,7 @@ export default function AdminAnalytics() {
                         {range === 'today' && (
                           <p className="text-xs text-amber-600 mt-1 max-w-md">
                             Google takes a few hours to sort today’s visitors — many show as “Unknown” and
-                            paid counts look low until tomorrow. The Short Version and Visitor Log above are
+                            paid counts look low until tomorrow. The Visitor Log above is
                             live and complete.
                           </p>
                         )}
@@ -1442,11 +1670,11 @@ function StatCard({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-      <div className="flex items-center gap-2 text-navy/60 text-sm font-semibold mb-2 uppercase tracking-wide">
+    <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6 lg:p-4">
+      <div className="flex items-center gap-2 text-navy/60 text-sm lg:text-xs font-semibold mb-2 uppercase tracking-wide">
         <Icon className="w-4 h-4" /> {label}
       </div>
-      <div className="text-3xl font-bold text-navy price-text inline-flex items-baseline">
+      <div className="text-3xl lg:text-2xl font-bold text-navy price-text inline-flex items-baseline">
         {value}
         {children}
       </div>

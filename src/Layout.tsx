@@ -1,8 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
-import LoadingScreen from './components/LoadingScreen';
 import ScrollToTop from './components/ScrollToTop';
 import StickyCallBar from './components/StickyCallBar';
 import { trackPageView, trackCtaClick } from './lib/trackPageView';
@@ -72,24 +71,12 @@ function MagneticCursor() {
 
 export default function Layout() {
   const location = useLocation();
-  const [showLoading, setShowLoading] = useState(false);
-
-  useEffect(() => {
-    const hasSeenLoader = sessionStorage.getItem('tiki-taco-loader');
-    if (!hasSeenLoader) {
-      setShowLoading(true);
-      sessionStorage.setItem('tiki-taco-loader', 'true');
-    }
-  }, []);
 
   return (
     <AuthProvider>
       <ScrollToTop />
       <MagneticCursor />
       <PageViewTracker />
-      {showLoading && (
-        <LoadingScreen onFinish={() => setShowLoading(false)} />
-      )}
       <AnimatePresence mode="wait">
         <div key={location.pathname}>
           <Outlet />

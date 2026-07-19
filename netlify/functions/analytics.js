@@ -100,17 +100,21 @@ export const handler = async (event) => {
       yesterday: { cur: ['yesterday', 'yesterday'], prev: ['2daysAgo', '2daysAgo'], trendDim: 'dateHour' },
       7: { cur: ['7daysAgo', 'today'], prev: ['15daysAgo', '8daysAgo'], trendDim: 'date' },
       30: { cur: ['30daysAgo', 'today'], prev: ['61daysAgo', '31daysAgo'], trendDim: 'date' },
-      90: { cur: ['90daysAgo', 'today'], prev: ['181daysAgo', '91daysAgo'], trendDim: 'date' }
+      90: { cur: ['90daysAgo', 'today'], prev: ['181daysAgo', '91daysAgo'], trendDim: 'date' },
+      // All time: monthly bars, no previous window (deltas are meaningless).
+      all: { cur: ['2020-01-01', 'today'], prev: null, trendDim: 'yearMonth' }
     };
     const rangeKey = Object.prototype.hasOwnProperty.call(RANGES, event.queryStringParameters?.range)
       ? event.queryStringParameters.range
       : '30';
     const R = RANGES[rangeKey];
     const dateRanges = [{ startDate: R.cur[0], endDate: R.cur[1] }];
-    const comparisonRanges = [
-      { startDate: R.cur[0], endDate: R.cur[1] },
-      { startDate: R.prev[0], endDate: R.prev[1] }
-    ];
+    const comparisonRanges = R.prev
+      ? [
+          { startDate: R.cur[0], endDate: R.cur[1] },
+          { startDate: R.prev[0], endDate: R.prev[1] }
+        ]
+      : dateRanges;
 
     const accessToken = await getGoogleAccessToken(saEmail, saKey);
 
@@ -170,7 +174,7 @@ export const handler = async (event) => {
         headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
-    const [locRes, detailRes] = await Promise.all([
+    const [locRes, detailRes, hoursRes] = await Promise.all([
       runReport({
         dateRanges,
         dimensions: [{ name: 'country' }, { name: 'region' }, { name: 'city' }],
@@ -186,6 +190,14 @@ export const handler = async (event) => {
         metrics: [{ name: 'activeUsers' }],
         orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
         limit: 1000
+      }),
+      // Visitors by hour of day (property timezone) for the Busiest Hours chart.
+      runReport({
+        dateRanges,
+        dimensions: [{ name: 'hour' }],
+        metrics: [{ name: 'activeUsers' }],
+        orderBys: [{ dimension: { dimensionName: 'hour' } }],
+        limit: 24
       })
     ]);
 
@@ -199,6 +211,7 @@ export const handler = async (event) => {
     const [totals, trend, sources, pages, devices] = reports;
     const locations = locRes.ok ? await locRes.json() : { rows: [] };
     const detail = detailRes.ok ? await detailRes.json() : { rows: [] };
+    const hourly = hoursRes.ok ? await hoursRes.json() : { rows: [] };
 
     // With two dateRanges GA adds an implicit dateRange dimension:
     // date_range_0 = current window, date_range_1 = previous window.
@@ -206,7 +219,9 @@ export const handler = async (event) => {
     const rowFor = (rangeName) =>
       totalRows.find((r) => r.dimensionValues?.[0]?.value === rangeName) ?? (totalRows.length === 1 ? totalRows[0] : undefined);
     const currentRow = rowFor('date_range_0');
-    const previousRow = rowFor('date_range_1');
+    // Single-range queries (all time) have no implicit dateRange dimension, so
+    // the length-1 fallback in rowFor would wrongly echo the current totals here.
+    const previousRow = R.prev ? rowFor('date_range_1') : undefined;
     const parseTotals = (row) => ({
       users: metricRow(row, 0),
       sessions: metricRow(row, 1),
@@ -216,7 +231,7 @@ export const handler = async (event) => {
 
     const body = {
       range: rangeKey,
-      granularity: R.trendDim === 'dateHour' ? 'hour' : 'day',
+      granularity: R.trendDim === 'dateHour' ? 'hour' : R.trendDim === 'yearMonth' ? 'month' : 'day',
       totals: parseTotals(currentRow),
       prevTotals: previousRow ? parseTotals(previousRow) : null,
       trend: (trend?.rows ?? []).map((r) => ({
@@ -236,6 +251,10 @@ export const handler = async (event) => {
       })),
       devices: (devices?.rows ?? []).map((r) => ({
         device: r.dimensionValues[0].value,
+        users: metricRow(r, 0)
+      })),
+      hours: (hourly?.rows ?? []).map((r) => ({
+        hour: Number(r.dimensionValues[0].value),
         users: metricRow(r, 0)
       })),
       locations: (locations?.rows ?? []).map((r) => ({
