@@ -726,7 +726,7 @@ function SearchRankings({ range }: { range: string }) {
 
 export default function AdminAnalytics() {
   const { user, session } = useAuth();
-  const [range, setRange] = useState('30');
+  const [range, setRange] = useState('all');
   const [state, setState] = useState<LoadState>('loading');
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [dataSource, setDataSource] = useState<'ga' | 'self'>('ga');
@@ -749,6 +749,10 @@ export default function AdminAnalytics() {
     trend: AnalyticsData['trend'];
     granularity: 'hour' | 'day' | 'month';
   } | null>(null);
+
+  // Busiest Hours has its own range filter; null = follow the master dropdown.
+  const [hoursRange, setHoursRange] = useState<string | null>(null);
+  const [hoursData, setHoursData] = useState<Array<{ hour: number; users: number }> | null>(null);
 
   // Self-hosted call/page tracking (tiki_page_views). In GA mode it supplies
   // the call-click layer; standalone it's the full fallback dashboard.
@@ -866,6 +870,37 @@ export default function AdminAnalytics() {
     };
   }, [chartExpanded, expandRange, range, data, session?.access_token, fetchSelfSummary]);
 
+  // Hourly data for Busiest Hours. Follows the master range until its own
+  // dropdown is used; off-master ranges fetch GA first, self-hosted fallback.
+  const effectiveHoursRange = hoursRange ?? range;
+  useEffect(() => {
+    if (effectiveHoursRange === range) {
+      setHoursData(data?.hours ?? null);
+      return;
+    }
+    let cancelled = false;
+    setHoursData(null);
+    (async () => {
+      try {
+        const res = await fetch(`/.netlify/functions/analytics?range=${effectiveHoursRange}`, {
+          headers: { Authorization: `Bearer ${session?.access_token ?? ''}` },
+        });
+        if (res.ok) {
+          const body = (await res.json()) as AnalyticsData;
+          if (!cancelled) setHoursData(body.hours ?? []);
+          return;
+        }
+      } catch {
+        // Local dev has no Netlify functions — fall through to self-hosted.
+      }
+      const raw = await fetchSelfSummary(RANGE_TO_RPC_DAYS[effectiveHoursRange] ?? 30);
+      if (!cancelled) setHoursData(raw?.hours?.map((h) => ({ hour: h.hour, users: h.visitors })) ?? []);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [effectiveHoursRange, range, data, session?.access_token, fetchSelfSummary]);
+
   // Close the expanded chart with Escape.
   useEffect(() => {
     if (!chartExpanded) return;
@@ -945,18 +980,22 @@ export default function AdminAnalytics() {
           <AdminNav
             title="Analytics"
             actions={
-              <select
-                value={range}
-                onChange={(e) => setRange(e.target.value)}
-                aria-label="Date range"
-                className="px-5 py-3 rounded-full text-base font-semibold text-navy bg-white border border-navy/20 hover:border-coral focus:outline-none focus:ring-2 focus:ring-teal cursor-pointer min-h-[48px]"
-              >
-                {RANGE_OPTIONS.map((opt) => (
-                  <option key={opt.key} value={opt.key}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <label className="flex items-center gap-3">
+                <span className="text-base font-semibold text-navy whitespace-nowrap">
+                  Show data from:
+                </span>
+                <select
+                  value={range}
+                  onChange={(e) => setRange(e.target.value)}
+                  className="px-5 py-3 rounded-full text-base font-semibold text-navy bg-white border border-navy/20 hover:border-coral focus:outline-none focus:ring-2 focus:ring-teal cursor-pointer min-h-[48px]"
+                >
+                  {RANGE_OPTIONS.map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             }
           />
 
@@ -1073,14 +1112,34 @@ export default function AdminAnalytics() {
                 />
               </div>
 
-              {/* Busiest hours — visitors by hour of day over the selected range */}
+              {/* Busiest hours — visitors by hour of day, own range filter */}
               {data.hours && (
                 <div className="bg-white rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-6">
-                  <div className="flex items-baseline justify-between gap-3 mb-4">
-                    <h2 className="text-lg font-bold text-navy">Busiest Hours</h2>
-                    <span className="text-xs text-gray-500">visitors by hour of day (Eastern) · {RANGE_OPTIONS.find((o) => o.key === range)?.label}</span>
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <div className="flex items-baseline gap-3">
+                      <h2 className="text-lg font-bold text-navy">Busiest Hours</h2>
+                      <span className="text-xs text-gray-500">visitors by hour of day (Eastern)</span>
+                    </div>
+                    <label className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-navy whitespace-nowrap">Show data from:</span>
+                      <select
+                        value={effectiveHoursRange}
+                        onChange={(e) => setHoursRange(e.target.value)}
+                        className="px-4 py-2 rounded-full text-sm font-semibold text-navy bg-white border border-navy/20 hover:border-coral focus:outline-none focus:ring-2 focus:ring-teal cursor-pointer"
+                      >
+                        {RANGE_OPTIONS.map((opt) => (
+                          <option key={opt.key} value={opt.key}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
                   </div>
-                  <BusyHoursChart hours={data.hours} />
+                  {hoursData ? (
+                    <BusyHoursChart hours={hoursData} />
+                  ) : (
+                    <p className="text-center text-navy py-16">Loading chart…</p>
+                  )}
                 </div>
               )}
 
