@@ -169,10 +169,8 @@ export default function Navigation() {
             className="flex items-center flex-shrink-0 lg:ml-12"
           >
             <div className="h-[4rem] sm:h-[4.56rem] md:h-[5.14rem] flex items-center overflow-visible">
-              {/* White logo over the transparent hero nav; color logo once the
-                  bar goes solid white (scrolled, other pages, mobile menu). */}
               <img
-                src={isSolid ? '/tiki-taco-logo.png' : '/tiki-logo-white.png'}
+                src="/tiki-logo-white.png"
                 alt="Tiki Taco"
                 className="h-full w-auto object-contain scale-[1.05] origin-left"
               />
