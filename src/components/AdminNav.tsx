@@ -58,7 +58,7 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex fixed inset-y-0 left-0 w-64 bg-navy flex-col p-4 z-40">
         <Link to="/admin/analytics" className="flex items-center justify-center px-2 pt-2 pb-6">
-          <img src="/tiki-taco-logo.png" alt="Tiki Taco Cruises" className="h-[70px] w-auto" />
+          <img src="/tiki-logo-white.png" alt="Tiki Taco Cruises" className="h-[70px] w-auto" />
         </Link>
         {menu}
       </aside>
@@ -67,7 +67,7 @@ export default function AdminNav({ title, actions }: AdminNavProps) {
       <div className="lg:hidden mb-6 rounded-2xl bg-navy p-3">
         <div className="flex items-center justify-between">
           <Link to="/admin/analytics" className="px-1">
-            <img src="/tiki-taco-logo.png" alt="Tiki Taco Cruises" className="h-10 w-auto" />
+            <img src="/tiki-logo-white.png" alt="Tiki Taco Cruises" className="h-10 w-auto" />
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen((open) => !open)}
