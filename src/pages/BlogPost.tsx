@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 import { supabase } from '../lib/supabase';
 import { siteImageUrl, absoluteSiteImageUrl } from '../lib/siteImageUrl';
+import { canonicalHref } from '../lib/canonicalHref';
 
 interface BlogPostRecord {
   id: string;
@@ -169,6 +170,9 @@ export default function BlogPost() {
               components={{
                 img: ({ src, alt, ...rest }) => (
                   <img src={siteImageUrl(typeof src === 'string' ? src : '')} alt={alt ?? ''} loading="lazy" {...rest} />
+                ),
+                a: ({ href, children, ...rest }) => (
+                  <a href={canonicalHref(typeof href === 'string' ? href : '')} {...rest}>{children}</a>
                 ),
               }}
             >

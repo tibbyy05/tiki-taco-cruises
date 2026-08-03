@@ -53,7 +53,7 @@ const schema = {
     content: {
       type: "string",
       description:
-        "Full polished blog body in markdown. 600-1100 words. H2/H3 only (no H1). Includes a CTA near the end.",
+        "Full polished blog body in markdown. 600-1100 words. H2/H3 only (no H1). Includes a CTA near the end. Any link to our own site MUST use the exact canonical form https://tikitacocruises.com/ — always https, never http, and always with the trailing slash. Do not invent URLs for pages you are not certain exist; link to the homepage instead.",
     },
   },
   required: ["title", "excerpt", "content"],
