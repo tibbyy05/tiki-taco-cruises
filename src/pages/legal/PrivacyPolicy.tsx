@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
       </p>
 
       <h2>Information Collected Automatically</h2>
-      <p>We run two forms of analytics on this site:</p>
+      <p>We use the following analytics and measurement tools on this site:</p>
       <ul>
         <li>
           <strong>Our own page-view logging.</strong> We record the page path you viewed, the referring source,
@@ -35,9 +35,8 @@ export default function PrivacyPolicy() {
           uses no cookies and collects no personal information.
         </li>
         <li>
-          <strong>Google Analytics, loaded via Google Tag Manager.</strong> This uses cookies and similar
-          technologies to measure site traffic and how visitors move through the site. Google may process this
-          data on our behalf; see{' '}
+          <strong>Google Analytics, loaded via Google Tag Manager.</strong> Uses cookies and similar technologies
+          to measure site traffic and how visitors move through the site. See{' '}
           <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
             Google&rsquo;s Privacy Policy
           </a>
@@ -47,13 +46,42 @@ export default function PrivacyPolicy() {
           </a>
           .
         </li>
+        <li>
+          <strong>Microsoft Clarity.</strong> Captures how visitors interact with the site &mdash; including
+          clicks, scrolling, mouse movement, and session replays &mdash; to help us understand and improve the
+          experience. Clarity masks text input fields by default. See{' '}
+          <a href="https://privacy.microsoft.com/privacystatement" target="_blank" rel="noopener noreferrer">
+            Microsoft&rsquo;s Privacy Statement
+          </a>
+          .
+        </li>
+        <li>
+          <strong>CallRail.</strong> Call tracking and attribution. CallRail may display a different phone number
+          depending on how you reached the site, so that we can tell which marketing channels generate calls. If
+          you call that number, CallRail records call metadata such as the number you called from, along with the
+          date, time, and duration. See{' '}
+          <a href="https://www.callrail.com/privacy" target="_blank" rel="noopener noreferrer">
+            CallRail&rsquo;s Privacy Notice
+          </a>
+          .
+        </li>
+        <li>
+          <strong>Advertising measurement.</strong> Google and Microsoft advertising tags measure conversions from
+          ad campaigns. These may set cookies and, in the course of loading, an approximate location may be
+          derived from your IP address.
+        </li>
       </ul>
 
       <h2>Cookies</h2>
       <p>
-        The cookies on this site come from Google Analytics and Google Tag Manager, and are used for traffic
-        measurement. You can block or delete cookies through your browser settings; the site will continue to
-        work normally without them.
+        The cookies on this site come from Google Tag Manager, Google Analytics, Microsoft Clarity, CallRail, and
+        the advertising tags described above. They are used for traffic measurement, experience analysis, and
+        conversion tracking. You can block or delete cookies through your browser settings; the site will continue
+        to work normally without them.
+      </p>
+      <p>
+        Most of these tools honour your browser&rsquo;s &ldquo;Do Not Track&rdquo; or global privacy control
+        signal where one is set.
       </p>
 
       <h2>Service Providers We Share Data With</h2>
@@ -66,7 +94,9 @@ export default function PrivacyPolicy() {
         <li><strong>SendGrid</strong> &mdash; delivers booking and enquiry emails to our team.</li>
         <li><strong>Supabase</strong> &mdash; database and media hosting for site content and booking records.</li>
         <li><strong>Netlify</strong> &mdash; website hosting and delivery.</li>
-        <li><strong>Google</strong> &mdash; analytics and tag management, as described above.</li>
+        <li><strong>Google</strong> &mdash; analytics, tag management, and advertising measurement.</li>
+        <li><strong>Microsoft</strong> &mdash; Clarity experience analytics and advertising measurement.</li>
+        <li><strong>CallRail</strong> &mdash; call tracking and attribution.</li>
       </ul>
       <p>
         We may also disclose information where required by law, or to protect our legal rights.
