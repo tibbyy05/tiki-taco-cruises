@@ -18,7 +18,7 @@ interface CruiseCard {
 
 const FOUR_HOUR_PRICING = {
   duration: '4 Hours',
-  capacity: 'Up to 18 Guests',
+  capacity: '12 Guests Included (max 18)',
   price: 'Starting at $200/hour (2 hour minimum) for up to 12 guests · +$60 per extra guest',
 };
 
@@ -286,7 +286,7 @@ export default function CruiseDestinations() {
                 </p>
                 <ul className="space-y-3 mb-8">
                   {[
-                    'Up to 18 guests · always private',
+                    'Up to 12 guests included · max 18 (+$60 each) · always private',
                     'Captain & fuel included — no license needed',
                     'BYOB with cooler & ice on board',
                     'Starting at $200/hour (2 hour minimum)',

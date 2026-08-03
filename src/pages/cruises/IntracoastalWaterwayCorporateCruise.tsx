@@ -12,7 +12,6 @@ const jsonLd = {
       "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$200-$800",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -20,6 +19,29 @@ const jsonLd = {
         "addressRegion": "FL",
         "postalCode": "33316",
         "addressCountry": "US"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
@@ -27,46 +49,120 @@ const jsonLd = {
       "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#webpage",
       "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
       "name": "Corporate Cruise in Fort Lauderdale",
-      "description": "A 4-hour private corporate and event cruise in Fort Lauderdale for team outings, client events, and private group gatherings along the Intracoastal Waterway.",
-      "about": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" }
+      "description": "A private and customizable Fort Lauderdale corporate cruise for team outings, client entertainment, and group events along the Intracoastal Waterway.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#product"
+      },
+      "mainEntity": {
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#product"
+      },
+      "breadcrumb": {
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648793415_1780173066864_Untitled.jpg"
+      }
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
-        { "@type": "ListItem", "position": 3, "name": "Corporate Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cruises",
+          "item": "https://tikitacocruises.com/cruise-destinations/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Corporate Cruise in Fort Lauderdale",
+          "item": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/"
+        }
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service",
+      "@type": "Product",
+      "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#product",
       "name": "Corporate Cruise in Fort Lauderdale",
-      "serviceType": "Private corporate boat cruise",
-      "category": "Corporate event boat tour",
       "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#webpage" },
-      "description": "A private, customizable Fort Lauderdale corporate cruise for team outings, client entertainment, and private group gatherings along the Intracoastal Waterway.",
-      "provider": { "@id": "https://tikitacocruises.com/#business" },
-      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
-      "audience": {
-        "@type": "BusinessAudience",
-        "name": "Corporate groups, teams, and private event planners"
+      "image": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648793415_1780173066864_Untitled.jpg",
+      "description": "A private and customizable Fort Lauderdale corporate cruise for team outings, client entertainment, and group events along the Intracoastal Waterway.",
+      "category": "Private corporate boat tour",
+      "brand": {
+        "@id": "https://tikitacocruises.com/#business"
       },
+      "mainEntityOfPage": {
+        "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#webpage"
+      },
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Duration",
+          "value": "4 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Minimum booking",
+          "value": "2 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Included guests",
+          "value": "Up to 12 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Additional guest fee",
+          "value": "USD 60 per person"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Start times",
+          "value": "10:00 AM or 2:00 PM"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Departure point",
+          "value": "The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316"
+        }
+      ],
       "offers": {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#offer",
         "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
-        "price": "800",
+        "price": "200",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#service" },
-        "priceSpecification": [
-          { "@type": "PriceSpecification", "price": "800", "priceCurrency": "USD", "description": "Base price for a 4-hour private corporate cruise for up to 12 passengers." },
-          { "@type": "UnitPriceSpecification", "price": "200", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
-          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
-        ]
+        "seller": {
+          "@id": "https://tikitacocruises.com/#business"
+        },
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "200",
+          "priceCurrency": "USD",
+          "unitCode": "HUR",
+          "unitText": "hour",
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "HUR"
+          },
+          "description": "Starting price per hour. Two-hour minimum booking."
+        }
+      },
+      "audience": {
+        "@type": "BusinessAudience",
+        "name": "Corporate groups, teams, and private event planners"
       }
     }
   ]
@@ -175,7 +271,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
         },
         {
           question: 'Is this suitable for larger corporate groups?',
-          answer: 'Our boat accommodates up to 18 guests comfortably. For larger groups, contact us about booking multiple boats for a fleet experience.',
+          answer: 'Your booking covers up to 12 guests, and the boat comfortably holds up to 18 — additional guests beyond 12 are $60 per person. For larger groups, contact us about booking multiple boats for a fleet experience.',
         },
         {
           question: 'Where does this cruise depart from?',

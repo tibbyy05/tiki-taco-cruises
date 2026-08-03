@@ -21,7 +21,7 @@ const faqs = [
   {
     question: 'How many people fit on the pontoon boat?',
     answer:
-      'The boat comfortably accommodates up to 18 guests. Every cruise is private — it’s always just your group on board.',
+      'Your booking covers up to 12 guests, and the boat comfortably holds up to 18 — additional guests beyond 12 are $60 per person. Every cruise is private — it’s always just your group on board.',
   },
   {
     question: 'Can we bring our own food and drinks?',
@@ -52,7 +52,6 @@ const jsonLd = {
       "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$200-$800",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -60,54 +59,139 @@ const jsonLd = {
         "addressRegion": "FL",
         "postalCode": "33316",
         "addressCountry": "US"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
       "@type": "WebPage",
       "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#webpage",
       "url": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/",
-      "name": "Pontoon Boat Rental Fort Lauderdale",
-      "description": "Private captained pontoon boat rental in Fort Lauderdale for up to 18 guests. BYOB, cooler and ice, fuel and captain included. Starting at $200/hour (2 hour minimum).",
-      "about": { "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#service" }
+      "name": "Pontoon Boat Rental in Fort Lauderdale",
+      "description": "A private captained tiki-style pontoon boat rental in Fort Lauderdale for Intracoastal cruises, New River sightseeing, sandbar stops, swimming, and group celebrations.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#product"
+      },
+      "mainEntity": {
+        "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#product"
+      },
+      "breadcrumb": {
+        "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648798903_1770257699997_Sandbar.jpg"
+      }
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Pontoon Boat Rental", "item": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Pontoon Boat Rental",
+          "item": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/"
+        }
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#service",
-      "name": "Pontoon Boat Rental Fort Lauderdale",
-      "serviceType": "Private captained pontoon boat rental",
-      "category": "Boat rental",
+      "@type": "Product",
+      "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#product",
+      "name": "Pontoon Boat Rental in Fort Lauderdale",
       "url": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#webpage" },
-      "description": "Private tiki-style pontoon boat rental with a USCG-licensed captain for up to 18 guests. Cruise the Intracoastal Waterway, New River, and Fort Lauderdale sandbars. BYOB with cooler, ice, and fuel included.",
-      "provider": { "@id": "https://tikitacocruises.com/#business" },
-      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "image": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648798903_1770257699997_Sandbar.jpg",
+      "description": "A private captained tiki-style pontoon boat rental in Fort Lauderdale for Intracoastal cruises, New River sightseeing, sandbar stops, swimming, and group celebrations.",
+      "category": "Private captained pontoon boat rental",
+      "brand": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#webpage"
+      },
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Minimum booking",
+          "value": "2 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Included guests",
+          "value": "Up to 12 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Additional guest fee",
+          "value": "USD 60 per person"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Captain and fuel",
+          "value": "Included"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Departure point",
+          "value": "The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316"
+        }
+      ],
       "offers": {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#offer",
         "url": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/",
         "price": "200",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#service" },
-        "eligibleQuantity": {
-          "@type": "QuantitativeValue",
-          "minValue": 2,
-          "unitText": "HOUR"
+        "seller": {
+          "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
           "price": "200",
           "priceCurrency": "USD",
-          "unitText": "HOUR",
-          "description": "Hourly rate with a 2-hour minimum; base rate covers up to 12 passengers, additional guests $60 per person."
+          "unitCode": "HUR",
+          "unitText": "hour",
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "HUR"
+          },
+          "description": "Starting price per hour. Two-hour minimum booking."
         }
       }
     },

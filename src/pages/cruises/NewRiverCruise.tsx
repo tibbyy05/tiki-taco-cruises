@@ -9,10 +9,9 @@ const jsonLd = {
       "name": "Tiki Taco Cruises",
       "url": "https://tikitacocruises.com/",
       "telephone": "+1-954-764-4344",
+      "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$200-$800",
-      "email": "tikitacocruises@gmail.com",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -20,6 +19,29 @@ const jsonLd = {
         "addressRegion": "FL",
         "postalCode": "33316",
         "addressCountry": "US"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
@@ -27,63 +49,116 @@ const jsonLd = {
       "@id": "https://tikitacocruises.com/new-river-cruise/#webpage",
       "url": "https://tikitacocruises.com/new-river-cruise/",
       "name": "New River Cruise in Fort Lauderdale",
-      "description": "A 4-hour private New River tiki cruise in Fort Lauderdale with historic downtown views, waterfront homes, local landmarks, and scenic cruising.",
+      "description": "Cruise through downtown Fort Lauderdale along the New River, passing historic landmarks, waterfront homes, yachts, and iconic city views.",
       "isPartOf": {
         "@id": "https://tikitacocruises.com/#website"
       },
       "about": {
-        "@id": "https://tikitacocruises.com/new-river-cruise/#service"
+        "@id": "https://tikitacocruises.com/new-river-cruise/#product"
       },
       "mainEntity": {
-        "@id": "https://tikitacocruises.com/new-river-cruise/#service"
+        "@id": "https://tikitacocruises.com/new-river-cruise/#product"
+      },
+      "breadcrumb": {
+        "@id": "https://tikitacocruises.com/new-river-cruise/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://tikitacocruises.com/fort-lauderdale-hero.jpg"
       }
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://tikitacocruises.com/new-river-cruise/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
-        { "@type": "ListItem", "position": 3, "name": "New River Cruise in Fort Lauderdale", "item": "https://tikitacocruises.com/new-river-cruise/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cruises",
+          "item": "https://tikitacocruises.com/cruise-destinations/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "New River Cruise in Fort Lauderdale",
+          "item": "https://tikitacocruises.com/new-river-cruise/"
+        }
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://tikitacocruises.com/new-river-cruise/#service",
+      "@type": "Product",
+      "@id": "https://tikitacocruises.com/new-river-cruise/#product",
       "name": "New River Cruise in Fort Lauderdale",
-      "serviceType": "Private tiki boat cruise",
-      "category": "Boat tour",
       "url": "https://tikitacocruises.com/new-river-cruise/",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/new-river-cruise/#webpage" },
+      "image": "https://tikitacocruises.com/fort-lauderdale-hero.jpg",
       "description": "Cruise through downtown Fort Lauderdale along the New River, passing historic landmarks, waterfront homes, yachts, and iconic city views.",
-      "provider": { "@id": "https://tikitacocruises.com/#business" },
-      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
-      "hoursAvailable": [
+      "category": "Private boat tour",
+      "brand": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://tikitacocruises.com/new-river-cruise/#webpage"
+      },
+      "additionalProperty": [
         {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-          "opens": "10:00",
-          "closes": "14:00"
+          "@type": "PropertyValue",
+          "name": "Duration",
+          "value": "4 hours"
         },
         {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-          "opens": "14:00",
-          "closes": "18:00"
+          "@type": "PropertyValue",
+          "name": "Minimum booking",
+          "value": "2 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Included guests",
+          "value": "Up to 12 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Additional guest fee",
+          "value": "USD 60 per person"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Start times",
+          "value": "10:00 AM or 2:00 PM"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Departure point",
+          "value": "The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316"
         }
       ],
       "offers": {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/new-river-cruise/#offer",
         "url": "https://tikitacocruises.com/new-river-cruise/",
-        "price": "800",
+        "price": "200",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/new-river-cruise/#service" },
-        "priceSpecification": [
-          { "@type": "PriceSpecification", "price": "800", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
-          { "@type": "UnitPriceSpecification", "price": "200", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
-          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
-        ]
+        "seller": {
+          "@id": "https://tikitacocruises.com/#business"
+        },
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "200",
+          "priceCurrency": "USD",
+          "unitCode": "HUR",
+          "unitText": "hour",
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "HUR"
+          },
+          "description": "Starting price per hour. Two-hour minimum booking."
+        }
       }
     }
   ]

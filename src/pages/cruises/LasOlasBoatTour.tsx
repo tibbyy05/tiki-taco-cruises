@@ -12,7 +12,6 @@ const jsonLd = {
       "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$200-$800",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -20,6 +19,29 @@ const jsonLd = {
         "addressRegion": "FL",
         "postalCode": "33316",
         "addressCountry": "US"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
@@ -27,42 +49,116 @@ const jsonLd = {
       "@id": "https://tikitacocruises.com/las-olas-boat-tour/#webpage",
       "url": "https://tikitacocruises.com/las-olas-boat-tour/",
       "name": "Las Olas & Intracoastal Party Cruise",
-      "description": "A 4-hour private Fort Lauderdale party cruise with Las Olas views, Intracoastal sightseeing, music, drinks, and group celebration space.",
-      "about": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" }
+      "description": "A private Fort Lauderdale party cruise with Las Olas views, Intracoastal sightseeing, music, drinks, and space for group celebrations.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour/#product"
+      },
+      "mainEntity": {
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour/#product"
+      },
+      "breadcrumb": {
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648794455_1770258227569_real6.jpg"
+      }
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://tikitacocruises.com/las-olas-boat-tour/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
-        { "@type": "ListItem", "position": 3, "name": "Las Olas & Intracoastal Party Cruise", "item": "https://tikitacocruises.com/las-olas-boat-tour/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cruises",
+          "item": "https://tikitacocruises.com/cruise-destinations/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Las Olas & Intracoastal Party Cruise",
+          "item": "https://tikitacocruises.com/las-olas-boat-tour/"
+        }
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service",
+      "@type": "Product",
+      "@id": "https://tikitacocruises.com/las-olas-boat-tour/#product",
       "name": "Las Olas & Intracoastal Party Cruise",
-      "serviceType": "Private tiki party cruise",
-      "category": "Boat tour",
       "url": "https://tikitacocruises.com/las-olas-boat-tour/",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#webpage" },
-      "description": "A private Las Olas and Intracoastal party cruise in Fort Lauderdale designed for bachelorette parties, birthdays, weekend groups, and social celebrations.",
-      "provider": { "@id": "https://tikitacocruises.com/#business" },
-      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
+      "image": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648794455_1770258227569_real6.jpg",
+      "description": "A private Fort Lauderdale party cruise with Las Olas views, Intracoastal sightseeing, music, drinks, and space for group celebrations.",
+      "category": "Private party boat tour",
+      "brand": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://tikitacocruises.com/las-olas-boat-tour/#webpage"
+      },
+      "additionalProperty": [
+        {
+          "@type": "PropertyValue",
+          "name": "Duration",
+          "value": "4 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Minimum booking",
+          "value": "2 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Included guests",
+          "value": "Up to 12 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Additional guest fee",
+          "value": "USD 60 per person"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Start times",
+          "value": "10:00 AM or 2:00 PM"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Departure point",
+          "value": "The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316"
+        }
+      ],
       "offers": {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/las-olas-boat-tour/#offer",
         "url": "https://tikitacocruises.com/las-olas-boat-tour/",
-        "price": "800",
+        "price": "200",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/las-olas-boat-tour/#service" },
-        "priceSpecification": [
-          { "@type": "PriceSpecification", "price": "800", "priceCurrency": "USD", "description": "Base price for a 4-hour private cruise for up to 12 passengers." },
-          { "@type": "UnitPriceSpecification", "price": "200", "priceCurrency": "USD", "unitText": "HOUR", "description": "Equivalent hourly rate." },
-          { "@type": "UnitPriceSpecification", "price": "60", "priceCurrency": "USD", "unitText": "PERSON", "description": "Additional guest price." }
-        ]
+        "seller": {
+          "@id": "https://tikitacocruises.com/#business"
+        },
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "200",
+          "priceCurrency": "USD",
+          "unitCode": "HUR",
+          "unitText": "hour",
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "HUR"
+          },
+          "description": "Starting price per hour. Two-hour minimum booking."
+        }
       }
     }
   ]

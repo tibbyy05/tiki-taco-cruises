@@ -85,11 +85,11 @@
     visibility: visible;
   }
 
-  /* Hash-link scroll targets must clear the fixed nav + promo banner */
+  /* Hash-link scroll targets must clear the fixed nav */
   #features,
   #booking,
   #routes {
-    scroll-margin-top: 160px;
+    scroll-margin-top: 128px;
   }
 
   .glass-card {

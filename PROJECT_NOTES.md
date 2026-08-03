@@ -20,7 +20,7 @@ Last updated: April 28, 2026 (post-Batch 5 deploy)
 | Business name | Tiki Taco Cruises |
 | Phone | (954) 764-4344 |
 | Address | The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316 |
-| TikTok | @tiktaco64 |
+| TikTok | @tikitacocruises |
 | Email | Tikitacocruises@gmail.com |
 
 ## CURRENT SITE STRUCTURE

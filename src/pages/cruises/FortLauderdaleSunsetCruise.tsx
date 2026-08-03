@@ -18,7 +18,6 @@ const jsonLd = {
       "email": "tikitacocruises@gmail.com",
       "logo": "https://tikitacocruises.com/tiki-taco-logo.png",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
-      "priceRange": "$200-$800",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "1881 SE 17th St",
@@ -26,6 +25,29 @@ const jsonLd = {
         "addressRegion": "FL",
         "postalCode": "33316",
         "addressCountry": "US"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "20:00"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://tikitacocruises.com/#website",
+      "url": "https://tikitacocruises.com/",
+      "name": "Tiki Taco Cruises",
+      "publisher": {
+        "@id": "https://tikitacocruises.com/#business"
       }
     },
     {
@@ -33,44 +55,87 @@ const jsonLd = {
       "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#webpage",
       "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
       "name": "Fort Lauderdale Sunset Cruise & Morning Cruise",
-      "description": "A 2-hour Fort Lauderdale tiki cruise option available as a morning cruise or sunset cruise along the Intracoastal Waterway.",
-      "about": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" },
-      "mainEntity": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" }
+      "description": "A 2-hour Fort Lauderdale tiki cruise available as a morning cruise or sunset cruise along the Intracoastal Waterway.",
+      "isPartOf": {
+        "@id": "https://tikitacocruises.com/#website"
+      },
+      "about": {
+        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#product"
+      },
+      "mainEntity": {
+        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#product"
+      },
+      "breadcrumb": {
+        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648798001_1770258224058_Real1.jpg"
+      }
     },
     {
       "@type": "BreadcrumbList",
       "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://tikitacocruises.com/" },
-        { "@type": "ListItem", "position": 2, "name": "Cruises", "item": "https://tikitacocruises.com/cruise-destinations/" },
-        { "@type": "ListItem", "position": 3, "name": "Fort Lauderdale Sunset Cruise & Morning Cruise", "item": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://tikitacocruises.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cruises",
+          "item": "https://tikitacocruises.com/cruise-destinations/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Fort Lauderdale Sunset Cruise & Morning Cruise",
+          "item": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/"
+        }
       ]
     },
     {
-      "@type": "Service",
-      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service",
+      "@type": "Product",
+      "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#product",
       "name": "Fort Lauderdale Sunset Cruise & Morning Cruise",
-      "serviceType": "2-hour tiki boat cruise",
-      "category": "Boat tour",
       "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
-      "mainEntityOfPage": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#webpage" },
-      "description": "A shorter 2-hour Fort Lauderdale tiki cruise available as a morning cruise or sunset cruise, ideal for sightseeing, skyline views, and a relaxed Intracoastal experience.",
-      "provider": { "@id": "https://tikitacocruises.com/#business" },
-      "areaServed": { "@type": "City", "name": "Fort Lauderdale" },
-      "hoursAvailable": [
+      "image": "https://tikitacocruises.com/images/gallery/a8c9295f-6dd9-4ef8-916a-ba79f966368b/1783648798001_1770258224058_Real1.jpg",
+      "description": "A 2-hour Fort Lauderdale tiki cruise available as a morning cruise or sunset cruise along the Intracoastal Waterway.",
+      "category": "Private boat tour",
+      "brand": {
+        "@id": "https://tikitacocruises.com/#business"
+      },
+      "mainEntityOfPage": {
+        "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#webpage"
+      },
+      "additionalProperty": [
         {
-          "@type": "OpeningHoursSpecification",
-          "name": "Morning Cruise",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-          "opens": "08:00",
-          "closes": "10:00"
+          "@type": "PropertyValue",
+          "name": "Duration",
+          "value": "2 hours"
         },
         {
-          "@type": "OpeningHoursSpecification",
-          "name": "Sunset Cruise",
-          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-          "opens": "18:00",
-          "closes": "20:00"
+          "@type": "PropertyValue",
+          "name": "Minimum booking",
+          "value": "2 hours"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Morning cruise",
+          "value": "8:00 AM to 10:00 AM"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Sunset cruise",
+          "value": "6:00 PM to 8:00 PM"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Departure point",
+          "value": "The Hilton Marina, 1881 SE 17th St, Fort Lauderdale, FL 33316"
         }
       ],
       "offers": {
@@ -79,18 +144,21 @@ const jsonLd = {
         "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
         "price": "200",
         "priceCurrency": "USD",
-        "itemOffered": { "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#service" },
-        "eligibleQuantity": {
-          "@type": "QuantitativeValue",
-          "minValue": 6,
-          "unitText": "HOUR"
+        "seller": {
+          "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
           "price": "200",
           "priceCurrency": "USD",
-          "unitText": "PERSON",
-          "description": "Hourly rate for a 2-hour morning or sunset cruise."
+          "unitCode": "HUR",
+          "unitText": "hour",
+          "referenceQuantity": {
+            "@type": "QuantitativeValue",
+            "value": 1,
+            "unitCode": "HUR"
+          },
+          "description": "Starting price per hour. Two-hour minimum booking."
         }
       }
     }

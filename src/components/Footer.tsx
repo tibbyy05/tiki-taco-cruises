@@ -65,7 +65,7 @@ export default function Footer() {
                 <MessageSquare className="w-5 h-5" />
               </a>
               <a
-                href="https://www.tiktok.com/@tiktaco64?lang=en"
+                href="https://www.tiktok.com/@tikitacocruises"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 sm:w-10 sm:h-10 bg-white/10 hover:bg-coral rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 min-h-[44px] min-w-[44px]"
@@ -192,9 +192,9 @@ export default function Footer() {
               </a>
             </p>
             <div className="md:flex-1 flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 sm:gap-x-6 text-white/60 order-1 md:order-3">
-              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Privacy Policy</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Terms of Service</a>
-              <a href="#" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Cancellation Policy</a>
+              <Link to="/privacy-policy/" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Privacy Policy</Link>
+              <Link to="/terms-of-service/" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Terms of Service</Link>
+              <Link to="/cancellation-policy/" className="text-teal hover:text-coral transition-colors whitespace-nowrap">Cancellation Policy</Link>
             </div>
           </div>
         </div>

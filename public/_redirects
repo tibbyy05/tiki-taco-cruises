@@ -23,6 +23,9 @@
 /intracoastal-waterway-corporate-cruise  /intracoastal-waterway-corporate-cruise/    301
 /fort-lauderdale-sunset-cruise           /fort-lauderdale-sunset-cruise/             301
 /pontoon-boat-rental-fort-lauderdale     /pontoon-boat-rental-fort-lauderdale/       301
+/privacy-policy                          /privacy-policy/                            301
+/terms-of-service                        /terms-of-service/                          301
+/cancellation-policy                     /cancellation-policy/                       301
 
 # Blog post slug canonicalization lives in netlify/edge-functions/blog-trailing-slash.js.
 # It can NOT be a rule here: redirect matching ignores trailing slashes, so any

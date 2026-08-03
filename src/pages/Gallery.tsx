@@ -16,9 +16,13 @@ interface GalleryItem {
   category?: string | null;
 }
 
+// Seeded into state synchronously so the prerendered HTML ships real <img>
+// tags instead of a "Loading..." placeholder — the gallery has to be crawlable
+// and readable with JavaScript disabled. The Supabase fetch below swaps in the
+// live set on hydration.
 const fallbackGalleryItems: GalleryItem[] = staticGalleryImages.map((img) => ({
   id: `static-${img.id}`,
-  image_url: img.src,
+  image_url: siteImageUrl(img.src),
   caption: img.alt,
   display_order: img.id,
   category: img.category,
@@ -26,23 +30,20 @@ const fallbackGalleryItems: GalleryItem[] = staticGalleryImages.map((img) => ({
 
 const Gallery: React.FC = () => {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(fallbackGalleryItems);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchGalleryItems = async () => {
-      setIsLoading(true);
       const { data } = await supabase
         .from('gallery_photos')
         .select('id, image_url, caption, display_order')
         .eq('client_id', CLIENT_ID)
         .order('display_order', { ascending: false });
 
-      const items = data && data.length > 0 ? data : fallbackGalleryItems;
-      setGalleryItems(items.map((item) => ({ ...item, image_url: siteImageUrl(item.image_url) })));
-      setIsLoading(false);
+      if (!data || data.length === 0) return; // keep the prerendered fallback
+      setGalleryItems(data.map((item) => ({ ...item, image_url: siteImageUrl(item.image_url) })));
     };
 
     fetchGalleryItems();
@@ -149,9 +150,7 @@ const Gallery: React.FC = () => {
         <section className="gallery-grid-section">
           <div className="container">
             <div className="gallery-grid">
-              {isLoading ? (
-                <p style={{ textAlign: 'center', color: '#4a5568' }}>Loading...</p>
-              ) : galleryItems.length === 0 ? (
+              {galleryItems.length === 0 ? (
                 <p style={{ textAlign: 'center', color: '#4a5568' }}>Gallery coming soon!</p>
               ) : (
                 galleryItems.map((image, index) => {
@@ -287,8 +286,8 @@ const Gallery: React.FC = () => {
             justify-content: center;
             color: white;
             text-align: center;
-            /* Clear the fixed nav + promo banner */
-            padding-top: 130px;
+            /* Clear the fixed nav */
+            padding-top: 98px;
             box-sizing: content-box;
           }
           

@@ -18,7 +18,7 @@ const socials = [
     Icon: Instagram,
   },
   {
-    href: 'https://www.tiktok.com/@tiktaco64?lang=en',
+    href: 'https://www.tiktok.com/@tikitacocruises',
     label: 'TikTok',
     Icon: Music,
   },

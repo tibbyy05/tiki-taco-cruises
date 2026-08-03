@@ -28,6 +28,9 @@ const staticRoutes = [
   { path: '/faq/', changefreq: 'monthly', priority: '0.7' },
   { path: '/contact-us/', changefreq: 'monthly', priority: '0.7' },
   { path: '/blog/', changefreq: 'weekly', priority: '0.7' },
+  { path: '/privacy-policy/', changefreq: 'yearly', priority: '0.3' },
+  { path: '/terms-of-service/', changefreq: 'yearly', priority: '0.3' },
+  { path: '/cancellation-policy/', changefreq: 'yearly', priority: '0.3' },
 ];
 
 const todayIso = new Date().toISOString().slice(0, 10);

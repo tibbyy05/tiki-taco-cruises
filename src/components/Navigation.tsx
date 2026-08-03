@@ -121,46 +121,6 @@ export default function Navigation() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBackground}`}
     >
-      {/* July Special banner */}
-      <div className="relative z-50 bg-coral text-white text-center text-xs sm:text-sm font-semibold tracking-wide py-1.5 px-4">
-        <svg
-          viewBox="0 0 1900 1000"
-          className="inline-block h-[0.95em] w-auto align-[-0.1em] mr-2 rounded-[1px] shadow-sm"
-          aria-hidden="true"
-        >
-          <defs>
-            <polygon id="us-star" points="0,-30 6.7,-9.3 28.5,-9.3 10.9,3.5 17.6,24.3 0,11.5 -17.6,24.3 -10.9,3.5 -28.5,-9.3 -6.7,-9.3" />
-            <g id="us-row6">
-              <use href="#us-star" x="63.3" /><use href="#us-star" x="190" /><use href="#us-star" x="316.7" /><use href="#us-star" x="443.3" /><use href="#us-star" x="570" /><use href="#us-star" x="696.7" />
-            </g>
-            <g id="us-row5">
-              <use href="#us-star" x="126.7" /><use href="#us-star" x="253.3" /><use href="#us-star" x="380" /><use href="#us-star" x="506.7" /><use href="#us-star" x="633.3" />
-            </g>
-          </defs>
-          <rect width="1900" height="1000" fill="#B22234" />
-          <path
-            d="M0,115.4H1900 M0,269.2H1900 M0,423.1H1900 M0,576.9H1900 M0,730.8H1900 M0,884.6H1900"
-            stroke="#FFFFFF"
-            strokeWidth="76.9"
-          />
-          <rect width="760" height="538.5" fill="#3C3B6E" />
-          <g fill="#FFFFFF">
-            <use href="#us-row6" y="53.8" />
-            <use href="#us-row5" y="107.7" />
-            <use href="#us-row6" y="161.5" />
-            <use href="#us-row5" y="215.4" />
-            <use href="#us-row6" y="269.2" />
-            <use href="#us-row5" y="323.1" />
-            <use href="#us-row6" y="376.9" />
-            <use href="#us-row5" y="430.8" />
-            <use href="#us-row6" y="484.6" />
-          </g>
-        </svg>
-        Celebrate 250 Years of Freedom — July Special: $200/hour for up to 15 guests ·{' '}
-        <a href="tel:+19547644344" suppressHydrationWarning className="underline underline-offset-2 hover:text-white/80 transition-colors" data-gtm-id="call-to-book">
-          <span className="cr-number" suppressHydrationWarning>Call (954) 764-4344</span>
-        </a>
-      </div>
       <div className={`relative z-50 w-full px-3 lg:px-6 ${navPadding} ${isMobileMenuOpen ? 'bg-white' : ''}`}>
         <div className="flex items-center justify-between gap-4">
           <a

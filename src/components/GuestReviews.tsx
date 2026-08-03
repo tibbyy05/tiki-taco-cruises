@@ -7,10 +7,16 @@ const ROW_COUNT = 2;
 const DRIFT_SPEED = 42; // px per second auto-scroll
 const CARD_STEP = 344; // card width + gap, used for arrow slides
 
+// Only this many reviews go into the prerendered HTML. All 74 used to ship on
+// every homepage request, which is a lot of markup for content most visitors
+// never scroll to; the rest now load on demand behind "Load More".
+const INITIAL_COUNT = 9;
+
 // Split reviews across rows; each row scrolls continuously and loops.
-const rows = Array.from({ length: ROW_COUNT }, (_, r) =>
-  testimonials.filter((_, i) => i % ROW_COUNT === r)
-);
+const splitIntoRows = (reviews: typeof testimonials) =>
+  Array.from({ length: ROW_COUNT }, (_, r) =>
+    reviews.filter((_, i) => i % ROW_COUNT === r)
+  );
 
 function ReviewCard({ name, text, date }: (typeof testimonials)[number]) {
   return (
@@ -30,9 +36,13 @@ export default function GuestReviews() {
   // marquee, so it's added client-side only — keeping the prerendered
   // HTML at one copy of each review.
   const [isLooping, setIsLooping] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
   const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
   const pausedUntilRef = useRef(0);
   const hoverRef = useRef(false);
+
+  const rows = splitIntoRows(testimonials.slice(0, visibleCount));
+  const hasMore = visibleCount < testimonials.length;
 
   useEffect(() => setIsLooping(true), []);
 
@@ -80,7 +90,9 @@ export default function GuestReviews() {
     };
     raf = requestAnimationFrame(step);
     return () => cancelAnimationFrame(raf);
-  }, [isLooping]);
+    // visibleCount matters: loading more reviews changes each row's scrollWidth,
+    // so the drift positions have to be re-seeded against the new track.
+  }, [isLooping, visibleCount]);
 
   const slide = (direction: -1 | 1) => {
     // Pause the drift briefly so the manual slide isn't fought. Native smooth
@@ -168,6 +180,18 @@ export default function GuestReviews() {
           <ChevronRight className="w-6 h-6" />
         </button>
       </div>
+
+      {hasMore && (
+        <div className="mt-8 text-center px-4">
+          <button
+            type="button"
+            onClick={() => setVisibleCount(testimonials.length)}
+            className="inline-block border-2 border-ocean text-ocean hover:bg-ocean hover:text-white font-semibold px-6 py-2.5 rounded-full transition-colors"
+          >
+            Load More Reviews
+          </button>
+        </div>
+      )}
 
       <div className="mt-10 text-center px-4">
         <a
