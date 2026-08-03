@@ -61,8 +61,12 @@ export const routes: Route[] = [
 ];
 
 // Real Google reviews (verbatim; truncated ones end with an ellipsis as shown
-// on Google). Update alongside the 5.0 / 88-review badge in GuestReviews.tsx.
+// on Google). Update alongside the 5.0 / 95-review badge in GuestReviews.tsx.
 export const testimonials: Testimonial[] = [
+  { id: '73', name: 'Ryan Yankee', rating: 5, text: 'Fantastic trip. Shoutout Taco.', date: 'July 2026' },
+  { id: '74', name: 'Janessa Hughes', rating: 5, text: 'We had the best time on with captain Taco! Great stories and good times!', date: 'July 2026' },
+  { id: '75', name: 'The Balloon Co.', rating: 5, text: 'Amazing time on the Tiki Taco!!! Thank you Taco, we had a great time!! We will come again!', date: 'July 2026' },
+  { id: '76', name: 'Carolina Castillo', rating: 5, text: 'Really nice, affordable and fun. Great for sightseeing.', date: 'July 2026' },
   { id: '1', name: 'Julie Sullivan', rating: 5, text: 'Tiki Taco was amazing!! We had such a great time cruising around the intercostal listening to Taco’s stories about the area. Would highly recommend for tourists AND locals!', date: 'July 2026' },
   { id: '2', name: 'Rick Buscavage', rating: 5, text: 'No other tour can possibly compare to Taco’s Tiki Tour! This comfortable pontoon boat has every amenity you need, to enjoy a sail with the most knowledgeable Captain in South Florida.', date: 'July 2026' },
   { id: '3', name: 'Sarah Rocca', rating: 5, text: 'We had an amazing sunset cruise with Taco on his tiki boat. He’s a wealth of information about the history and houses of Fort Lauderdale. If you’re looking for a great day out on the water this is the way to do it!!', date: 'July 2026' },

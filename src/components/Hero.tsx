@@ -163,11 +163,11 @@ export default function Hero() {
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 text-sm text-white/90 hover:text-white transition-colors"
-              aria-label="Rated 5.0 from 88 Google reviews — read them on Google Maps"
+              aria-label="Rated 5.0 from 95 Google reviews — read them on Google Maps"
             >
               <span className="text-[#FFC94A] tracking-[0.15em] text-base" aria-hidden="true">★★★★★</span>
               <span className="font-semibold">5.0</span>
-              <span className="text-white/70">from 88 Google Reviews</span>
+              <span className="text-white/70">from 95 Google Reviews</span>
             </a>
           </div>
 
