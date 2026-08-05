@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
-import { testimonials } from '../data/mockData';
+import { testimonials, GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from '../data/mockData';
 import ScrollReveal from './ScrollReveal';
 
 const ROW_COUNT = 2;
@@ -129,7 +129,7 @@ export default function GuestReviews() {
               ))}
             </div>
             <p className="text-lg sm:text-xl font-bold text-ocean mb-2">
-              5.0 Stars · 95 Google Reviews
+              {`${GOOGLE_RATING} Stars · ${GOOGLE_REVIEW_COUNT} Google Reviews`}
             </p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-ocean mb-3 sm:mb-4">
               What Guests Say About Our Tiki Cruises
@@ -202,8 +202,8 @@ export default function GuestReviews() {
         >
           <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
             <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-coral text-coral" />
-            <span className="font-bold text-lg sm:text-xl">5.0</span>
-            <span className="text-white/80 text-sm sm:text-base">from 95 Google reviews</span>
+            <span className="font-bold text-lg sm:text-xl">{GOOGLE_RATING}</span>
+            <span className="text-white/80 text-sm sm:text-base">{`from ${GOOGLE_REVIEW_COUNT} Google reviews`}</span>
           </div>
         </a>
       </div>

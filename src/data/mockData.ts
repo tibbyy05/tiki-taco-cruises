@@ -60,8 +60,15 @@ export const routes: Route[] = [
   }
 ];
 
+// Single source of truth for the Google rating badge. Every visible rating and
+// review count on the site reads from these two, so bumping the count after new
+// reviews land is a one-line change here — not a hunt through Hero and
+// GuestReviews. Keep them matching what Google actually shows.
+export const GOOGLE_RATING = '5.0';
+export const GOOGLE_REVIEW_COUNT = 95;
+
 // Real Google reviews (verbatim; truncated ones end with an ellipsis as shown
-// on Google). Update alongside the 5.0 / 95-review badge in GuestReviews.tsx.
+// on Google). Add new ones here and bump GOOGLE_REVIEW_COUNT above.
 export const testimonials: Testimonial[] = [
   { id: '73', name: 'Ryan Yankee', rating: 5, text: 'Fantastic trip. Shoutout Taco.', date: 'July 2026' },
   { id: '74', name: 'Janessa Hughes', rating: 5, text: 'We had the best time on with captain Taco! Great stories and good times!', date: 'July 2026' },
