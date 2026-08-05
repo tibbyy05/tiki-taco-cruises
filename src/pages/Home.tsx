@@ -61,7 +61,10 @@ const localBusinessSchema = {
         "closes": "20:00"
       },
       "sameAs": [
-        "https://www.instagram.com/tikitacocruises"
+        "https://www.google.com/maps?cid=1115630382324282086",
+        "https://www.facebook.com/share/19xpKXTBBG/",
+        "https://www.instagram.com/tikitacocruises",
+        "https://www.tiktok.com/@tikitacocruises"
       ]
     },
     {
