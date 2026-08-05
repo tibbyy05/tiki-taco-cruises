@@ -57,8 +57,8 @@ const localBusinessSchema = {
           "Saturday",
           "Sunday"
         ],
-        "opens": "08:00",
-        "closes": "20:00"
+        "opens": "07:00",
+        "closes": "22:30"
       },
       "sameAs": [
         "https://www.google.com/maps?cid=1115630382324282086",

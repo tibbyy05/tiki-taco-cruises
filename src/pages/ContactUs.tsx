@@ -91,7 +91,7 @@ export default function ContactUs() {
                     <Clock className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
                     <div className="text-gray-700 text-base sm:text-lg">
                       <p className="font-semibold">Monday &ndash; Sunday</p>
-                      <p>8:00 AM &ndash; 8:00 PM</p>
+                      <p>7:00 AM &ndash; 10:30 PM</p>
                     </div>
                   </li>
                 </ul>
