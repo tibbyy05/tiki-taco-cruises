@@ -62,6 +62,7 @@ const localBusinessSchema = {
       },
       "sameAs": [
         "https://www.google.com/maps?cid=1115630382324282086",
+        "https://www.yelp.com/biz/tiki-taco-cruises-fort-lauderdale",
         "https://www.facebook.com/share/19xpKXTBBG/",
         "https://www.instagram.com/tikitacocruises",
         "https://www.tiktok.com/@tikitacocruises"
