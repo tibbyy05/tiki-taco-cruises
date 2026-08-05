@@ -186,11 +186,6 @@ const Gallery: React.FC = () => {
                             className="gallery-media"
                           />
                         )}
-                        {captionText && (
-                          <div className="gallery-overlay">
-                            <h3>{captionText}</h3>
-                          </div>
-                        )}
                       </div>
                       {captionText && (
                         <p className="gallery-caption">{captionText}</p>
@@ -262,7 +257,6 @@ const Gallery: React.FC = () => {
               )}
               {activeImage.caption && (
                 <div className="lightbox-caption">
-                  <h3>{activeImage.caption}</h3>
                   <p>{activeImage.caption}</p>
                 </div>
               )}
@@ -271,8 +265,14 @@ const Gallery: React.FC = () => {
         )}
 
         <style>{`
+          /* Keep this whole block free of quotes, ampersands and angle
+             brackets. React escapes them into HTML entities in the style
+             element text, browsers do not decode entities inside a style
+             element, so the prerendered CSS stops matching the hydrated CSS.
+             React then throws away the entire server-rendered gallery and
+             re-renders it client-side. Hence the unquoted font name. */
           .gallery-page {
-            font-family: 'DM Sans', sans-serif;
+            font-family: DM Sans, sans-serif;
           }
 
           /* Hero Section */
@@ -400,31 +400,6 @@ const Gallery: React.FC = () => {
             transform: scale(1.1);
           }
 
-          .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1.5rem;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            color: white;
-            transform: translateY(100%);
-            transition: transform 0.3s;
-          }
-
-          .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-          }
-
-          .gallery-overlay h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-          }
-
-          .gallery-item {
-            position: relative;
-          }
-
           .gallery-media {
             filter: blur(12px);
             transform: scale(1.02);
@@ -434,11 +409,6 @@ const Gallery: React.FC = () => {
           .gallery-media[src] {
             filter: blur(0);
             transform: scale(1);
-          }
-
-          .gallery-overlay p {
-            font-size: 0.875rem;
-            opacity: 0.9;
           }
 
           .lightbox {
@@ -471,17 +441,11 @@ const Gallery: React.FC = () => {
             border-radius: 12px;
           }
 
-          .lightbox-caption h3 {
-            color: white;
-            font-size: 1.25rem;
-            margin-top: 16px;
-            text-align: center;
-          }
-
           .lightbox-caption p {
-            color: rgba(255, 255, 255, 0.75);
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.05rem;
             text-align: center;
-            margin-top: 6px;
+            margin-top: 16px;
           }
 
           .close-btn {
