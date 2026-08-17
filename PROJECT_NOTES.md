@@ -1,6 +1,10 @@
 # TIKI TACO CRUISES WEBSITE - PROJECT SUMMARY
 
-Last updated: April 28, 2026 (post-Batch 5 deploy)
+Last updated: August 17, 2026 (post-Batch 7 deploy, commit d11d5a8)
+
+**Pricing, site structure and open items live in the BATCH 7 section. Sections above it
+dating from Batch 5 are historical and contain superseded numbers — do not read them as
+current.**
 
 ## PROJECT OVERVIEW
 
@@ -37,12 +41,16 @@ Last updated: April 28, 2026 (post-Batch 5 deploy)
 | `/intracoastal-waterway-corporate-cruise` | 4-hour cruise: corporate / private events |
 | `/gallery` | Photo gallery (Supabase-backed) |
 | `/faq` | 10 FAQs covering pricing/policies |
+| `/fort-lauderdale-sunset-cruise` | 2-hour morning & sunset cruise (now a full page, indexed) |
+| `/pontoon-boat-rental-fort-lauderdale` | Pontoon rental service page |
+| `/contact-us` | Contact page |
+| `/blog` + 4 posts | Supabase-backed, prerendered |
+| `/privacy-policy`, `/terms-of-service`, `/cancellation-policy` | Legal |
 
 ### PUBLIC BUT NOINDEX
 
 | Path | Description |
 |---|---|
-| `/fort-lauderdale-sunset-cruise` | "Launching Soon" placeholder (Phase 4 unblocks) |
 | `/admin` | Admin gallery (also Disallow in robots.txt) |
 
 ### NETLIFY 301 REDIRECTS (all active)
@@ -58,7 +66,7 @@ Last updated: April 28, 2026 (post-Batch 5 deploy)
 
 WILDCARD: `/*` → custom NotFound page (noindex, 3 CTAs: Home/Cruises/Contact)
 
-## CURRENT PRICING (DISPLAYED ON SITE)
+## CURRENT PRICING — HISTORICAL, SEE BATCH 7 FOR LIVE NUMBERS
 
 On cruise page pricing blocks (OLD pricing — Phase 4 will swap):
 - All 4-hour cruise pages display: $1,500 / 4 Hours / Up to 18 Guests
@@ -148,9 +156,9 @@ Kosta Derkach (kosta@downtowncomputers.com, Downtown Computers) sent a 7-item SE
 | 6. Gallery without JS | Images now in prerendered HTML (was "Loading…") |
 | 7. Cruise page schema | Kosta's `@graph` on all 6 URLs |
 
-### Canonical pricing terms (use these everywhere)
+### Canonical pricing terms — SUPERSEDED, see Batch 7
 
-**$200/hour · 2-hour minimum · up to 12 guests included · max 18 · $60 per additional guest**
+~~$200/hour · 2-hour minimum · up to 12 guests included · max 18 · $60 per additional guest~~
 
 ### Item 1 was a false positive — don't "fix" it
 
@@ -237,7 +245,7 @@ exception explicitly. **This split is an assumption, not an instruction — conf
 
 | Item | Outcome |
 |---|---|
-| 1. Standardize pricing/capacity/duration | 13 files at $225/hr · 12 incl · max 18 led-with; fixed-duration "4 Hours" → "2 Hr Minimum"; sunset page had no capacity info at all, added |
+| 1. Standardize pricing/capacity/duration | 13 files at $225/hr · 3-hr min · 14 incl · max 18; fixed-duration "4 Hours" claims removed; sunset page had no capacity info at all, added |
 | 2. Open Charter | **Still live in Square** — branch B applies, page not yet built |
 | 3. Contextual blog links | Done on the 2 posts Kosta named, exact anchors he specified |
 | 4. Review widget + AggregateRating | `CompactReviews.tsx` on 7 pages + Product schema on all 8 |
@@ -246,12 +254,11 @@ exception explicitly. **This split is an assumption, not an instruction — conf
 ### Square contradicts the website — needs Taco
 
 Square's live booking widget still says `$200/Hour for up to 18 guests. 2 Hour Minimum` — no
-included-guest tier, no additional-guest fee, and the old rate. Taco's Aug 15 spec is
-$225/hour, 12 included, +$60 after 12.
+included-guest tier, no additional-guest fee, and the old rate.
 
-An 18-guest 2-hour booking: **$400 on Square, $1,120 on the site.** The website is now correct
-per Taco; Square is the stale one, and Square is what actually charges the card. **Taco needs
-to update Square** — until he does, every online booking under-charges.
+An 18-guest 3-hour booking: **$600 on Square, $915 on the site.** The website is correct;
+Square is stale, and Square is what actually charges the card. **Taco is handling this** (told
+to Danny, Aug 17) — but until he does it, every online booking under-charges.
 
 ### Open Charter is a real, bookable product
 
@@ -293,6 +300,56 @@ Verified in the built HTML: present on exactly the 8 specified URLs, absent ever
 existing cruise Product in the `@graph`, plus this standalone one with the rating. That is
 what his spec asked for, but Google may pick the wrong entity. Worth attaching
 `aggregateRating` to his existing node instead.
+
+## OPEN AFTER BATCH 7 — START HERE (Aug 17, 2026)
+
+Batch 7 is committed (`d11d5a8`) and verified live in production. What's left:
+
+### Waiting on Taco
+
+1. **Open Charter — one question: do strangers share the boat?**
+   Square sells `2 Hour Open Charters · min 6 guests · $60 per person` in the early-morning and
+   evening slots. The site documents it nowhere.
+   - If **shared**: it's a distinct product, and "every cruise is private" has to come out of
+     the FAQ, legal pages and `llms.txt`.
+   - If **private, per-head**: it's a second price tier, not a second product.
+   Recommendation either way: put it on `/fort-lauderdale-sunset-cruise/` rather than a new
+   URL — Square runs it in that page's exact slots, so a separate page self-cannibalises.
+2. **Square still lists $200/hour.** Taco is handling it (Aug 17). An 18-guest 3-hour booking
+   is $600 on Square vs $915 on the site until he does.
+3. **Blog content is Taco's** going forward (Aug 17). Note two posts were already updated in
+   Supabase during Batch 7 — sandbar and corporate — so he shouldn't redo them. The two
+   Open-Charter posts were deliberately left alone.
+
+### Assumptions shipped without confirmation — verify before the next pricing change
+
+4. **`$60` is flat per booking, not per hour.** Full 18 guests on a 3-hour cruise = $915. If
+   it's actually per-hour it's $1,395 and every price line is wrong.
+5. **The 3-hour minimum does not apply to the 2-hour products.**
+   `/fort-lauderdale-sunset-cruise/` keeps a 2-hour minimum ($450) and the FAQ states the
+   exception. If the 3-hour minimum is meant to be universal, that page has to be retired or
+   rebuilt — it is indexed, in the nav, and in the sitemap.
+
+### Unverified / loose ends
+
+6. **Mobile layout of the new pricing spec block was never seen.** `resize_window` reported
+   success but kept returning desktop-width screenshots. Grid is `grid-cols-2 lg:grid-cols-5`
+   with the fifth cell spanning 2 on small screens. Check on a phone.
+7. **GTM container mismatch.** `index.html` uses `GTM-PXM6BDVH`; these notes recorded
+   `GTM-PXVV455L` from Batch 3. One is stale. Unrelated to Batch 7, never chased.
+8. **`SEO_EMAIL_DRAFT_081726.md` is written but unsent.** Square is deliberately not mentioned
+   in it — if Kosta re-audits consistency he will find the $200/hour and log it as our miss.
+9. **Two `Product` nodes on the 5 cruise pages** — Kosta's existing one plus the new rated one.
+   That is what his spec asked for, but Google may bind the rating to the wrong entity. Raised
+   with him in the draft; his call.
+10. **`llms.txt` must be re-checked on every pricing change.** Pricing moved three times in
+    four days on this batch. `public/llms.txt`.
+
+### Dev server
+
+Port 5173 belongs to a different project. Run this one explicitly:
+`cd "C:\Websites\Tiki Taco Cruises\project" && npx vite --port 5180 --strictPort`
+Consider pinning `server: { port: 5180, strictPort: true }` in `vite.config.ts`.
 
 ## OPEN ITEMS FROM BATCH 6
 
