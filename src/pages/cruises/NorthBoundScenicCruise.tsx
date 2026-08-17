@@ -1,4 +1,5 @@
 import CruisePage from '../../components/CruisePage';
+import { productAggregateRatingSchema } from '../../lib/reviewSchema';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -109,17 +110,22 @@ const jsonLd = {
         {
           "@type": "PropertyValue",
           "name": "Duration",
-          "value": "4 hours"
+          "value": "Booked hourly (3 hour minimum)"
         },
         {
           "@type": "PropertyValue",
           "name": "Minimum booking",
-          "value": "2 hours"
+          "value": "3 hours"
         },
         {
           "@type": "PropertyValue",
           "name": "Included guests",
-          "value": "Up to 12 passengers"
+          "value": "Up to 14 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
         },
         {
           "@type": "PropertyValue",
@@ -141,14 +147,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/north-bound-scenic-cruise/#offer",
         "url": "https://tikitacocruises.com/north-bound-scenic-cruise/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -157,7 +163,7 @@ const jsonLd = {
             "value": 1,
             "unitCode": "HUR"
           },
-          "description": "Starting price per hour. Two-hour minimum booking."
+          "description": "Starting price per hour. Three-hour minimum booking."
         }
       }
     }
@@ -172,6 +178,7 @@ export default function NorthBoundScenicCruise() {
         description: 'Take a scenic cruise in Fort Lauderdale along the Intracoastal with optional sandbar stops. Perfect for sightseeing, swimming, and relaxing on the water.',
         canonical: 'https://tikitacocruises.com/north-bound-scenic-cruise/',
         jsonLd,
+        extraJsonLd: productAggregateRatingSchema,
       }}
       hero={{
         title: 'Northbound Scenic Cruise in Fort Lauderdale',
@@ -179,10 +186,12 @@ export default function NorthBoundScenicCruise() {
         backgroundImage: '/Sandbar.png',
       }}
       pricing={{
-        duration: '4 Hours',
-        price: 'Starting at $200/hour (2 hour minimum)',
-        basePassengers: 'Up to 12 Passengers',
-        additionalGuestPrice: '$60',
+        rate: '$225 per hour',
+        minimumHours: '3 hours',
+        minimumPrice: '$675',
+        includedGuests: '14',
+        maxCapacity: '18',
+        extraGuestFee: '$60 each',
         startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[
@@ -220,7 +229,7 @@ export default function NorthBoundScenicCruise() {
         ],
       }}
       itinerary={{
-        heading: 'Your 4-Hour Journey',
+        heading: 'A Sample 4-Hour Journey',
         steps: [
           {
             label: '1',
@@ -239,18 +248,6 @@ export default function NorthBoundScenicCruise() {
           },
         ],
       }}
-      testimonials={[
-        {
-          text: "Best day on the water! The sandbar stop was amazing — crystal clear water, great vibes, and the captain knew exactly where to take us. Would do this every weekend if we could.",
-          name: "Tyler Brooks",
-          rating: 5,
-        },
-        {
-          text: "We booked this for a group outing and it was perfect. The scenic cruise was beautiful and the sandbar was a blast. Everyone had an incredible time.",
-          name: "Nicole Ramirez",
-          rating: 5,
-        },
-      ]}
       gallery={{
         heading: 'North Bound Scenic Cruise Photo Gallery',
         // TODO: Replace with North Bound Scenic-specific photography when available.

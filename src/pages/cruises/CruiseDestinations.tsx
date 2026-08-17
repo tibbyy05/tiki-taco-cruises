@@ -16,10 +16,10 @@ interface CruiseCard {
   price: string;
 }
 
-const FOUR_HOUR_PRICING = {
-  duration: '4 Hours',
-  capacity: '12 Guests Included (max 18)',
-  price: 'Starting at $200/hour (2 hour minimum) for up to 12 guests · +$60 per extra guest',
+const HOURLY_PRICING = {
+  duration: '3 Hr Minimum',
+  capacity: 'Up to 18 Guests (14 included)',
+  price: '$225/hour · 3 hours from $675 · up to 18 guests (14 included, guests 15–18 are $60 each)',
 };
 
 const featuredCruises: CruiseCard[] = [
@@ -28,21 +28,21 @@ const featuredCruises: CruiseCard[] = [
     path: '/las-olas-boat-tour/',
     subtext: 'Luxury views with a social, high-energy vibe',
     bullets: ['Las Olas Boulevard views', 'Waterfront mansions & yachts', 'Perfect for parties & groups'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
   {
     title: 'Northbound Sandbar & Scenic Cruise',
     path: '/north-bound-scenic-cruise/',
     subtext: 'Swim, float, and relax at a Fort Lauderdale sandbar',
     bullets: ['Popular Fort Lauderdale sandbar stop', 'Swimming, floating & relaxing', 'Scenic Intracoastal views'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
   {
     title: 'Corporate & Private Event Cruise',
     path: '/intracoastal-waterway-corporate-cruise/',
     subtext: 'A unique setting for team outings and client events',
     bullets: ['Private, customizable experience', 'Great for team building or hosting', 'Relaxed, upscale environment'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
 ];
 
@@ -52,28 +52,28 @@ const allCruises: CruiseCard[] = [
     path: '/new-river-cruise/',
     subtext: 'Cruise through the heart of Fort Lauderdale along the New River, passing historic landmarks, downtown views, and waterfront homes. This route is ideal for those looking for a more relaxed, scenic experience with a touch of local history.',
     bullets: ['Historic downtown Fort Lauderdale views', 'Waterfront homes & hidden canals', 'Calm, scenic cruising route', 'Great for sightseeing & photos'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
   {
     title: 'Northbound Sandbar & Scenic Cruise',
     path: '/north-bound-scenic-cruise/',
     subtext: "Head north along the Intracoastal for a mix of sightseeing and fun. This cruise often includes a stop at one of Fort Lauderdale's popular sandbars, making it perfect for swimming, relaxing, and socializing.",
     bullets: ['Popular Fort Lauderdale sandbar stop', 'Swimming, floating & relaxing', 'Scenic Intracoastal views', 'Social, laid-back atmosphere'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
   {
     title: 'Las Olas & Intracoastal Party Cruise',
     path: '/las-olas-boat-tour/',
     subtext: 'Take in iconic Las Olas views while enjoying a lively, social cruise experience. This route is popular for celebrations, group outings, and anyone looking to combine sightseeing with a party atmosphere.',
     bullets: ['Las Olas Boulevard views', 'Luxury yachts & waterfront estates', 'Perfect for groups & celebrations', 'Music, drinks & social vibe'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
   {
     title: 'Corporate & Private Event Cruise',
     path: '/intracoastal-waterway-corporate-cruise/',
     subtext: 'Host your next event on the water with a fully customizable cruise. Ideal for corporate outings, client entertainment, or private group gatherings.',
     bullets: ['Private, customizable experience', 'Great for team outings & events', 'Comfortable, upscale setting', 'Easy group planning'],
-    ...FOUR_HOUR_PRICING,
+    ...HOURLY_PRICING,
   },
 ];
 
@@ -239,7 +239,7 @@ export default function CruiseDestinations() {
                   {[
                     'Morning Cruise: 8:00 AM – 10:00 AM',
                     'Sunset Cruise: 6:00 PM – 8:00 PM',
-                    'Starting at $200/hour (2 hour minimum)',
+                    'Starting at $225/hour (3 hour minimum)',
                     'Great for smaller groups or tighter schedules',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
@@ -286,10 +286,10 @@ export default function CruiseDestinations() {
                 </p>
                 <ul className="space-y-3 mb-8">
                   {[
-                    'Up to 12 guests included · max 18 (+$60 each) · always private',
+                    'Up to 18 guests · 14 included · guests 15–18 are $60 each · always private',
                     'Captain & fuel included — no license needed',
                     'BYOB with cooler & ice on board',
-                    'Starting at $200/hour (2 hour minimum)',
+                    'Starting at $225/hour (3 hour minimum)',
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3">
                       <Check className="w-5 h-5 text-coral flex-shrink-0 mt-1" />
@@ -389,9 +389,9 @@ export default function CruiseDestinations() {
               </p>
               <p>
                 All our destinations depart from The Hilton Marina (1881 SE 17th St, Fort Lauderdale) and include
-                a professional USCG Licensed Captain, premium amenities, fuel, and all safety equipment. With flexible
-                2, 3, and 4-hour options, you can customize your Fort Lauderdale pontoon experience to match your
-                preferences and budget.
+                a professional USCG Licensed Captain, premium amenities, fuel, and all safety equipment. Cruises are
+                booked by the hour with a three-hour minimum, so you can customize your Fort Lauderdale pontoon
+                experience to match your preferences and budget.
               </p>
               <p>
                 From the luxury estates of Las Olas to the crystal-clear waters of Fort Lauderdale's famous sandbar,

@@ -20,11 +20,17 @@ interface SEOProps {
   ogImage?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown>;
+  /**
+   * A second, independent JSON-LD block emitted alongside `jsonLd` rather than
+   * merged into it. Used for the Product + AggregateRating markup, which has to
+   * stay separate from each page's existing LocalBusiness/WebPage @graph.
+   */
+  extraJsonLd?: Record<string, unknown>;
 }
 
 const DEFAULT_OG_IMAGE = 'https://tikitacocruises.com/fort-lauderdale-hero.jpg';
 
-export default function SEO({ title, description, canonical, ogTitle, ogImage, noindex = false, jsonLd }: SEOProps) {
+export default function SEO({ title, description, canonical, ogTitle, ogImage, noindex = false, jsonLd, extraJsonLd }: SEOProps) {
   const { pathname } = useLocation();
   const normalizedPath = pathname.endsWith('/') ? pathname : `${pathname}/`;
   const url = canonical || `https://tikitacocruises.com${normalizedPath}`;
@@ -54,6 +60,12 @@ export default function SEO({ title, description, canonical, ogTitle, ogImage, n
       {jsonLd && (
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}
+        </script>
+      )}
+
+      {extraJsonLd && (
+        <script type="application/ld+json">
+          {JSON.stringify(extraJsonLd)}
         </script>
       )}
     </Helmet>

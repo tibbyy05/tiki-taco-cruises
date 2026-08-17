@@ -1,4 +1,5 @@
 import CruisePage from '../../components/CruisePage';
+import { productAggregateRatingSchema } from '../../lib/reviewSchema';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -109,17 +110,22 @@ const jsonLd = {
         {
           "@type": "PropertyValue",
           "name": "Duration",
-          "value": "4 hours"
+          "value": "Booked hourly (3 hour minimum)"
         },
         {
           "@type": "PropertyValue",
           "name": "Minimum booking",
-          "value": "2 hours"
+          "value": "3 hours"
         },
         {
           "@type": "PropertyValue",
           "name": "Included guests",
-          "value": "Up to 12 passengers"
+          "value": "Up to 14 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
         },
         {
           "@type": "PropertyValue",
@@ -141,14 +147,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/new-river-cruise/#offer",
         "url": "https://tikitacocruises.com/new-river-cruise/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -157,7 +163,7 @@ const jsonLd = {
             "value": 1,
             "unitCode": "HUR"
           },
-          "description": "Starting price per hour. Two-hour minimum booking."
+          "description": "Starting price per hour. Three-hour minimum booking."
         }
       }
     }
@@ -172,6 +178,7 @@ export default function NewRiverCruise() {
         description: 'Cruise the New River on a Fort Lauderdale tiki boat. Enjoy a scenic historic tour with waterfront views, downtown sights, and the Stranahan House from the water.',
         canonical: 'https://tikitacocruises.com/new-river-cruise/',
         jsonLd,
+        extraJsonLd: productAggregateRatingSchema,
       }}
       hero={{
         title: 'New River Cruise in Fort Lauderdale',
@@ -179,10 +186,12 @@ export default function NewRiverCruise() {
         backgroundImage: '/Night_Intracoastal2.jpg',
       }}
       pricing={{
-        duration: '4 Hours',
-        price: 'Starting at $200/hour (2 hour minimum)',
-        basePassengers: 'Up to 12 Passengers',
-        additionalGuestPrice: '$60',
+        rate: '$225 per hour',
+        minimumHours: '3 hours',
+        minimumPrice: '$675',
+        includedGuests: '14',
+        maxCapacity: '18',
+        extraGuestFee: '$60 each',
         startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[
@@ -220,7 +229,7 @@ export default function NewRiverCruise() {
         ],
       }}
       itinerary={{
-        heading: 'Your 4-Hour Journey',
+        heading: 'A Sample 4-Hour Journey',
         steps: [
           {
             label: '1',
@@ -239,18 +248,6 @@ export default function NewRiverCruise() {
           },
         ],
       }}
-      testimonials={[
-        {
-          text: "The New River cruise was a highlight of our trip. So peaceful and scenic — the captain knew every landmark and made it feel like a private tour. Highly recommend for anyone who wants a relaxed day on the water.",
-          name: "Karen Mitchell",
-          rating: 5,
-        },
-        {
-          text: "We loved seeing the Stranahan House from the water. The whole route felt like a hidden gem. Perfect for our family outing — not too wild, just right.",
-          name: "James Patel",
-          rating: 5,
-        },
-      ]}
       gallery={{
         heading: 'New River Tiki Cruise Photo Gallery',
         // TODO: Replace with New River-specific photography when available.

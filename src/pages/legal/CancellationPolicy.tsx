@@ -50,7 +50,7 @@ export default function CancellationPolicy() {
 
       <h2>Guest Numbers</h2>
       <p>
-        Your booking covers up to 12 guests, with additional guests at $60 per person up to the vessel&rsquo;s
+        Your booking covers 14 guests, with guests 15 through 18 at $60 each up to the vessel&rsquo;s
         maximum of 18. Let us know in advance if your numbers change so we can prepare the boat and confirm your
         total. Full booking terms are in our <Link to="/terms-of-service/">Terms of Service</Link>.
       </p>

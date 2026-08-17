@@ -20,7 +20,7 @@ const faqSchema = {
       ],
       "telephone": "+1-954-764-4344",
       "email": "tikitacocruises@gmail.com",
-      "priceRange": "$200-$800",
+      "priceRange": "$675-$1400",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
       "address": {
         "@type": "PostalAddress",
@@ -118,7 +118,7 @@ const faqSchema = {
           "name": "What does a 4-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "4-hour cruises start at $200 per hour for up to 12 passengers. Additional guests are $60 per person."
+            "text": "Cruises are $225 per hour with a three-hour minimum, so a 3-hour cruise is $675. That covers 14 guests. The boat holds up to 18 — guests 15 through 18 are $60 each."
           }
         },
         {
@@ -127,7 +127,7 @@ const faqSchema = {
           "name": "What does a 2-hour cruise cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "2-hour morning and sunset cruises start at $200 per hour (2-hour minimum)."
+            "text": "The 2-hour morning and sunset cruises start at $225 per hour with a 2-hour minimum. All other private cruises have a 3-hour minimum."
           }
         },
         {
@@ -223,11 +223,11 @@ const faqs = [
   },
   {
     question: 'What does a 4-hour cruise cost?',
-    answer: '4-hour cruises start at $200 per hour for up to 12 passengers. Additional guests are $60 per person.',
+    answer: 'Cruises are $225 per hour with a three-hour minimum, so a 3-hour cruise is $675. That covers 14 guests. The boat holds up to 18 — guests 15 through 18 are $60 each.',
   },
   {
     question: 'What does a 2-hour cruise cost?',
-    answer: '2-hour morning and sunset cruises start at $200 per hour (2-hour minimum).',
+    answer: 'The 2-hour morning and sunset cruises start at $225 per hour with a 2-hour minimum. All other private cruises have a 3-hour minimum.',
   },
   {
     question: 'What are the start times?',

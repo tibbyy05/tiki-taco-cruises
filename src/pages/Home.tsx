@@ -11,6 +11,7 @@ import SquareBooking from '../components/SquareBooking';
 import LocationSection from '../components/LocationSection';
 import Footer from '../components/Footer';
 import ScrollReveal from '../components/ScrollReveal';
+import { productAggregateRatingSchema } from '../lib/reviewSchema';
 
 const localBusinessSchema = {
   "@context": "https://schema.org",
@@ -27,7 +28,7 @@ const localBusinessSchema = {
       ],
       "telephone": "+1-954-764-4344",
       "email": "tikitacocruises@gmail.com",
-      "priceRange": "$200-$800",
+      "priceRange": "$675-$1400",
       "hasMap": "https://www.google.com/maps?cid=1115630382324282086",
       "address": {
         "@type": "PostalAddress",
@@ -147,8 +148,8 @@ const popularCruises = [
       'Historic downtown & New River landmarks',
       'Waterfront homes, yachts & hidden canals',
       'Calm, scenic cruising route',
-      'Up to 12 guests included · max 18 (+$60 per extra guest)',
-      'Starting at $200/hour (2 hour minimum)',
+      'Up to 18 guests · 14 included · guests 15–18 are $60 each',
+      'Starting at $225/hour (3 hour minimum)',
     ],
   },
   {
@@ -160,8 +161,8 @@ const popularCruises = [
       'Popular Fort Lauderdale sandbar stop',
       'Swimming, floating & relaxing',
       'Scenic Intracoastal views',
-      'Up to 12 guests included · max 18 (+$60 per extra guest)',
-      'Starting at $200/hour (2 hour minimum)',
+      'Up to 18 guests · 14 included · guests 15–18 are $60 each',
+      'Starting at $225/hour (3 hour minimum)',
     ],
   },
   {
@@ -173,8 +174,8 @@ const popularCruises = [
       'Relaxing Intracoastal Waterway ride',
       'Panoramic skyline & waterfront views',
       'Perfect for groups & celebrations',
-      'Up to 12 guests included · max 18 (+$60 per extra guest)',
-      'Starting at $200/hour (2 hour minimum)',
+      'Up to 18 guests · 14 included · guests 15–18 are $60 each',
+      'Starting at $225/hour (3 hour minimum)',
     ],
   },
 ];
@@ -188,6 +189,7 @@ export default function Home() {
         description="Book a private tiki cruise in Fort Lauderdale. Explore the Intracoastal, sandbars, and sunset views with premium amenities and flexible day or evening tours."
         canonical="https://tikitacocruises.com/"
         jsonLd={localBusinessSchema}
+        extraJsonLd={productAggregateRatingSchema}
       />
       {/* Kick off the LCP hero image download immediately (homepage only —
           index.html is shared by all SSG pages, so it can't live there) */}

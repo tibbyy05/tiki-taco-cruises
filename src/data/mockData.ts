@@ -1,71 +1,11 @@
-import { Boat, Route, Testimonial, FAQItem } from '../types';
-
-export const boats: Boat[] = [
-  {
-    id: '1',
-    name: 'Coastal Cruiser',
-    capacity: 18,
-    length: 22,
-    hourlyRate: 150,
-    dailyRate: 950,
-    amenities: ['Bluetooth Sound', 'Bimini Top', 'Cooler & Ice', 'Swimming Ladder'],
-    image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&auto=format&fit=crop'
-  },
-  {
-    id: '2',
-    name: 'Paradise Explorer',
-    capacity: 18,
-    length: 24,
-    hourlyRate: 180,
-    dailyRate: 1150,
-    amenities: ['Premium Sound System', 'Bimini Top', 'Large Cooler', 'Swimming Platform', 'Extra Seating'],
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop'
-  },
-  {
-    id: '3',
-    name: 'Luxury Yacht Pontoon',
-    capacity: 18,
-    length: 26,
-    hourlyRate: 220,
-    dailyRate: 1450,
-    amenities: ['Premium Audio', 'Full Shade', 'Built-in Coolers', 'Water Slide', 'Deluxe Seating', 'LED Lighting'],
-    image: '/hero-pontoon-miami.jpg'
-  }
-];
-
-export const routes: Route[] = [
-  {
-    id: '1',
-    name: 'Las Olas & Intracoastal Cruise',
-    description: 'Cruise through Fort Lauderdale\'s famous Intracoastal Waterway, passing luxury waterfront homes and the vibrant Las Olas Boulevard area.',
-    duration: '3 hours',
-    highlights: ['Las Olas views', 'Luxury waterfront homes', 'Perfect for sightseeing'],
-    image: '/Night_Intracoastal2.jpg'
-  },
-  {
-    id: '2',
-    name: 'Fort Lauderdale Sandbar',
-    description: 'Anchor at the popular Fort Lauderdale sandbar with stunning waterfront views. Perfect for swimming and relaxation.',
-    duration: '4 hours',
-    highlights: ['Popular sandbar destination', 'Crystal clear waters', 'Ideal for photos'],
-    image: '/Sandbar.png'
-  },
-  {
-    id: '3',
-    name: 'Intracoastal Waterway Tour',
-    description: 'Explore the beautiful Fort Lauderdale Intracoastal Waterway, passing luxury yachts, waterfront mansions, and the Port Everglades inlet.',
-    duration: '4 hours',
-    highlights: ['Luxury yachts', 'Waterfront mansions', 'Port Everglades views'],
-    image: 'https://vjiybpiuquttbaimywbt.supabase.co/storage/v1/object/public/pontoon/15.png'
-  }
-];
+import { Testimonial, FAQItem } from '../types';
 
 // Single source of truth for the Google rating badge. Every visible rating and
 // review count on the site reads from these two, so bumping the count after new
 // reviews land is a one-line change here — not a hunt through Hero and
 // GuestReviews. Keep them matching what Google actually shows.
 export const GOOGLE_RATING = '5.0';
-export const GOOGLE_REVIEW_COUNT = 95;
+export const GOOGLE_REVIEW_COUNT = 103;
 
 // Real Google reviews (verbatim; truncated ones end with an ellipsis as shown
 // on Google). Add new ones here and bump GOOGLE_REVIEW_COUNT above.

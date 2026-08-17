@@ -1,4 +1,5 @@
 import CruisePage from '../../components/CruisePage';
+import { productAggregateRatingSchema } from '../../lib/reviewSchema';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -109,17 +110,22 @@ const jsonLd = {
         {
           "@type": "PropertyValue",
           "name": "Duration",
-          "value": "4 hours"
+          "value": "Booked hourly (3 hour minimum)"
         },
         {
           "@type": "PropertyValue",
           "name": "Minimum booking",
-          "value": "2 hours"
+          "value": "3 hours"
         },
         {
           "@type": "PropertyValue",
           "name": "Included guests",
-          "value": "Up to 12 passengers"
+          "value": "Up to 14 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
         },
         {
           "@type": "PropertyValue",
@@ -141,14 +147,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/#offer",
         "url": "https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -157,7 +163,7 @@ const jsonLd = {
             "value": 1,
             "unitCode": "HUR"
           },
-          "description": "Starting price per hour. Two-hour minimum booking."
+          "description": "Starting price per hour. Three-hour minimum booking."
         }
       },
       "audience": {
@@ -176,6 +182,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
         description: 'Host a corporate cruise in Fort Lauderdale on a private tiki boat. Ideal for team outings, client events, and company celebrations on the water.',
         canonical: 'https://tikitacocruises.com/intracoastal-waterway-corporate-cruise/',
         jsonLd,
+        extraJsonLd: productAggregateRatingSchema,
       }}
       hero={{
         title: 'Corporate Cruise in Fort Lauderdale',
@@ -183,10 +190,12 @@ export default function IntracoastalWaterwayCorporateCruise() {
         backgroundImage: '/Night_Intracoastal2.jpg',
       }}
       pricing={{
-        duration: '4 Hours',
-        price: 'Starting at $200/hour (2 hour minimum)',
-        basePassengers: 'Up to 12 Passengers',
-        additionalGuestPrice: '$60',
+        rate: '$225 per hour',
+        minimumHours: '3 hours',
+        minimumPrice: '$675',
+        includedGuests: '14',
+        maxCapacity: '18',
+        extraGuestFee: '$60 each',
         startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[
@@ -224,7 +233,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
         ],
       }}
       itinerary={{
-        heading: 'Your 4-Hour Journey',
+        heading: 'A Sample 4-Hour Journey',
         steps: [
           {
             label: '1',
@@ -243,18 +252,6 @@ export default function IntracoastalWaterwayCorporateCruise() {
           },
         ],
       }}
-      testimonials={[
-        {
-          text: "We hosted a team outing on the tiki boat and it was the best company event we've ever done. Everyone loved being on the water — way better than another happy hour.",
-          name: "Laura Chen",
-          rating: 5,
-        },
-        {
-          text: "Used this for a client event and it made a huge impression. The boat was clean, the captain was professional, and the Intracoastal views were stunning. Highly recommend.",
-          name: "Brian Foster",
-          rating: 5,
-        },
-      ]}
       gallery={{
         heading: 'Tiki Taco Corporate Cruise Photo Gallery',
         // TODO: Replace with Corporate Cruise-specific photography when available.
@@ -271,7 +268,7 @@ export default function IntracoastalWaterwayCorporateCruise() {
         },
         {
           question: 'Is this suitable for larger corporate groups?',
-          answer: 'Your booking covers up to 12 guests, and the boat comfortably holds up to 18 — additional guests beyond 12 are $60 per person. For larger groups, contact us about booking multiple boats for a fleet experience.',
+          answer: 'Your booking covers 14 guests, and the boat comfortably holds up to 18 — guests 15 through 18 are $60 each. For larger groups, contact us about booking multiple boats for a fleet experience.',
         },
         {
           question: 'Where does this cruise depart from?',

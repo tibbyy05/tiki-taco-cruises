@@ -5,6 +5,8 @@ import SEO from '../../components/SEO';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import SquareBooking from '../../components/SquareBooking';
+import { productAggregateRatingSchema } from '../../lib/reviewSchema';
+import CompactReviews from '../../components/CompactReviews';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -124,6 +126,21 @@ const jsonLd = {
         },
         {
           "@type": "PropertyValue",
+          "name": "Included guests",
+          "value": "Up to 14 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Additional guest fee",
+          "value": "USD 60 per person"
+        },
+        {
+          "@type": "PropertyValue",
           "name": "Morning cruise",
           "value": "8:00 AM to 10:00 AM"
         },
@@ -142,14 +159,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/#offer",
         "url": "https://tikitacocruises.com/fort-lauderdale-sunset-cruise/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -182,6 +199,7 @@ export default function FortLauderdaleSunsetCruise() {
         description="Enjoy a Fort Lauderdale sunset cruise or morning cruise on a 2-hour tiki boat ride. Scenic views, relaxed vibes, and perfect for smaller groups."
         canonical="https://tikitacocruises.com/fort-lauderdale-sunset-cruise/"
         jsonLd={jsonLd}
+        extraJsonLd={productAggregateRatingSchema}
       />
       <Navigation />
 
@@ -252,8 +270,11 @@ export default function FortLauderdaleSunsetCruise() {
           </div>
           <div className="text-center">
             <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $200/hour (2 hour minimum)</div>
-              <div className="text-ocean/70 text-sm sm:text-base">2-hour private cruise</div>
+              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">$225 per hour &middot; 2 hours from $450</div>
+              <div className="text-ocean font-semibold text-base sm:text-lg mb-1">Up to 18 Guests</div>
+              <div className="text-ocean/70 text-sm sm:text-base">
+                2-hour private cruise &middot; 14 guests included &middot; guests 15&ndash;18 are $60 each
+              </div>
             </div>
           </div>
         </div>
@@ -358,7 +379,7 @@ export default function FortLauderdaleSunsetCruise() {
               {
                 name: 'New River Historic Cruise',
                 path: '/new-river-cruise/',
-                description: 'A 4-hour scenic cruise through downtown Fort Lauderdale along the New River.',
+                description: 'A scenic cruise through downtown Fort Lauderdale along the New River.',
                 image: '/new-river-tile.jpg',
               },
               {
@@ -408,6 +429,8 @@ export default function FortLauderdaleSunsetCruise() {
           </a>
         </div>
       )}
+
+      <CompactReviews />
 
       <Footer />
     </div>

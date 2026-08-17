@@ -1,4 +1,5 @@
 import CruisePage from '../../components/CruisePage';
+import { productAggregateRatingSchema } from '../../lib/reviewSchema';
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -109,17 +110,22 @@ const jsonLd = {
         {
           "@type": "PropertyValue",
           "name": "Duration",
-          "value": "4 hours"
+          "value": "Booked hourly (3 hour minimum)"
         },
         {
           "@type": "PropertyValue",
           "name": "Minimum booking",
-          "value": "2 hours"
+          "value": "3 hours"
         },
         {
           "@type": "PropertyValue",
           "name": "Included guests",
-          "value": "Up to 12 passengers"
+          "value": "Up to 14 passengers"
+        },
+        {
+          "@type": "PropertyValue",
+          "name": "Maximum capacity",
+          "value": "18 passengers"
         },
         {
           "@type": "PropertyValue",
@@ -141,14 +147,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/las-olas-boat-tour/#offer",
         "url": "https://tikitacocruises.com/las-olas-boat-tour/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -157,7 +163,7 @@ const jsonLd = {
             "value": 1,
             "unitCode": "HUR"
           },
-          "description": "Starting price per hour. Two-hour minimum booking."
+          "description": "Starting price per hour. Three-hour minimum booking."
         }
       }
     }
@@ -172,6 +178,7 @@ export default function LasOlasBoatTour() {
         description: 'Book a party pontoon boat in Fort Lauderdale. Cruise Las Olas and the Intracoastal with music, drinks, and the perfect setup for bachelorettes and groups.',
         canonical: 'https://tikitacocruises.com/las-olas-boat-tour/',
         jsonLd,
+        extraJsonLd: productAggregateRatingSchema,
       }}
       hero={{
         title: 'Las Olas & Intracoastal Party Cruise',
@@ -179,10 +186,12 @@ export default function LasOlasBoatTour() {
         backgroundImage: '/Night_Intracoastal2.jpg',
       }}
       pricing={{
-        duration: '4 Hours',
-        price: 'Starting at $200/hour (2 hour minimum)',
-        basePassengers: 'Up to 12 Passengers',
-        additionalGuestPrice: '$60',
+        rate: '$225 per hour',
+        minimumHours: '3 hours',
+        minimumPrice: '$675',
+        includedGuests: '14',
+        maxCapacity: '18',
+        extraGuestFee: '$60 each',
         startTimes: ['10:00 AM', '2:00 PM'],
       }}
       highlights={[
@@ -220,7 +229,7 @@ export default function LasOlasBoatTour() {
         ],
       }}
       itinerary={{
-        heading: 'Your 4-Hour Journey',
+        heading: 'A Sample 4-Hour Journey',
         steps: [
           {
             label: '1',
@@ -239,18 +248,6 @@ export default function LasOlasBoatTour() {
           },
         ],
       }}
-      testimonials={[
-        {
-          text: "Best bachelorette party ever! The boat was perfect, the captain was awesome, and cruising past Las Olas with music blasting was an experience we'll never forget.",
-          name: "Rachel Kim",
-          rating: 5,
-        },
-        {
-          text: "We rented this for my birthday and it exceeded expectations. The tiki vibe, the views, the space — everything was spot on. Already planning our next trip.",
-          name: "Marcus Johnson",
-          rating: 5,
-        },
-      ]}
       gallery={{
         heading: 'Las Olas Boat Tour Photo Gallery',
         // TODO: Replace with Las Olas Boat Tour-specific photography when available.

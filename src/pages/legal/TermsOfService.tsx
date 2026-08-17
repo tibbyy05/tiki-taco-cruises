@@ -25,9 +25,9 @@ export default function TermsOfService() {
 
       <h2>Pricing and Guests</h2>
       <ul>
-        <li>Cruises start at <strong>$200 per hour</strong>, with a <strong>two-hour minimum</strong> booking.</li>
-        <li>The base rate covers <strong>up to 12 guests</strong>.</li>
-        <li>Additional guests beyond 12 are <strong>$60 per person</strong>.</li>
+        <li>Cruises start at <strong>$225 per hour</strong>, with a <strong>three-hour minimum</strong> booking.</li>
+        <li>The base rate covers <strong>14 guests</strong>.</li>
+        <li>Guests 15 through 18 are <strong>$60 each</strong>.</li>
         <li>The vessel&rsquo;s <strong>maximum capacity is 18 guests</strong>, which cannot be exceeded under any circumstances.</li>
       </ul>
       <p>

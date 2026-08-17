@@ -5,7 +5,9 @@
  *   <CruisePage
  *     seo={{ title: "...", description: "..." }}
  *     hero={{ title: "...", subtitle: "...", backgroundImage: "/img.jpg" }}
- *     pricing={{ duration: "4 Hours", price: "Starting at $200/hour (2 hour minimum)", basePassengers: "Up to 12 Passengers", startTimes: ["10:00 AM", "2:00 PM"] }}
+ *     pricing={{ rate: "$225 per hour", minimumHours: "3 hours", minimumPrice: "$675",
+ *                includedGuests: "14", maxCapacity: "18", extraGuestFee: "$60 each",
+ *                startTimes: ["10:00 AM", "2:00 PM"] }}
  *     whatToExpect={{ heading: "What to Expect", bullets: ["..."] }}
  *     sections={[{ heading: "...", subtext: "..." }]}
  *     gallery={{ heading: "Gallery", images: [{ src: "...", alt: "..." }] }}
@@ -17,6 +19,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Clock, Users, Check, ArrowRight, ChevronRight, ChevronDown, Phone } from 'lucide-react';
 import SEO from './SEO';
+import CompactReviews from './CompactReviews';
 import Navigation from './Navigation';
 import Footer from './Footer';
 import SquareBooking from './SquareBooking';
@@ -27,6 +30,8 @@ export interface CruisePageSEO {
   canonical?: string;
   ogImage?: string;
   jsonLd?: Record<string, unknown>;
+  /** Separate Product + AggregateRating block; see src/lib/reviewSchema.ts. */
+  extraJsonLd?: Record<string, unknown>;
 }
 
 export interface CruisePageHero {
@@ -36,11 +41,18 @@ export interface CruisePageHero {
 }
 
 export interface CruisePagePricing {
-  duration: string;
-  price: string;
-  basePassengers: string;
-  additionalGuestPrice?: string;
-  hourlyRate?: string;
+  /** Headline hourly rate, e.g. "$225 per hour". */
+  rate: string;
+  /** Minimum booking length, e.g. "3 hours". */
+  minimumHours: string;
+  /** All-in price at the minimum, e.g. "$675". */
+  minimumPrice: string;
+  /** Guests covered by the base rate, e.g. "14". */
+  includedGuests: string;
+  /** Vessel capacity, e.g. "18". */
+  maxCapacity: string;
+  /** Fee for each guest above includedGuests, e.g. "$60 each". */
+  extraGuestFee: string;
   startTimes: string[];
 }
 
@@ -66,12 +78,6 @@ export interface CruisePageFAQ {
   answer: string;
 }
 
-export interface CruisePageTestimonial {
-  text: string;
-  name: string;
-  rating: number;
-}
-
 export interface CruisePageItineraryStep {
   label: string;
   heading: string;
@@ -87,7 +93,6 @@ export interface CruisePageProps {
   itinerary?: { heading: string; steps: CruisePageItineraryStep[] };
   whatToExpect?: { heading: string; bullets: string[] };
   sections?: CruisePageSection[];
-  testimonials?: CruisePageTestimonial[];
   gallery?: CruisePageGallery;
   faqs?: CruisePageFAQ[];
   faqHeading?: string;
@@ -102,7 +107,6 @@ export default function CruisePage({
   itinerary,
   whatToExpect,
   sections,
-  testimonials,
   gallery,
   faqs,
   faqHeading = 'Frequently Asked Questions',
@@ -131,16 +135,18 @@ export default function CruisePage({
           <div className="text-center text-white max-w-4xl mx-auto w-full">
             <div className="inline-flex items-center gap-2 bg-coral/90 backdrop-blur-sm px-4 py-2 rounded-full mb-4 text-sm sm:text-base">
               <Clock className="w-4 h-4" />
-              <span>{pricing.duration}</span>
+              <span>{`${pricing.minimumHours} minimum`}</span>
             </div>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 tracking-tight leading-tight">
               {hero.title}
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8">
-              <div className="text-4xl sm:text-5xl font-bold text-coral price-text">{pricing.price}</div>
+              <div className="text-4xl sm:text-5xl font-bold text-coral price-text">
+                {`From ${pricing.minimumPrice}`}
+              </div>
               <div className="flex items-center gap-2 text-lg sm:text-xl">
                 <Users className="w-5 h-5" />
-                <span>{pricing.basePassengers}</span>
+                <span>{`Up to ${pricing.maxCapacity} Guests`}</span>
               </div>
             </div>
             <a
@@ -167,45 +173,48 @@ export default function CruisePage({
         </div>
       </div>
 
-      {/* Quick Summary */}
+      {/* Pricing spec — one labelled row per number so "included" and
+          "maximum" can never be read as the same figure. */}
       <section className="py-6 sm:py-8 px-4 bg-white border-b border-ocean/10">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-          <div className="bg-sand/40 rounded-xl p-4">
-            <div className="text-sm text-ocean/70">Duration</div>
-            <div className="text-xl font-bold text-ocean">{pricing.duration}</div>
+        <div className="max-w-5xl mx-auto">
+          <dl className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 text-center">
+            <div className="bg-sand/40 rounded-xl p-4">
+              <dt className="text-sm text-ocean/70">Rate</dt>
+              <dd className="text-lg sm:text-xl font-bold text-coral price-text">{pricing.rate}</dd>
+            </div>
+            <div className="bg-sand/40 rounded-xl p-4">
+              <dt className="text-sm text-ocean/70">Minimum</dt>
+              <dd className="text-lg sm:text-xl font-bold text-ocean price-text">
+                {`${pricing.minimumHours} — ${pricing.minimumPrice}`}
+              </dd>
+            </div>
+            <div className="bg-sand/40 rounded-xl p-4">
+              <dt className="text-sm text-ocean/70">Guests included</dt>
+              <dd className="text-lg sm:text-xl font-bold text-ocean">{pricing.includedGuests}</dd>
+            </div>
+            <div className="bg-sand/40 rounded-xl p-4">
+              <dt className="text-sm text-ocean/70">Maximum capacity</dt>
+              <dd className="text-lg sm:text-xl font-bold text-ocean">{pricing.maxCapacity}</dd>
+            </div>
+            <div className="bg-sand/40 rounded-xl p-4 col-span-2 lg:col-span-1">
+              <dt className="text-sm text-ocean/70">
+                {`Guests ${Number(pricing.includedGuests) + 1}–${pricing.maxCapacity}`}
+              </dt>
+              <dd className="text-lg sm:text-xl font-bold text-ocean price-text">{pricing.extraGuestFee}</dd>
+            </div>
+          </dl>
+
+          {pricing.startTimes.length > 0 && (
+            <div className="mt-4 text-center text-sm text-ocean/70">
+              Start times: <span className="font-semibold text-ocean">{pricing.startTimes.join(' or ')}</span>
+            </div>
+          )}
+
+          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-ocean/70">
+            <span className="bg-white rounded-full px-4 py-1">USCG Captain</span>
+            <span className="bg-white rounded-full px-4 py-1">Fuel Included</span>
+            <span className="bg-white rounded-full px-4 py-1">Cooler &amp; Ice</span>
           </div>
-          <div className="bg-sand/40 rounded-xl p-4">
-            <div className="text-sm text-ocean/70">Guests</div>
-            <div className="text-xl font-bold text-ocean">{pricing.basePassengers}</div>
-          </div>
-          <div className="bg-sand/40 rounded-xl p-4">
-            <div className="text-sm text-ocean/70">Price</div>
-            <div className="text-xl font-bold text-coral price-text">{pricing.price}</div>
-          </div>
-        </div>
-        {(pricing.additionalGuestPrice || pricing.hourlyRate || pricing.startTimes.length > 0) && (
-          <div className="max-w-5xl mx-auto mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-sm text-ocean/70">
-            {pricing.additionalGuestPrice && (
-              <div className="bg-sand/40 rounded-xl p-3">
-                <span className="font-semibold text-ocean">{pricing.additionalGuestPrice}</span> per additional guest
-              </div>
-            )}
-            {pricing.hourlyRate && (
-              <div className="bg-sand/40 rounded-xl p-3">
-                <span className="font-semibold text-ocean">{pricing.hourlyRate}</span> per hour
-              </div>
-            )}
-            {pricing.startTimes.length > 0 && (
-              <div className="bg-sand/40 rounded-xl p-3">
-                Start times: <span className="font-semibold text-ocean">{pricing.startTimes.join(' or ')}</span>
-              </div>
-            )}
-          </div>
-        )}
-        <div className="max-w-5xl mx-auto mt-4 flex flex-wrap justify-center gap-3 text-sm text-ocean/70">
-          <span className="bg-white rounded-full px-4 py-1">USCG Captain</span>
-          <span className="bg-white rounded-full px-4 py-1">Fuel Included</span>
-          <span className="bg-white rounded-full px-4 py-1">Cooler & Ice</span>
         </div>
       </section>
 
@@ -244,14 +253,15 @@ export default function CruisePage({
             {/* Pricing Badge */}
             <div className="mt-8 text-center">
               <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-                <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">{pricing.price}</div>
-                <div className="text-ocean/70 text-sm sm:text-base">
-                  {pricing.duration} | {pricing.basePassengers}
-                  {pricing.additionalGuestPrice && ` | +${pricing.additionalGuestPrice} per extra guest`}
+                <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">
+                  {`${pricing.rate} · ${pricing.minimumHours} minimum`}
                 </div>
-                {pricing.hourlyRate && (
-                  <div className="text-ocean/60 text-sm mt-1">{pricing.hourlyRate}/hr</div>
-                )}
+                <div className="text-ocean/70 text-sm sm:text-base">
+                  {`${pricing.minimumHours} for ${pricing.minimumPrice} · ${pricing.includedGuests} guests included`}
+                </div>
+                <div className="text-ocean/60 text-sm mt-1">
+                  {`Up to ${pricing.maxCapacity} guests · guests ${Number(pricing.includedGuests) + 1}–${pricing.maxCapacity} are ${pricing.extraGuestFee}`}
+                </div>
               </div>
               <div className="mt-6">
                 <a
@@ -310,29 +320,8 @@ export default function CruisePage({
         </section>
       )}
 
-      {/* Testimonials */}
-      {testimonials && testimonials.length > 0 && (
-        <section className="py-12 sm:py-16 md:py-20 px-4 bg-gradient-to-b from-sand/20 to-white">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl font-bold text-ocean mb-8 sm:mb-12 text-center">
-              What Our Guests Say
-            </h2>
-            <div className="space-y-6">
-              {testimonials.map((testimonial, index) => (
-                <div key={index} className="bg-white rounded-2xl p-6 sm:p-8 shadow-lg">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <span key={i} className="text-coral text-xl">&#9733;</span>
-                    ))}
-                  </div>
-                  <p className="text-ocean/80 text-lg mb-4 italic">&ldquo;{testimonial.text}&rdquo;</p>
-                  <p className="font-bold text-ocean">&mdash; {testimonial.name}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Google reviews — real reviews from src/data/mockData.ts */}
+      <CompactReviews />
 
       {/* Gallery */}
       {gallery && gallery.images.length > 0 && (

@@ -6,12 +6,14 @@ import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import SquareBooking from '../components/SquareBooking';
+import { productAggregateRatingSchema } from '../lib/reviewSchema';
+import CompactReviews from '../components/CompactReviews';
 
 const faqs = [
   {
     question: 'How much does it cost to rent a pontoon boat in Fort Lauderdale?',
     answer:
-      'Our private captained pontoon rental starts at $200 per hour with a 2-hour minimum. The base rate covers up to 12 passengers; additional guests are $60 per person, up to 18 total. Fuel, cooler, ice, and your licensed captain are all included — no hidden fees.',
+      'Our private captained pontoon rental is $225 per hour with a 3-hour minimum — a 3-hour rental is $675. That covers 14 guests; the boat holds up to 18, and guests 15 through 18 are $60 each. Fuel, cooler, ice, and your licensed captain are all included — no hidden fees.',
   },
   {
     question: 'Do I need a boating license to rent the pontoon?',
@@ -21,7 +23,7 @@ const faqs = [
   {
     question: 'How many people fit on the pontoon boat?',
     answer:
-      'Your booking covers up to 12 guests, and the boat comfortably holds up to 18 — additional guests beyond 12 are $60 per person. Every cruise is private — it’s always just your group on board.',
+      'Your booking covers 14 guests, and the boat comfortably holds up to 18 — guests 15 through 18 are $60 each. Every cruise is private — it’s always just your group on board.',
   },
   {
     question: 'Can we bring our own food and drinks?',
@@ -143,12 +145,12 @@ const jsonLd = {
         {
           "@type": "PropertyValue",
           "name": "Minimum booking",
-          "value": "2 hours"
+          "value": "3 hours"
         },
         {
           "@type": "PropertyValue",
           "name": "Included guests",
-          "value": "Up to 12 passengers"
+          "value": "Up to 14 passengers"
         },
         {
           "@type": "PropertyValue",
@@ -175,14 +177,14 @@ const jsonLd = {
         "@type": "Offer",
         "@id": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/#offer",
         "url": "https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/",
-        "price": "200",
+        "price": "225",
         "priceCurrency": "USD",
         "seller": {
           "@id": "https://tikitacocruises.com/#business"
         },
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "200",
+          "price": "225",
           "priceCurrency": "USD",
           "unitCode": "HUR",
           "unitText": "hour",
@@ -191,7 +193,7 @@ const jsonLd = {
             "value": 1,
             "unitCode": "HUR"
           },
-          "description": "Starting price per hour. Two-hour minimum booking."
+          "description": "Starting price per hour. Three-hour minimum booking."
         }
       }
     },
@@ -252,9 +254,10 @@ export default function PontoonBoatRental() {
     <div className="min-h-screen">
       <SEO
         title="Pontoon Boat Rental Fort Lauderdale | Private & Captained"
-        description="Rent a private captained pontoon boat in Fort Lauderdale for up to 18 guests. BYOB, cooler & ice, fuel included. Sandbars, Intracoastal & New River. From $200/hour."
+        description="Rent a private captained pontoon boat in Fort Lauderdale for up to 18 guests. BYOB, cooler & ice, fuel included. Sandbars, Intracoastal & New River. From $225/hour."
         canonical="https://tikitacocruises.com/pontoon-boat-rental-fort-lauderdale/"
         jsonLd={jsonLd}
+        extraJsonLd={productAggregateRatingSchema}
       />
       <Navigation />
 
@@ -311,8 +314,8 @@ export default function PontoonBoatRental() {
           </h2>
           <div className="text-center mb-8">
             <div className="inline-block bg-coral/10 border-2 border-coral rounded-xl px-6 py-4">
-              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $200/hour (2 hour minimum)</div>
-              <div className="text-ocean/70 text-sm sm:text-base">Private captained rental · up to 12 passengers included · additional guests $60/person (max 18)</div>
+              <div className="text-2xl sm:text-3xl font-bold text-coral mb-2 price-text">Starting at $225/hour (3 hour minimum)</div>
+              <div className="text-ocean/70 text-sm sm:text-base">Private captained rental · up to 14 passengers included · additional guests $60/person (max 18)</div>
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
@@ -496,6 +499,8 @@ export default function PontoonBoatRental() {
           </a>
         </div>
       )}
+
+      <CompactReviews />
 
       <Footer />
     </div>

@@ -2,6 +2,8 @@ import { Phone, Mail, MapPin, Clock, Facebook, Instagram, MessageSquare, Music }
 import SEO from '../components/SEO';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
+import { productAggregateRatingSchema } from '../lib/reviewSchema';
+import CompactReviews from '../components/CompactReviews';
 
 const MAP_EMBED_SRC =
   'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3582.892963639084!2d-80.12278532393849!3d26.102412477139588!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80ab96de1f60856b%3A0xf7b83ebff1272e6!2sTiki%20Taco%20Cruises!5e0!3m2!1sen!2sus!4v1781679173728!5m2!1sen!2sus';
@@ -35,6 +37,7 @@ export default function ContactUs() {
       <SEO
         title="Contact Tiki Taco Cruises | Fort Lauderdale Pontoon Charters"
         description="Get in touch with Tiki Taco Cruises in Fort Lauderdale. Call, email, or message us about private tiki boat cruises, charters, and booking availability."
+        extraJsonLd={productAggregateRatingSchema}
       />
       <div className="min-h-screen">
         <Navigation />
@@ -140,6 +143,8 @@ export default function ContactUs() {
             </div>
           </div>
         </section>
+
+        <CompactReviews />
 
         <Footer />
       </div>

@@ -168,10 +168,13 @@ export default function BlogPost() {
           <div className="blog-prose bg-white rounded-xl sm:rounded-2xl shadow-lg border border-navy/10 p-5 sm:p-10">
             <ReactMarkdown
               components={{
-                img: ({ src, alt, ...rest }) => (
+                // `node` is react-markdown's AST node. It must be pulled out of
+                // the rest spread — otherwise React stringifies it onto the
+                // element as node="[object Object]" in the prerendered HTML.
+                img: ({ src, alt, node: _node, ...rest }) => (
                   <img src={siteImageUrl(typeof src === 'string' ? src : '')} alt={alt ?? ''} loading="lazy" {...rest} />
                 ),
-                a: ({ href, children, ...rest }) => (
+                a: ({ href, children, node: _node, ...rest }) => (
                   <a href={canonicalHref(typeof href === 'string' ? href : '')} {...rest}>{children}</a>
                 ),
               }}

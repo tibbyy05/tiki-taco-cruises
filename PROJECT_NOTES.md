@@ -193,6 +193,107 @@ nothing). The Supabase **CLI is logged in and linked**, so:
 `npx supabase projects api-keys --project-ref vjiybpiuquttbaimywbt` returns the service-role
 key. That is how the blog post content was corrected directly.
 
+## BATCH 7 — Kosta SEO email (August 13, 2026) — BUILT, NOT YET PUSHED
+
+Kosta's 5-item email. Pricing changed twice mid-batch; Taco's number below is the final one.
+
+### Canonical pricing terms (SUPERSEDES Batch 6)
+
+**$225/hour · 3-hour minimum ($675) · 14 guests included · max 18 · guests 15–18 are $60 each**
+
+Pricing moved three times during this batch. Final numbers are Danny's Aug 17 spec. Earlier
+values ($200/12, $250/15, $225/12 with a 2-hour minimum) are all dead — do not resurrect.
+
+Taco's standing instruction on capacity still applies:
+
+> "We really need to post everywhere on web site up to 18 passengers. Very important, this is
+> what puts me above 90% of my competitors."
+
+**Copy pattern ("Option C"), use this everywhere.** The confusion in earlier drafts came from
+14 and 18 competing in one sentence. The fix is to name *which* guests pay:
+
+| | |
+|---|---|
+| Rate | $225 per hour |
+| Minimum | 3 hours — $675 |
+| Guests included | 14 |
+| Maximum capacity | 18 |
+| Guests 15–18 | $60 each |
+
+Never write "additional guests" or "after 14" — write **"guests 15–18 are $60 each"**.
+`CruisePage` renders this as a five-cell `<dl>`; its `CruisePagePricing` interface was
+refactored to match (`rate` / `minimumHours` / `minimumPrice` / `includedGuests` /
+`maxCapacity` / `extraGuestFee`), replacing the old duration/price/basePassengers shape.
+
+### The 3-hour minimum does NOT apply to the 2-hour products
+
+`/fort-lauderdale-sunset-cruise/` sells 2-hour morning (8–10 AM) and sunset (6–8 PM) cruises —
+it is in the nav as "2-Hour Morning & Sunset Cruises" and in the sitemap. Square also still
+sells 2 Hour Open Charters. A blanket 3-hour minimum makes both unsellable, so that page keeps
+its 2-hour minimum ($450) and everything else got 3 hours ($675). The FAQ documents the
+exception explicitly. **This split is an assumption, not an instruction — confirm it.**
+
+### Shipped in the working tree
+
+| Item | Outcome |
+|---|---|
+| 1. Standardize pricing/capacity/duration | 13 files at $225/hr · 12 incl · max 18 led-with; fixed-duration "4 Hours" → "2 Hr Minimum"; sunset page had no capacity info at all, added |
+| 2. Open Charter | **Still live in Square** — branch B applies, page not yet built |
+| 3. Contextual blog links | Done on the 2 posts Kosta named, exact anchors he specified |
+| 4. Review widget + AggregateRating | `CompactReviews.tsx` on 7 pages + Product schema on all 8 |
+| 5. llms.txt | **Blocked** — attachment never landed on disk |
+
+### Square contradicts the website — needs Taco
+
+Square's live booking widget still says `$200/Hour for up to 18 guests. 2 Hour Minimum` — no
+included-guest tier, no additional-guest fee, and the old rate. Taco's Aug 15 spec is
+$225/hour, 12 included, +$60 after 12.
+
+An 18-guest 2-hour booking: **$400 on Square, $1,120 on the site.** The website is now correct
+per Taco; Square is the stale one, and Square is what actually charges the card. **Taco needs
+to update Square** — until he does, every online booking under-charges.
+
+### Open Charter is a real, bookable product
+
+`2 Hour Open Charters - Early Morning and Evening Cruise · Minimum of 6 guests · $60 per person`
+is live in Square right now. It appears nowhere on the site's service pages, which is why the
+blog reads as inconsistent — the blog is *right* and the site is silent. Two posts describe it:
+`2-hour-fort-lauderdale-boat-cruise-for-small-groups` (its "$360 for up to six guests" is
+exactly $60 × 6, i.e. correct) and `how-to-choose-the-right-party-boat-in-fort-lauderdale`.
+Both left untouched pending Taco. Note the 2-hour post calls it "a private experience" while
+Square sells it per-seat — that contradiction is real either way.
+
+### Also found and fixed (not on his list)
+
+- **8 fabricated testimonials** on the 4 template cruise pages — "Tyler Brooks", "Nicole
+  Ramirez", "Marcus Johnson", "Rachel Kim", "James Patel", "Karen Mitchell", "Brian Foster",
+  "Laura Chen". None appear in the 78 real Google reviews. Removed and replaced with the real
+  `CompactReviews` widget — these were the exact pages about to carry AggregateRating markup.
+- **`node="[object Object]"` on every blog link and image.** react-markdown's AST node was
+  being spread onto the DOM element in `BlogPost.tsx`. Pre-existing; fixed.
+- **Dead code carrying phantom prices.** `Fleet.tsx` (unrendered) advertised "+$50/hour"
+  captain service, and `mockData.routes` held "3 hours" durations, plus three fictional boats
+  with stock photos and $150–$220 hourly rates. All deleted, along with the `Boat`/`Route`
+  types.
+- **"2, 3, and 4-hour options"** on `/cruise-destinations/` — the 3-hour product was removed
+  back in Phase 2c.
+
+### Review data is now single-source
+
+`GOOGLE_RATING` / `GOOGLE_REVIEW_COUNT` in `src/data/mockData.ts` feed the homepage marquee,
+the compact widget, and `src/lib/reviewSchema.ts` (the Product + AggregateRating JSON-LD).
+Bumping the count in one place updates all three, which is what Kosta asked for. Count was
+95, actual Google is **103** — verified on Maps, not assumed.
+
+Schema is emitted through a new `extraJsonLd` prop on `<SEO>` so it lands as its own
+`<script>` and touches none of the existing LocalBusiness/WebSite/WebPage/ItemList graphs.
+Verified in the built HTML: present on exactly the 8 specified URLs, absent everywhere else.
+
+**Caveat to raise with Kosta:** the 5 cruise pages now carry two `Product` nodes — his
+existing cruise Product in the `@graph`, plus this standalone one with the rating. That is
+what his spec asked for, but Google may pick the wrong entity. Worth attaching
+`aggregateRating` to his existing node instead.
+
 ## OPEN ITEMS FROM BATCH 6
 
 1. **CallRail call recording — check this first.** Florida is an all-party consent state
