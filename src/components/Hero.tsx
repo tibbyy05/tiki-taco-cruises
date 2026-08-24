@@ -122,7 +122,7 @@ export default function Hero() {
       {/* Text + photo card — on mobile this stacks directly under the photo
           band; on desktop it sits beside the carousel and clears the fixed nav */}
       <div className="relative flex-1 flex items-start lg:items-center w-full">
-        <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-12 pt-5 sm:pt-7 lg:pt-44 pb-4 lg:pb-10 grid lg:grid-cols-[1fr_1.7fr] items-center gap-10 lg:gap-12">
+        <div className="max-w-[1400px] mx-auto w-full px-5 sm:px-8 lg:px-12 pt-0 sm:pt-7 lg:pt-44 pb-4 lg:pb-10 grid lg:grid-cols-[1fr_1.7fr] items-center gap-10 lg:gap-12">
           <div className="max-w-xl mx-auto lg:mx-0 text-center lg:text-left text-white">
             <p className="text-[0.68rem] sm:text-xs font-semibold tracking-[0.25em] uppercase text-[#38BDF8] lg:text-white/85 mb-2 sm:mb-4">
               Private <span className="text-[#38BDF8] lg:text-coral">•</span> Captained <span className="text-[#38BDF8] lg:text-coral">•</span> Up to 18 Guests
