@@ -153,14 +153,14 @@ export default function Hero() {
               <button
                 type="button"
                 onClick={openBookingFlow}
-                className="w-full justify-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-lg font-semibold !text-[length:1.15rem] inline-flex items-center min-h-[48px] transition-colors"
+                className="w-full justify-center bg-coral hover:bg-coral/90 text-white px-6 py-3 rounded-lg font-semibold !text-[length:1.2075rem] inline-flex items-center h-[50px] transition-colors"
                 data-gtm-id="check-availability"
               >
                 Check Availability
               </button>
               <a
                 href="/cruise-destinations/"
-                className="w-full justify-center border border-white/50 hover:border-white hover:bg-white/10 text-white px-6 py-3 rounded-lg font-semibold text-base inline-flex items-center min-h-[48px] transition-colors"
+                className="w-full justify-center border border-white/50 hover:border-white hover:bg-white/10 text-white px-6 py-3 rounded-lg font-semibold text-[length:0.95rem] inline-flex items-center h-[50px] transition-colors"
                 data-gtm-id="view-cruises-pricing"
               >
                 View Cruises &amp; Pricing

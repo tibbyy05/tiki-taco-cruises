@@ -5,7 +5,7 @@ import { Testimonial, FAQItem } from '../types';
 // reviews land is a one-line change here — not a hunt through Hero and
 // GuestReviews. Keep them matching what Google actually shows.
 export const GOOGLE_RATING = '5.0';
-export const GOOGLE_REVIEW_COUNT = 103;
+export const GOOGLE_REVIEW_COUNT = 113;
 
 // Real Google reviews (verbatim; truncated ones end with an ellipsis as shown
 // on Google). Add new ones here and bump GOOGLE_REVIEW_COUNT above.
