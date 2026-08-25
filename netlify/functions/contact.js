@@ -16,7 +16,7 @@ const ALLOWED_ORIGINS = [
   'http://localhost:8888',
 ];
 
-const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'Tikitacocruises@gmail.com';
+const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'tibbyy05@gmail.com';
 
 // Sender must be a SendGrid-verified identity. We do not control DNS for
 // tikitacocruises.com, so we send from the already-verified ai-genda.com and

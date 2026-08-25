@@ -57,6 +57,8 @@ export default function ContactUs() {
         <section className="px-4 py-12 sm:py-16 md:py-20 bg-white">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+              <ContactForm />
+
               <div className="bg-sand rounded-2xl p-6 sm:p-8 shadow-lg">
                 <h2 className="text-xl sm:text-2xl font-bold text-ocean mb-6">Tiki Taco Cruises</h2>
 
@@ -127,7 +129,6 @@ export default function ContactUs() {
                 </a>
               </div>
 
-              <ContactForm />
             </div>
 
             <div className="mt-8 lg:mt-12 rounded-2xl overflow-hidden shadow-lg h-[300px] sm:h-[400px] lg:h-[450px]">
