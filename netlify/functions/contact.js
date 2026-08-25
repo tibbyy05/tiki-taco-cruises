@@ -1,158 +1,149 @@
-const sgMail = require('@sendgrid/mail');
+import sgMail from '@sendgrid/mail';
 
-exports.handler = async (event) => {
-  // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
+/**
+ * Contact-form handler for /contact-us/.
+ *
+ * Replaces an earlier booking-request handler that took its destination
+ * address from the request body — that let anyone POST here and send mail to
+ * any address on our SendGrid account. The recipient is now server-side only.
+ */
+
+// Only these origins may POST here.
+const ALLOWED_ORIGINS = [
+  'https://tikitacocruises.com',
+  'https://www.tikitacocruises.com',
+  'http://localhost:5173',
+  'http://localhost:8888',
+];
+
+const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'Tikitacocruises@gmail.com';
+
+// Sender must be a SendGrid-verified identity. We do not control DNS for
+// tikitacocruises.com, so we send from the already-verified ai-genda.com and
+// set replyTo to the customer. This only ever mails Taco's own inbox, so the
+// sending domain does not affect customer-facing deliverability. If the Tiki
+// domain is verified later, set CONTACT_FROM_EMAIL — no code change needed.
+const FROM_EMAIL = process.env.CONTACT_FROM_EMAIL || 'noreply@ai-genda.com';
+
+const LIMITS = { name: 120, email: 200, phone: 40, message: 5000 };
+
+const esc = (v) =>
+  String(v == null ? '' : v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+// Deliberately simple: reject the obviously malformed, let SendGrid bounce the rest.
+const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v || '').trim());
+
+function corsHeaders(origin) {
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowed,
     'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST'
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json',
+  };
+}
+
+export const handler = async (event) => {
+  const origin = (event.headers && (event.headers.origin || event.headers.Origin)) || '';
+  const headers = corsHeaders(origin);
+  const fail = (statusCode, error) => ({ statusCode, headers, body: JSON.stringify({ error }) });
+
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
+  if (event.httpMethod !== 'POST') return fail(405, 'Method not allowed');
+
+  let body;
+  try {
+    body = JSON.parse(event.body || '{}');
+  } catch {
+    return fail(400, 'Invalid request body.');
+  }
+
+  const name = String(body.name || '').trim();
+  const email = String(body.email || '').trim();
+  const phone = String(body.phone || '').trim();
+  const message = String(body.message || '').trim();
+
+  // Honeypot: real people never fill a field they cannot see. Return 200 so
+  // bots get no signal that they were caught.
+  if (String(body.company || '').trim()) {
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+  }
+
+  if (!name || !email || !message) return fail(400, 'Name, email, and message are required.');
+  if (!isEmail(email)) return fail(400, 'Please enter a valid email address.');
+  if (
+    name.length > LIMITS.name ||
+    email.length > LIMITS.email ||
+    phone.length > LIMITS.phone ||
+    message.length > LIMITS.message
+  ) {
+    return fail(400, 'One or more fields are too long.');
+  }
+
+  if (!process.env.SENDGRID_API_KEY) {
+    console.error('[contact] SENDGRID_API_KEY is not set');
+    return fail(500, 'Email is not configured. Please call us at (954) 764-4344.');
+  }
+
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+  const row = (label, value) => `
+    <tr>
+      <td style="padding:10px 14px;font:600 12px/1.4 Arial,sans-serif;color:#4A5568;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;vertical-align:top;">${label}</td>
+      <td style="padding:10px 14px;font:400 15px/1.5 Arial,sans-serif;color:#1a202c;">${value}</td>
+    </tr>`;
+
+  const msg = {
+    to: TO_EMAIL,
+    from: { email: FROM_EMAIL, name: 'Tiki Taco Cruises Website' },
+    replyTo: { email, name: name || email },
+    subject: `Website enquiry — ${name}`,
+    text: [
+      `New enquiry from the Tiki Taco Cruises website`,
+      ``,
+      `Name:    ${name}`,
+      `Email:   ${email}`,
+      `Phone:   ${phone || '(not provided)'}`,
+      ``,
+      `Message:`,
+      message,
+      ``,
+      `Reply directly to this email to respond to ${name}.`,
+    ].join('\n'),
+    html: `<!DOCTYPE html><html><body style="margin:0;padding:24px;background:#F5F7FA;">
+      <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08);">
+        <div style="background:#1E3A5F;padding:26px 24px;">
+          <h1 style="margin:0;color:#fff;font:700 20px/1.3 Arial,sans-serif;">New Website Enquiry</h1>
+          <p style="margin:6px 0 0;color:#a8c4e0;font:400 13px/1.4 Arial,sans-serif;">Sent from the contact form at tikitacocruises.com</p>
+        </div>
+        <table style="width:100%;border-collapse:collapse;">
+          ${row('Name', esc(name))}
+          ${row('Email', `<a href="mailto:${esc(email)}" style="color:#0891B2;">${esc(email)}</a>`)}
+          ${row('Phone', phone ? `<a href="tel:${esc(phone)}" style="color:#0891B2;">${esc(phone)}</a>` : '<span style="color:#8a94a6;">Not provided</span>')}
+        </table>
+        <div style="padding:14px 14px 24px;">
+          <div style="font:600 12px/1.4 Arial,sans-serif;color:#4A5568;text-transform:uppercase;letter-spacing:.5px;padding:0 0 8px;">Message</div>
+          <div style="background:#F5F7FA;border-left:4px solid #FF6B6B;border-radius:6px;padding:14px 16px;font:400 15px/1.6 Arial,sans-serif;color:#1a202c;white-space:pre-wrap;">${esc(message)}</div>
+        </div>
+        <div style="background:#F5F7FA;padding:16px 24px;font:400 13px/1.5 Arial,sans-serif;color:#4A5568;">
+          Hit reply to respond directly to ${esc(name)}.
+        </div>
+      </div>
+    </body></html>`,
   };
 
-  // Handle preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
   try {
-    const { customerName, customerEmail, customerPhone, bookingData, ownerEmail } = JSON.parse(event.body);
-
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
-    // Format add-ons list
-    const addOnsList = bookingData.addOns.length > 0 
-      ? bookingData.addOns.map(addOn => `<li>${addOn.name} - $${addOn.price}</li>`).join('')
-      : '<li>No add-ons selected</li>';
-
-    const msg = {
-      to: ownerEmail,
-      from: {
-        email: 'noreply@ai-genda.com',
-        name: 'Pontoon Booking Request'
-      },
-      subject: `New Pontoon Booking Request - ${customerName}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background-color: #f4f4f4; }
-            .container { max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-            .header { background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); padding: 40px 20px; text-align: center; }
-            .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 600; }
-            .content { padding: 40px 30px; }
-            .section { margin-bottom: 30px; }
-            .section-title { font-size: 18px; font-weight: 700; color: #0066cc; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid #00bcd4; padding-bottom: 8px; }
-            .field { margin-bottom: 15px; }
-            .field-label { font-weight: 700; color: #2d3748; margin-bottom: 5px; font-size: 13px; text-transform: uppercase; }
-            .field-value { color: #333333; font-size: 16px; padding: 12px; background: #f8f9fa; border-left: 4px solid #00bcd4; border-radius: 4px; }
-            .field-value a { color: #0066cc; text-decoration: none; font-weight: 600; }
-            .add-ons-list { list-style: none; padding: 0; margin: 10px 0 0 0; }
-            .add-ons-list li { padding: 8px 12px; background: #f0f9ff; border-left: 3px solid #00bcd4; margin-bottom: 5px; border-radius: 4px; }
-            .total-box { background: linear-gradient(135deg, #0066cc 0%, #003d7a 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; }
-            .total-label { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; margin-bottom: 5px; }
-            .total-amount { font-size: 32px; font-weight: 700; }
-            .divider { height: 2px; background: linear-gradient(90deg, transparent, #00bcd4, transparent); margin: 30px 0; }
-            .footer { background: #003d7a; padding: 30px 20px; text-align: center; }
-            .footer-brand { color: #ffffff; margin: 0 0 10px 0; font-size: 16px; font-weight: 400; }
-            .footer-link { color: #00bcd4; text-decoration: none; font-size: 20px; font-weight: 700; }
-            .footer-link:hover { color: #ffffff; }
-            .footer-tagline { color: #a8d5e5; margin: 10px 0 0 0; font-size: 13px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>⛵ New Pontoon Booking Request</h1>
-            </div>
-            
-            <div class="content">
-              <div class="section">
-                <div class="section-title">Customer Information</div>
-                <div class="field">
-                  <div class="field-label">Name</div>
-                  <div class="field-value">${customerName}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Email Address</div>
-                  <div class="field-value"><a href="mailto:${customerEmail}">${customerEmail}</a></div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Phone</div>
-                  <div class="field-value"><a href="tel:${customerPhone}">${customerPhone}</a></div>
-                </div>
-              </div>
-
-              <div class="section">
-                <div class="section-title">Booking Details</div>
-                <div class="field">
-                  <div class="field-label">Date</div>
-                  <div class="field-value">${bookingData.dateFormatted}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Time Slot</div>
-                  <div class="field-value">${bookingData.timeLabel}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Duration</div>
-                  <div class="field-value">${bookingData.duration} Hours</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Destination</div>
-                  <div class="field-value">${bookingData.destination}</div>
-                </div>
-                <div class="field">
-                  <div class="field-label">Number of Guests</div>
-                  <div class="field-value">${bookingData.guests} Guest${bookingData.guests > 1 ? 's' : ''}</div>
-                </div>
-              </div>
-
-              <div class="section">
-                <div class="section-title">Add-ons</div>
-                <ul class="add-ons-list">
-                  ${addOnsList}
-                </ul>
-              </div>
-
-              <div class="total-box">
-                <div class="total-label">Total Amount</div>
-                <div class="total-amount">$${bookingData.total.toLocaleString()}</div>
-              </div>
-            </div>
-            
-            <div class="divider"></div>
-            
-            <div class="footer">
-              <p class="footer-brand">Powered by <a href="https://ai-genda.com" class="footer-link" target="_blank">Ai-genda</a></p>
-              <p class="footer-tagline">Professional web design & development services</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `,
-    };
-
     await sgMail.send(msg);
-    
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ success: true })
-    };
-    
-  } catch (error) {
-    console.error(error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ error: 'Failed to send email', details: error.message })
-    };
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true }) };
+  } catch (err) {
+    // SendGrid puts the useful detail in response.body, not err.message.
+    const detail = err && err.response && err.response.body;
+    console.error('[contact] SendGrid send failed:', JSON.stringify(detail || (err && err.message)));
+    return fail(502, 'We could not send your message. Please call us at (954) 764-4344.');
   }
 };
